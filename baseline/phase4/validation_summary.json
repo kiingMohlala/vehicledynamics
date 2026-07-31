@@ -4,17 +4,28 @@
     "freeze_tag": "v0.4.0-phase4-frozen"
   },
   "phase_4_1_load_transfer": {
-    "zero_ay": "PASS",
-    "axle_conservation": "PASS",
-    "vehicle_total_conservation": "PASS",
-    "sign_swap": "PASS",
-    "fz_min_respected": "PASS",
-    "theoretical_transfer": "PASS",
-    "parameter_sensitivity": "PASS",
-    "integration_logging": "DONE",
-    "dynamics_feedback": false,
     "status": "IMPLEMENTATION_VALIDATED",
-    "freeze_tag": "v0.4.1-phase4.1-load-transfer",
-    "freeze_date": "2026-07-31"
+    "freeze_tag": "v0.4.1-phase4.1-load-transfer"
+  },
+  "phase_4_2_combined": {
+    "pure_braking_regression": "PASS",
+    "pure_steering_regression": "PASS",
+    "trail_braking_baseline": "PASS",
+    "brake_release": "PASS",
+    "mu_sweep": "PASS",
+    "entry_speed_sweep": "PASS",
+    "status": "IMPLEMENTATION_VALIDATED",
+    "freeze_tag": "v0.4.2-phase4.2-combined",
+    "freeze_date": "2026-07-31",
+    "known_limitations": [
+      "Single-track (bicycle) model",
+      "No left/right tire force differences",
+      "No longitudinal-force-induced yaw moments",
+      "No load-transfer feedback into tire normal loads",
+      "No suspension roll or pitch",
+      "No tire relaxation length",
+      "No aerodynamic forces",
+      "No ESC or traction control"
+    ]
   }
 }

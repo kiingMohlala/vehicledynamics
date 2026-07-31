@@ -1,6 +1,6 @@
 # Vehicle Dynamics Simulation Framework
 
-Modular, validated vehicle dynamics library covering suspension, braking, ABS, tire models, and lateral dynamics.
+Modular, validated vehicle dynamics library: suspension, braking, ABS, combined-slip tires, bicycle dynamics, and combined braking + steering.
 
 **Repository:** https://github.com/kiingMohlala/vehicledynamics
 
@@ -8,53 +8,29 @@ Modular, validated vehicle dynamics library covering suspension, braking, ABS, t
 
 | Phase | Description | Status |
 |-------|-------------|--------|
-| 3.0 | Braking Dynamics + Thermal | ✅ Validated |
-| 3.2 | ABS Controller | ✅ Validated |
-| 3.3 | Standard Dugoff (longitudinal) | ✅ Implementation Validated |
-| 3.4 | Combined-Slip Dugoff | ✅ Integrated & Regression Validated |
-| **4.0** | **Dynamic Bicycle Model** | ✅ **Implementation Validated** |
+| 3.x | Braking + ABS + Combined-Slip Dugoff | ✅ Validated |
+| 4.0 | Dynamic Bicycle Model | ✅ Implementation Validated |
+| 4.1 | Load Transfer Diagnostics | ✅ Implementation Validated |
+| **4.2** | **Combined Braking & Steering** | ✅ **Implementation Validated** |
 
-## Project Structure
+## Progression
 
-```
-vehicle_dynamics/
-├── braking/          # Longitudinal braking + ABS + thermal
-├── tire/             # Dugoff tire models (longitudinal + combined-slip)
-├── lateral/          # Phase 4.0 dynamic bicycle model
-├── docs/
-└── baseline/
-    ├── phase3/
-    └── phase4/
-```
+Quarter-car suspension → Braking → ABS → Combined-slip tires → Bicycle dynamics → Load-transfer diagnostics → Combined braking & steering
+
+## Next
+
+**Phase 5.0 – Dual-Track Vehicle Model (4-wheel)**  
+Independent FL/FR/RL/RR wheels, true yaw moments from longitudinal forces, foundation for ESC.
 
 ## Quick Start
 
 ```bash
 pip install -r requirements.txt
-
-# Braking validation
 python -m vehicle_dynamics.braking.validation
-
-# Combined-slip tire validation
 python -m vehicle_dynamics.tire.validation_combined
-
-# Bicycle model validation
 python -m vehicle_dynamics.lateral.validation
+python -m vehicle_dynamics.combined.validation
 ```
-
-## Key Design Principles
-
-- Selectable tire models via dependency injection
-- Independent validation before system integration
-- Clear separation of implementation validation vs physical validation
-- Frozen public interfaces
-- Regression baselines for every major milestone
-
-## Next Steps
-
-- Phase 4.1 – Lateral load transfer / dynamic normal loads
-- Phase 4.2 – Combined braking + steering
-- Phase 4.3 – ESC foundation
 
 ## License
 

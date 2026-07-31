@@ -1,32 +1,29 @@
 # Project Milestones
 
-## v0.4.1-phase4.1-load-transfer (2026-07-31)
+## v0.4.2-phase4.2-combined (2026-07-31)
 
 **Status:** Frozen – Implementation Validated
 
-### Phase 4.1 – Load Transfer Diagnostics: Implementation Validated
+### Phase 4.2 – Combined Braking & Steering: Implementation Validated
 
-✅ Quasi-static lateral load transfer diagnostics  
-✅ Level A (no dynamics feedback)  
-✅ Axle-preserving clamp  
-✅ Logged in bicycle simulation results  
-✅ Full diagnostics validation suite passed
+✅ Dynamic Vx + bicycle lateral states  
+✅ Combined-slip (κ and α active)  
+✅ Pure-braking & pure-steering regressions  
+✅ Trail-braking validation (mu / speed sweeps, brake-release)
 
 ### Recommended Git Tag
 ```bash
-git tag -a v0.4.1-phase4.1-load-transfer -m "Phase 4.1 Load Transfer Diagnostics: Implementation Validated"
-git push origin v0.4.1-phase4.1-load-transfer
+git tag -a v0.4.2-phase4.2-combined -m "Phase 4.2 Combined Braking & Steering: Implementation Validated"
+git push origin v0.4.2-phase4.2-combined
 ```
 
 ---
 
 ## Previous Freezes
 
-### v0.4.0-phase4-frozen (2026-07-31)
-Phase 4.0 Dynamic Bicycle Model: Implementation Validated
-
-### v0.3.4-phase3.4-combined-slip (2026-07-31)
-Combined-Slip Dugoff: Integrated & Regression Validated
-
-### v0.3.3-phase3-frozen (2026-07-31)
-Braking + ABS + Standard Dugoff (longitudinal only)
+| Tag | Description |
+|-----|-------------|
+| v0.4.1-phase4.1-load-transfer | Load Transfer Diagnostics: Implementation Validated |
+| v0.4.0-phase4-frozen | Dynamic Bicycle Model: Implementation Validated |
+| v0.3.4-phase3.4-combined-slip | Combined-Slip Dugoff: Integrated & Regression Validated |
+| v0.3.3-phase3-frozen | Braking + ABS + Standard Dugoff (longitudinal) |

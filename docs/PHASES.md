@@ -1,26 +1,27 @@
 # Development Phases
 
 ## Phase 1 – Suspension Dynamics
-- 2-DOF quarter-car model
-- Skyhook / Groundhook / Hybrid controllers
-- ISO 8608 road profiles
+- 2-DOF quarter-car, Skyhook/Groundhook/Hybrid, ISO 8608 roads
 
-## Phase 3 – Braking System
-- Longitudinal dynamics + weight transfer + thermal + ABS
-- Combined-slip Dugoff (Phase 3.4 – Integrated & Regression Validated)
+## Phase 3 – Braking System ✅
+- Longitudinal dynamics, thermal, ABS
+- Combined-slip Dugoff (Phase 3.4)
 
-## Phase 4 – Lateral Dynamics & ESC
+## Phase 4 – Lateral Dynamics ✅
+- 4.0 Bicycle model
+- 4.1 Load-transfer diagnostics
+- 4.2 Combined braking & steering
 
-### Phase 4.0 – Dynamic Bicycle Model ✅ FROZEN
-- 2-DOF (vy, r), combined-slip tires (κ = 0)
+## Phase 5 – Dual-Track & Control (next)
 
-### Phase 4.1 – Load Transfer Diagnostics ✅ FROZEN
-- Quasi-static left/right load transfer (diagnostics only)
+### Phase 5.0 – Dual-Track Vehicle Model (4-wheel)
+- Separate FL/FR/RL/RR wheels
+- Independent normal loads, slip ratios, slip angles
+- True left/right yaw moments
+- Foundation for ESC and torque vectoring
 
-### Phase 4.2 – Combined Braking + Steering (current design)
-- Dynamic Vx + vy + r
-- Trail braking, combined-slip (κ and α both active)
-- Pure-braking and pure-steering regressions
-
-### Phase 4.3 – ESC Foundation
-- Desired yaw-rate model, yaw-moment controller, individual brake intervention
+### Later
+- Load-transfer feedback into tire Fz
+- ESC / brake vectoring
+- Differential models
+- Active torque distribution
