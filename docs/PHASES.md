@@ -12,13 +12,27 @@
 - Thermal model + fade
 - ABS controller (validated)
 - Selectable tire models (Hard / Simplified Dugoff / Standard Dugoff)
+- Combined-slip Dugoff (Phase 3.4 – Integrated & Regression Validated)
 
-## Phase 3.4 – Combined-Slip Tire (in progress)
-- Combined longitudinal + lateral Dugoff
-- Independent validation suite
-- Friction ellipse / utilization surfaces
+## Phase 4 – Lateral Dynamics & ESC
 
-## Upcoming
-- Combined-slip integration
-- Bicycle model
-- Electronic Stability Control (ESC)
+### Phase 4.0 – Dynamic Bicycle Model (current design)
+- 2-DOF (v_y, r)
+- Steering input + slip-angle computation
+- Combined-slip tire integration
+- Constant-radius and step-steer validation
+
+### Phase 4.1 – Load Transfer Coupling
+- Lateral load transfer
+- Roll moment approximation
+- Dynamic normal loads
+
+### Phase 4.2 – Combined Braking + Steering
+- Trail braking
+- Split-μ corner entry
+- Understeer / oversteer studies
+
+### Phase 4.3 – ESC Foundation
+- Desired yaw-rate model
+- Yaw-moment controller
+- Individual wheel brake intervention
