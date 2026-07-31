@@ -11,22 +11,21 @@
 - Wheel dynamics
 - Thermal model + fade
 - ABS controller (validated)
-- Selectable tire models (Hard / Simplified Dugoff / Standard Dugoff)
+- Selectable tire models
 - Combined-slip Dugoff (Phase 3.4 – Integrated & Regression Validated)
 
 ## Phase 4 – Lateral Dynamics & ESC
 
 ### Phase 4.0 – Dynamic Bicycle Model ✅ FROZEN
 - 2-DOF (vy, r)
-- Steering input + slip-angle computation
-- Combined-slip tire integration (κ = 0)
-- Constant-radius and step-steer validation
-- Dual ay cross-check, symmetry, linear bicycle comparison
+- Steering + slip angles
+- Combined-slip tires (κ = 0)
+- Full validation suite
 
-### Phase 4.1 – Load Transfer Coupling (next)
-- Lateral load transfer
-- Roll moment approximation
-- Dynamic normal loads
+### Phase 4.1 – Load Transfer Coupling (current design)
+- Quasi-static lateral load transfer
+- Dynamic / diagnostic normal loads
+- Zero-ay regression against Phase 4.0
 
 ### Phase 4.2 – Combined Braking + Steering
 - Trail braking
