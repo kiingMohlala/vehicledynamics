@@ -12,14 +12,15 @@
 ## Phase 4 – Lateral Dynamics & ESC
 
 ### Phase 4.0 – Dynamic Bicycle Model ✅ FROZEN
-- 2-DOF (vy, r), combined-slip tires (κ = 0), full validation
+- 2-DOF (vy, r), combined-slip tires (κ = 0)
 
 ### Phase 4.1 – Load Transfer Diagnostics ✅ FROZEN
 - Quasi-static left/right load transfer (diagnostics only)
-- Axle-preserving clamp, logged in simulation results
 
-### Phase 4.2 – Combined Braking + Steering (next)
-- Trail braking, split-μ corner entry, understeer/oversteer studies
+### Phase 4.2 – Combined Braking + Steering (current design)
+- Dynamic Vx + vy + r
+- Trail braking, combined-slip (κ and α both active)
+- Pure-braking and pure-steering regressions
 
 ### Phase 4.3 – ESC Foundation
 - Desired yaw-rate model, yaw-moment controller, individual brake intervention
