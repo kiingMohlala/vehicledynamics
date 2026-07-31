@@ -2,19 +2,33 @@
 
 ## Phase 3.4.2 – Combined-Slip Dugoff
 
-**Status:** Implementation Validated
+**Status:** Implementation Validated (numerical)
 
 - Independent validation suite passed
 - Phase 3.3 longitudinal compatibility confirmed
 - Reciprocal coupling verified
 - Clamp activation = 0 % under normal sampling
 
-## Next
+## Current Gate
 
-1. Generate and review visualization surfaces (Fx, Fy, λ, utilization)
-2. Qualitative physics review
-3. Integrate into BrakeSimulation (only after surfaces look correct)
-4. Full Phase 3 regression under the combined-slip model
+**Visual validation required before integration**
+
+See: `baseline/phase3/plots/VISUAL_CHECKLIST.md`
+
+Required surfaces:
+- Fx(κ, α)
+- Fy(κ, α)
+- λ(κ, α)
+- Utilization(κ, α)
+- Pure longitudinal & pure lateral slices
+
+## Next Steps (strict order)
+
+1. Generate plots (`python -m vehicle_dynamics.tire.visualization`)
+2. Complete the visual checklist
+3. Only if all checks pass → mark "Ready for Integration"
+4. Integrate into BrakeSimulation
+5. Re-run full Phase 3 regression suite under the combined-slip model
 
 ## Known Limitations (still apply)
 
