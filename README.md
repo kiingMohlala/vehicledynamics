@@ -1,6 +1,6 @@
 # Vehicle Dynamics Simulation Framework
 
-Modular, validated vehicle dynamics library: suspension, braking, ABS, combined-slip tires, bicycle dynamics, and combined braking + steering.
+Modular, validated vehicle dynamics library from quarter-car suspension through dual-track combined braking and steering.
 
 **Repository:** https://github.com/kiingMohlala/vehicledynamics
 
@@ -9,28 +9,16 @@ Modular, validated vehicle dynamics library: suspension, braking, ABS, combined-
 | Phase | Description | Status |
 |-------|-------------|--------|
 | 3.x | Braking + ABS + Combined-Slip Dugoff | ✅ Validated |
-| 4.0 | Dynamic Bicycle Model | ✅ Implementation Validated |
-| 4.1 | Load Transfer Diagnostics | ✅ Implementation Validated |
-| **4.2** | **Combined Braking & Steering** | ✅ **Implementation Validated** |
+| 4.0–4.2 | Bicycle + load transfer + combined manoeuvres | ✅ Validated |
+| **5.0** | **Dual-Track (4-wheel) Architecture** | ✅ **Implementation Validated (Initial)** |
 
 ## Progression
 
-Quarter-car suspension → Braking → ABS → Combined-slip tires → Bicycle dynamics → Load-transfer diagnostics → Combined braking & steering
+Quarter-car → Braking → ABS → Combined-slip tires → Bicycle dynamics → Load-transfer diagnostics → Combined braking & steering → **Dual-track 4-wheel**
 
 ## Next
 
-**Phase 5.0 – Dual-Track Vehicle Model (4-wheel)**  
-Independent FL/FR/RL/RR wheels, true yaw moments from longitudinal forces, foundation for ESC.
-
-## Quick Start
-
-```bash
-pip install -r requirements.txt
-python -m vehicle_dynamics.braking.validation
-python -m vehicle_dynamics.tire.validation_combined
-python -m vehicle_dynamics.lateral.validation
-python -m vehicle_dynamics.combined.validation
-```
+**Phase 5.1 – Ackermann Steering & Independent Wheel Control**
 
 ## License
 
