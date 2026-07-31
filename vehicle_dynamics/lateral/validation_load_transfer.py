@@ -1,14 +1,12 @@
 """
 Phase 4.1 – Load-transfer diagnostics validation (Level A).
 
-Does not modify bicycle dynamics. Verifies conservation, symmetry,
-bounds, and zero-ay behaviour.
+Strengthened conservation (axle-by-axle) and theoretical transfer cross-check.
 """
 
 import numpy as np
 from .load_transfer import (
     LoadTransferParameters,
-    LoadTransferState,
     compute_load_transfer,
 )
 
@@ -24,16 +22,34 @@ def test_zero_ay():
     )
     return ok, {"dFz_front": s.dFz_front, "dFz_rear": s.dFz_rear}
 
-def test_total_load_conserved():
+def test_axle_conservation():
+    """Fz_fl + Fz_fr == Fz_f_axle and rear equivalent, including under clamp."""
+    p = LoadTransferParameters(Fz_min=50.0, h_cg=0.8)
+    cases = [
+        (0.0, 6000.0, 7000.0),
+        (5.0, 6000.0, 7000.0),
+        (12.0, 4000.0, 4000.0),   # likely clamp
+        (20.0, 3000.0, 3000.0),   # strong clamp
+    ]
+    tol = 1e-6
+    for ay, Fz_f, Fz_r in cases:
+        s = compute_load_transfer(ay, Fz_f, Fz_r, p, mass=1400.0)
+        if abs((s.Fz_fl + s.Fz_fr) - Fz_f) > tol:
+            # Degenerate: axle total < 2*Fz_min
+            if Fz_f >= 2 * p.Fz_min:
+                return False, {"ay": ay, "front_sum": s.Fz_fl + s.Fz_fr, "Fz_f": Fz_f}
+        if abs((s.Fz_rl + s.Fz_rr) - Fz_r) > tol:
+            if Fz_r >= 2 * p.Fz_min:
+                return False, {"ay": ay, "rear_sum": s.Fz_rl + s.Fz_rr, "Fz_r": Fz_r}
+    return True, {"cases_checked": len(cases)}
+
+def test_vehicle_total_conservation():
     p = LoadTransferParameters()
     Fz_f, Fz_r = 6000.0, 7000.0
     s = compute_load_transfer(5.0, Fz_f, Fz_r, p, mass=1400.0)
-    # Before clamp, totals should match axle totals
-    # After clamp they may differ slightly if lift occurs; for moderate ay they should match
     total = s.Fz_fl + s.Fz_fr + s.Fz_rl + s.Fz_rr
-    expected = Fz_f + Fz_r
-    ok = abs(total - expected) < 1.0 or s.wheel_lift_front or s.wheel_lift_rear
-    return ok, {"total": total, "expected": expected}
+    ok = abs(total - (Fz_f + Fz_r)) < 1e-6
+    return ok, {"total": total, "expected": Fz_f + Fz_r}
 
 def test_sign_swap():
     p = LoadTransferParameters()
@@ -50,24 +66,30 @@ def test_sign_swap():
 
 def test_fz_min_respected():
     p = LoadTransferParameters(Fz_min=50.0, h_cg=0.8)
-    Fz_f, Fz_r = 3000.0, 3000.0
-    # Large ay to force potential lift
-    s = compute_load_transfer(15.0, Fz_f, Fz_r, p, mass=1400.0)
-    ok = (
-        s.Fz_fl >= p.Fz_min - 1e-6 and s.Fz_fr >= p.Fz_min - 1e-6 and
-        s.Fz_rl >= p.Fz_min - 1e-6 and s.Fz_rr >= p.Fz_min - 1e-6
-    )
+    s = compute_load_transfer(15.0, 3000.0, 3000.0, p, mass=1400.0)
+    ok = all(x >= p.Fz_min - 1e-6 for x in [s.Fz_fl, s.Fz_fr, s.Fz_rl, s.Fz_rr])
     return ok, {
         "Fz_fl": s.Fz_fl, "Fz_fr": s.Fz_fr,
         "wheel_lift_front": s.wheel_lift_front,
+        "front_axle_sum": s.Fz_fl + s.Fz_fr,
     }
 
+def test_theoretical_transfer():
+    """When track_f == track_r, dFz_front + dFz_rear == m*ay*h/t."""
+    track = 1.55
+    p = LoadTransferParameters(track_f=track, track_r=track, chi_f=0.55, h_cg=0.55)
+    mass = 1400.0
+    ay = 5.0
+    s = compute_load_transfer(ay, 6000.0, 7000.0, p, mass=mass)
+    theoretical = mass * ay * p.h_cg / track
+    actual = s.dFz_front + s.dFz_rear
+    ok = abs(actual - theoretical) < 1e-6
+    return ok, {"actual": actual, "theoretical": theoretical}
+
 def test_parameter_sensitivity():
-    p_low = LoadTransferParameters(h_cg=0.4)
-    p_high = LoadTransferParameters(h_cg=0.7)
     Fz_f, Fz_r = 6000.0, 7000.0
-    s_low = compute_load_transfer(5.0, Fz_f, Fz_r, p_low, mass=1400.0)
-    s_high = compute_load_transfer(5.0, Fz_f, Fz_r, p_high, mass=1400.0)
+    s_low = compute_load_transfer(5.0, Fz_f, Fz_r, LoadTransferParameters(h_cg=0.4), mass=1400.0)
+    s_high = compute_load_transfer(5.0, Fz_f, Fz_r, LoadTransferParameters(h_cg=0.7), mass=1400.0)
     ok = abs(s_high.dFz_front) > abs(s_low.dFz_front)
     return ok, {"dFz_low": s_low.dFz_front, "dFz_high": s_high.dFz_front}
 
@@ -75,15 +97,17 @@ def run_all_tests():
     print("=== Phase 4.1 Load-Transfer Diagnostics Validation ===\n")
     tests = [
         ("Zero ay", test_zero_ay),
-        ("Total load conserved", test_total_load_conserved),
+        ("Axle conservation", test_axle_conservation),
+        ("Vehicle total conservation", test_vehicle_total_conservation),
         ("Sign swap (+ay / -ay)", test_sign_swap),
         ("Fz_min respected", test_fz_min_respected),
+        ("Theoretical transfer cross-check", test_theoretical_transfer),
         ("Parameter sensitivity (h_cg)", test_parameter_sensitivity),
     ]
     all_pass = True
     for name, fn in tests:
         ok, diag = fn()
-        print(f"{name:35} : {'PASS' if ok else 'FAIL'}")
+        print(f"{name:40} : {'PASS' if ok else 'FAIL'}")
         if diag:
             for k, v in diag.items():
                 print(f"    {k}: {v}")

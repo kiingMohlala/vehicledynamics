@@ -3,10 +3,12 @@ Phase 4.1 – Quasi-static lateral load transfer diagnostics.
 
 Level A: compute left/right wheel loads for diagnostics only.
 Bicycle axle totals remain unchanged (Phase 4.0 behaviour preserved).
+
+Clamping preserves axle totals: if one wheel is clamped to Fz_min,
+the opposite wheel absorbs the remainder.
 """
 
 from dataclasses import dataclass
-import numpy as np
 
 @dataclass
 class LoadTransferParameters:
@@ -18,14 +20,37 @@ class LoadTransferParameters:
 
 @dataclass
 class LoadTransferState:
-    dFz_front: float         # front transfer magnitude [N] (positive ay → positive = load to right)
+    dFz_front: float         # front transfer magnitude [N]
     dFz_rear: float          # rear transfer magnitude [N]
     Fz_fl: float             # front-left normal load [N]
     Fz_fr: float             # front-right normal load [N]
     Fz_rl: float             # rear-left normal load [N]
     Fz_rr: float             # rear-right normal load [N]
-    wheel_lift_front: bool   # True if either front wheel would lift (clamped)
-    wheel_lift_rear: bool    # True if either rear wheel would lift (clamped)
+    wheel_lift_front: bool   # True if a front wheel was clamped
+    wheel_lift_rear: bool    # True if a rear wheel was clamped
+
+
+def _clamp_axle(Fz_left: float, Fz_right: float, Fz_axle: float, Fz_min: float):
+    """
+    Clamp individual wheels to Fz_min while preserving the axle total.
+    Returns (Fz_left, Fz_right, lift_occurred).
+    """
+    lift = False
+    if Fz_left < Fz_min:
+        Fz_left = Fz_min
+        Fz_right = Fz_axle - Fz_left
+        lift = True
+    if Fz_right < Fz_min:
+        Fz_right = Fz_min
+        Fz_left = Fz_axle - Fz_right
+        lift = True
+    # Final safety: if axle total itself is below 2*Fz_min, both sit at Fz_min
+    # (axle total cannot be preserved in that degenerate case)
+    if Fz_axle < 2.0 * Fz_min:
+        Fz_left = Fz_min
+        Fz_right = Fz_min
+        lift = True
+    return Fz_left, Fz_right, lift
 
 
 def compute_load_transfer(
@@ -36,7 +61,7 @@ def compute_load_transfer(
     mass: float = 1400.0,
 ) -> LoadTransferState:
     """
-    Quasi-static lateral load transfer.
+    Quasi-static lateral load transfer diagnostics.
 
     Positive ay (to the left) unloads the left side and loads the right side.
 
@@ -45,42 +70,29 @@ def compute_load_transfer(
     ay : float
         Lateral acceleration at CG [m/s²] (prefer ay_force).
     Fz_f_axle, Fz_r_axle : float
-        Static (or current) axle total normal loads [N].
+        Axle total normal loads [N] (static in Level A).
     params : LoadTransferParameters
+        Geometric and stiffness-distribution parameters.
     mass : float
-        Vehicle mass [kg] (used only for documentation / future extensions).
+        Vehicle mass [kg]. Used in the transfer formula:
+        dFz ~ mass * ay * h_cg / track.
     """
     if params is None:
         params = LoadTransferParameters()
 
-    # Total lateral transfer using average track
-    track_avg = 0.5 * (params.track_f + params.track_r)
-    # ΔF_total related to m*ay*h/t but we distribute by axle using chi_f
-    # Per-axle transfer:
+    # Per-axle transfer (chi_f distributes total transfer between axles)
     dFz_f = (mass * ay * params.h_cg / params.track_f) * params.chi_f
     dFz_r = (mass * ay * params.h_cg / params.track_r) * (1.0 - params.chi_f)
 
-    # Left / right split (positive ay → right gains load)
+    # Left / right split before clamping
     Fz_fl = Fz_f_axle / 2.0 - dFz_f
     Fz_fr = Fz_f_axle / 2.0 + dFz_f
     Fz_rl = Fz_r_axle / 2.0 - dFz_r
     Fz_rr = Fz_r_axle / 2.0 + dFz_r
 
-    # Clamp and detect lift
-    lift_f = False
-    lift_r = False
-    if Fz_fl < params.Fz_min:
-        Fz_fl = params.Fz_min
-        lift_f = True
-    if Fz_fr < params.Fz_min:
-        Fz_fr = params.Fz_min
-        lift_f = True
-    if Fz_rl < params.Fz_min:
-        Fz_rl = params.Fz_min
-        lift_r = True
-    if Fz_rr < params.Fz_min:
-        Fz_rr = params.Fz_min
-        lift_r = True
+    # Clamp while preserving axle totals
+    Fz_fl, Fz_fr, lift_f = _clamp_axle(Fz_fl, Fz_fr, Fz_f_axle, params.Fz_min)
+    Fz_rl, Fz_rr, lift_r = _clamp_axle(Fz_rl, Fz_rr, Fz_r_axle, params.Fz_min)
 
     return LoadTransferState(
         dFz_front=float(dFz_f),
