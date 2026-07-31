@@ -1,0 +1,28 @@
+{
+  "project": "vehicledynamics",
+  "phase": "4.0",
+  "baseline_id": "phase4-bicycle-implementation-validated",
+  "tag": "v0.4.0-phase4-frozen",
+  "date": "2026-07-31",
+  "description": "Dynamic 2-DOF bicycle model with combined-slip Dugoff tires (κ=0), RK45, constant Vx.",
+  "vehicle": {
+    "m_kg": 1400.0,
+    "Iz_kgm2": 2500.0,
+    "a_m": 1.2,
+    "b_m": 1.5,
+    "delta_max_rad": 0.6
+  },
+  "integrator": "RK45",
+  "vx_treatment": "constant",
+  "tire_model": "combined-slip Dugoff",
+  "kappa": 0.0,
+  "known_limitations": [
+    "Constant longitudinal speed",
+    "No longitudinal dynamics coupling",
+    "No lateral load transfer",
+    "No roll or pitch dynamics",
+    "No tire relaxation length",
+    "No aerodynamic effects",
+    "No ESC or torque vectoring"
+  ]
+}

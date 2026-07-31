@@ -16,13 +16,14 @@
 
 ## Phase 4 – Lateral Dynamics & ESC
 
-### Phase 4.0 – Dynamic Bicycle Model (current design)
-- 2-DOF (v_y, r)
+### Phase 4.0 – Dynamic Bicycle Model ✅ FROZEN
+- 2-DOF (vy, r)
 - Steering input + slip-angle computation
-- Combined-slip tire integration
+- Combined-slip tire integration (κ = 0)
 - Constant-radius and step-steer validation
+- Dual ay cross-check, symmetry, linear bicycle comparison
 
-### Phase 4.1 – Load Transfer Coupling
+### Phase 4.1 – Load Transfer Coupling (next)
 - Lateral load transfer
 - Roll moment approximation
 - Dynamic normal loads

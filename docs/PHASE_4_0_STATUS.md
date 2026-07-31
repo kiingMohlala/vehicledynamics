@@ -1,10 +1,10 @@
-# Project Milestones
+# Phase 4.0 Status
 
-## v0.4.0-phase4-frozen (2026-07-31)
+## Phase 4.0 – Dynamic Bicycle Model: Implementation Validated ✅
 
-**Status:** Frozen – Implementation Validated
+**Frozen:** 2026-07-31
 
-### Phase 4.0 – Dynamic Bicycle Model: Implementation Validated
+### Freeze Summary
 
 ✅ Dynamic 2-DOF bicycle model implemented  
 ✅ Combined-slip Dugoff tire model integrated (κ = 0 for Phase 4.0)  
@@ -21,6 +21,7 @@
 ✅ Numerical robustness (finite outputs, no NaN/Inf) validated
 
 ### Known Scope Limits (intentional)
+
 - Constant longitudinal speed
 - No longitudinal dynamics coupling
 - No lateral load transfer
@@ -29,18 +30,6 @@
 - No aerodynamic effects
 - No ESC or torque vectoring
 
-### Recommended Git Tag
-```bash
-git tag -a v0.4.0-phase4-frozen -m "Phase 4.0 Dynamic Bicycle Model: Implementation Validated"
-git push origin v0.4.0-phase4-frozen
-```
+### Next
 
----
-
-## Previous Freezes
-
-### v0.3.4-phase3.4-combined-slip (2026-07-31)
-Combined-Slip Dugoff: Integrated & Regression Validated
-
-### v0.3.3-phase3-frozen (2026-07-31)
-Braking + ABS + Standard Dugoff (longitudinal only)
+Phase 4.1 – Load Transfer Coupling
