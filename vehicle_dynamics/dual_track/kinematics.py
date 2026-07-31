@@ -27,7 +27,16 @@ def slip_ratio(Vx_w, omega, R, v_eps):
     return (Vx_safe - omega * R) / Vx_safe
 
 def slip_angle(Vx_w, Vy_w, v_eps):
-    return np.arctan2(Vy_w, max(abs(Vx_w), v_eps))
+    """
+    Slip angle in the same convention as Phase 4 bicycle:
+    positive alpha produces positive Fy (to the left).
+
+    At rest with positive steer delta, wheel-frame Vy_w is negative
+    (see wheel_frame_velocity), so we use:
+        alpha = -atan2(Vy_w, |Vx_w|)
+    which yields alpha ≈ +delta at zero sideslip.
+    """
+    return -np.arctan2(Vy_w, max(abs(Vx_w), v_eps))
 
 def body_forces_from_wheel(Fx_w, Fy_w, delta):
     """Transform wheel-frame forces to body frame."""
