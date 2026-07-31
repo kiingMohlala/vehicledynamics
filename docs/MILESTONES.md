@@ -1,43 +1,29 @@
 # Project Milestones
 
-## v0.4.0-phase4-frozen (2026-07-31)
+## v0.4.1-phase4.1-load-transfer (2026-07-31)
 
 **Status:** Frozen – Implementation Validated
 
-### Phase 4.0 – Dynamic Bicycle Model: Implementation Validated
+### Phase 4.1 – Load Transfer Diagnostics: Implementation Validated
 
-✅ Dynamic 2-DOF bicycle model implemented  
-✅ Combined-slip Dugoff tire model integrated (κ = 0 for Phase 4.0)  
-✅ RK45 integration with constant longitudinal speed  
-✅ Tire parameter injection supported  
-✅ Configurable steering limits implemented  
-✅ Full TireState propagated through the model  
-✅ Dual lateral acceleration (ay_force and ay_vehicle) implemented and cross-validated  
-✅ Straight-line stability validated  
-✅ Step-steer response validated  
-✅ Steady-state circular test validated  
-✅ Left/right symmetry validated  
-✅ Linear bicycle model cross-check validated  
-✅ Numerical robustness (finite outputs, no NaN/Inf) validated
-
-### Known Scope Limits (intentional)
-- Constant longitudinal speed
-- No longitudinal dynamics coupling
-- No lateral load transfer
-- No roll or pitch dynamics
-- No tire relaxation length
-- No aerodynamic effects
-- No ESC or torque vectoring
+✅ Quasi-static lateral load transfer diagnostics  
+✅ Level A (no dynamics feedback)  
+✅ Axle-preserving clamp  
+✅ Logged in bicycle simulation results  
+✅ Full diagnostics validation suite passed
 
 ### Recommended Git Tag
 ```bash
-git tag -a v0.4.0-phase4-frozen -m "Phase 4.0 Dynamic Bicycle Model: Implementation Validated"
-git push origin v0.4.0-phase4-frozen
+git tag -a v0.4.1-phase4.1-load-transfer -m "Phase 4.1 Load Transfer Diagnostics: Implementation Validated"
+git push origin v0.4.1-phase4.1-load-transfer
 ```
 
 ---
 
 ## Previous Freezes
+
+### v0.4.0-phase4-frozen (2026-07-31)
+Phase 4.0 Dynamic Bicycle Model: Implementation Validated
 
 ### v0.3.4-phase3.4-combined-slip (2026-07-31)
 Combined-Slip Dugoff: Integrated & Regression Validated

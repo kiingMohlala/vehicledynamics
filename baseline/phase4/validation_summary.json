@@ -1,20 +1,20 @@
 {
   "phase_4_0_bicycle": {
-    "straight_line_stability": "PASS",
-    "step_steer_response": "PASS",
-    "dual_ay_consistency": "PASS",
-    "left_right_symmetry": "PASS",
-    "steady_state_circular": "PASS",
-    "linear_regime_crosscheck": "PASS",
-    "no_nan_inf": "PASS",
-    "status": "IMPLEMENTATION_VALIDATED"
+    "status": "IMPLEMENTATION_VALIDATED",
+    "freeze_tag": "v0.4.0-phase4-frozen"
   },
-  "high_priority_fixes": {
-    "dual_lateral_acceleration": "DONE",
-    "tire_parameter_injection": "DONE",
-    "steering_limits": "DONE",
-    "full_tire_state_propagation": "DONE"
-  },
-  "freeze_tag": "v0.4.0-phase4-frozen",
-  "freeze_date": "2026-07-31"
+  "phase_4_1_load_transfer": {
+    "zero_ay": "PASS",
+    "axle_conservation": "PASS",
+    "vehicle_total_conservation": "PASS",
+    "sign_swap": "PASS",
+    "fz_min_respected": "PASS",
+    "theoretical_transfer": "PASS",
+    "parameter_sensitivity": "PASS",
+    "integration_logging": "DONE",
+    "dynamics_feedback": false,
+    "status": "IMPLEMENTATION_VALIDATED",
+    "freeze_tag": "v0.4.1-phase4.1-load-transfer",
+    "freeze_date": "2026-07-31"
+  }
 }
