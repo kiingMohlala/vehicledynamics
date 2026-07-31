@@ -8,6 +8,7 @@ Targets:
 
 import numpy as np
 from .simulation import DualTrackVehicleModel
+from .kinematics import FL, FR, RL, RR
 from ..combined.simulation import CombinedVehicleModel
 
 def test_symmetric_pure_steering():
@@ -26,13 +27,12 @@ def test_symmetric_pure_steering():
         pedal_func=lambda t: 0.0,
     )
 
-    # Steady-state yaw rate comparison (last second)
     r_d = float(np.mean(res_d.r[res_d.time > 5.0]))
     r_b = float(np.mean(res_b.r[res_b.time > 5.0]))
     if abs(r_b) < 1e-6:
         return False, {"reason": "bike r ~ 0"}
     rel = abs(r_d - r_b) / abs(r_b)
-    ok = rel < 0.15  # allow up to 15% for first architecture gate
+    ok = rel < 0.15
     return ok, {"r_dual": r_d, "r_bike": r_b, "rel_error": rel}
 
 def test_symmetric_pure_braking():
@@ -69,10 +69,8 @@ def test_load_transfer_feedback():
         delta_func=lambda t: delta,
         pedal_func=lambda t: 0.0,
     )
-    # In steady corner with +delta (left turn), ay > 0 → right side loaded
-    # FR and RR should have higher Fz than FL and RL
     mask = res.time > 4.0
-    Fz_mean = np.mean(res.Fz[mask], axis=0)  # FL FR RL RR
+    Fz_mean = np.mean(res.Fz[mask], axis=0)
     ok = Fz_mean[FR] > Fz_mean[FL] and Fz_mean[RR] > Fz_mean[RL]
     return ok, {
         "Fz_FL": float(Fz_mean[0]),
