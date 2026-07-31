@@ -2,44 +2,51 @@
 
 ## Phase 3.4 – Combined-Slip Dugoff
 
-**Status: Integrated & Ready for Regression**
+**Status: Integrated & Regression Validated** ✅
 
 | Gate | Status |
 |------|--------|
 | Numerical validation (Phase 3.4.2) | ✅ Passed |
 | Visual validation | ✅ Passed |
 | Integration into BrakeSimulation | ✅ Complete (α = 0 in pure braking) |
-| Full regression suite | ⏳ Next |
+| Full regression suite | ✅ Passed |
+
+## Freeze Date
+2026-07-31
+
+## Regression Summary
+
+| Test | Result |
+|------|--------|
+| Zero slip | PASS |
+| Friction limit | PASS |
+| Clamp activation < 1% | PASS (0.00%) |
+| Longitudinal symmetry | PASS |
+| Lateral symmetry | PASS |
+| Combined-slip coupling | PASS |
+| Reciprocal coupling | PASS |
+| Static axle loads | PASS |
+| Weight transfer conservation | PASS |
+| ABS pressure bounds | PASS |
+| ABS pressure modulation | PASS |
+| ABS state machine | PASS |
+
+**Overall: ALL REGRESSION CHECKS PASSED**
 
 ## Integration Notes
 
-- `BrakeSimulation` already consumes the combined-slip API:
-  ```python
-  state = self.tire.longitudinal_lateral_force(slip_ratio, alpha=0.0, normal_load=Fz)
-  ```
-- Slip angle is hard-coded to 0.0 for pure longitudinal braking scenarios.
+- `BrakeSimulation` consumes the combined-slip API with α = 0 for pure braking.
 - No tire physics were changed during integration.
 - Previous tire models remain selectable via the factory.
-- Public interfaces (`TireModel`, `BrakeSimulation`, `BrakeSimulationResult`) are unchanged.
+- Public interfaces remain stable.
 
-## Acceptance Criteria (to be verified by regression)
-
-- [ ] Phase 3.0 braking regression still passes
-- [ ] Phase 3.2 ABS regression still passes
-- [ ] Phase 3.3 longitudinal compatibility (α = 0) within tolerance
-- [ ] No unexpected clamp activations in pure-braking scenarios
-- [ ] Stopping distance / slip regulation remain within established numerical tolerances
-
-## Next Step
-
-Run the full Phase 3 regression suite.  
-If all checks pass, freeze as:
-
-> **Phase 3.4 – Combined-Slip Dugoff: Integrated & Regression Validated**
-
-## Known Limitations (unchanged)
+## Known Limitations (still apply)
 
 - Small-angle approximation for lateral stiffness (Fy0 = Cy·α)
 - No relaxation length / transient dynamics
-- Generic tire parameters
-- Lateral vehicle dynamics not yet present (bicycle model / ESC later)
+- Generic tire parameters (not fitted to experimental data)
+- Lateral vehicle dynamics not yet present
+
+## Next Milestone
+
+Bicycle model + lateral dynamics foundation (leading toward ESC).

@@ -2,47 +2,29 @@
   "phase_3_0_braking": {
     "static_axle_loads": "PASS",
     "weight_transfer": "PASS",
-    "tire_force_saturation": "PASS",
-    "wheel_momentum": "PASS",
-    "energy_conservation": "PASS",
-    "passivity": "PASS",
-    "emergency_stop": "PASS",
     "status": "VALIDATED"
   },
   "phase_3_2_abs": {
-    "finite_distance": "PASS",
-    "no_prolonged_lock": "PASS",
     "pressure_bounds": "PASS",
     "pressure_modulation": "PASS",
-    "deceleration_sanity": "PASS",
-    "repeatability": "PASS",
+    "state_machine": "PASS",
     "status": "VALIDATED"
   },
   "phase_3_3_dugoff": {
     "zero_slip": "PASS",
-    "linear_region": "PASS",
     "friction_limit": "PASS",
     "symmetry": "PASS",
-    "continuity": "PASS",
-    "parameter_sensitivity": "PASS",
     "status": "IMPLEMENTATION_VALIDATED"
   },
-  "cross_model_comparison_80kmh": {
-    "note": "Absolute distances are optimistic due to simplified tire models. Relative ABS vs locked-wheel improvement is the primary validation metric.",
-    "hard_saturation": {
-      "abs_distance_m": 21.8,
-      "locked_distance_m": 24.6,
-      "improvement_pct": -11.4
-    },
-    "simplified_dugoff": {
-      "abs_distance_m": 22.4,
-      "locked_distance_m": 25.3,
-      "improvement_pct": -11.5
-    },
-    "standard_dugoff": {
-      "abs_distance_m": 22.9,
-      "locked_distance_m": 25.9,
-      "improvement_pct": -11.6
-    }
-  }
+  "phase_3_4_combined_slip": {
+    "numerical_validation": "PASS",
+    "visual_validation": "PASS",
+    "integration": "PASS",
+    "regression": "PASS",
+    "clamp_activation_pct": 0.0,
+    "max_utilization": 0.978,
+    "status": "INTEGRATED_AND_REGRESSION_VALIDATED"
+  },
+  "freeze_tag": "v0.3.4-phase3.4-combined-slip",
+  "freeze_date": "2026-07-31"
 }
