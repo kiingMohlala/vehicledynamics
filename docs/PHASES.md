@@ -4,24 +4,23 @@
 - 2-DOF quarter-car, Skyhook/Groundhook/Hybrid, ISO 8608 roads
 
 ## Phase 3 – Braking System ✅
-- Longitudinal dynamics, thermal, ABS
-- Combined-slip Dugoff (Phase 3.4)
+- Longitudinal dynamics, thermal, ABS, combined-slip Dugoff
 
 ## Phase 4 – Lateral Dynamics ✅
 - 4.0 Bicycle model
 - 4.1 Load-transfer diagnostics
 - 4.2 Combined braking & steering
 
-## Phase 5 – Dual-Track & Control (next)
+## Phase 5 – Dual-Track & Control
 
-### Phase 5.0 – Dual-Track Vehicle Model (4-wheel)
-- Separate FL/FR/RL/RR wheels
-- Independent normal loads, slip ratios, slip angles
-- True left/right yaw moments
-- Foundation for ESC and torque vectoring
-
-### Later
+### Phase 5.0 – Dual-Track Vehicle Model (current design)
+- FL/FR/RL/RR independent wheels
+- Independent slips and normal loads
+- Yaw moments from Fx and Fy
 - Load-transfer feedback into tire Fz
+- Symmetric regression against Phase 4.2
+
+### Phase 5.1+ (later)
 - ESC / brake vectoring
-- Differential models
-- Active torque distribution
+- Differentials and torque distribution
+- Optional dynamic roll
