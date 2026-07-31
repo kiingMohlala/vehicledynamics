@@ -12,7 +12,7 @@ from .parameters import BicycleParameters
 from .kinematics import front_slip_angle, rear_slip_angle, inertial_rates
 from .result import LateralSimulationResult
 from ..tire.factory import TireFactory
-from ..tire.dugoff import DugoffParams
+from ..tire.dugoff import DugoffParams, TireState
 
 class DynamicBicycleModel:
     def __init__(
@@ -22,14 +22,16 @@ class DynamicBicycleModel:
         tire_params: DugoffParams = None,
     ):
         self.p = params or BicycleParameters()
-        self.tire = TireFactory.create(tire_model_name)
+        # Proper parameter injection into the tire model
+        self.tire = TireFactory.create(tire_model_name, params=tire_params)
+
         # Static normal loads (Phase 4.0 – no lateral load transfer yet)
-        # Simple a/b static distribution
         total_weight = self.p.m * 9.81
         self.Fz_f = total_weight * (self.p.b / self.p.L)
         self.Fz_r = total_weight * (self.p.a / self.p.L)
 
     def _tire_forces(self, vy, r, vx, delta):
+        """Return full front and rear TireState objects."""
         alpha_f = front_slip_angle(vy, r, vx, delta, self.p)
         alpha_r = rear_slip_angle(vy, r, vx, self.p)
 
@@ -37,16 +39,18 @@ class DynamicBicycleModel:
         state_f = self.tire.longitudinal_lateral_force(0.0, alpha_f, self.Fz_f)
         state_r = self.tire.longitudinal_lateral_force(0.0, alpha_r, self.Fz_r)
 
-        return state_f.Fy, state_r.Fy, alpha_f, alpha_r
+        return state_f, state_r
 
     def dynamics(self, t, state, vx, delta_func):
         """
         state = [vy, r, psi, X, Y]
         """
         vy, r, psi, X, Y = state
-        delta = delta_func(t)
+        delta = float(np.clip(delta_func(t), -self.p.delta_max, self.p.delta_max))
 
-        Fy_f, Fy_r, _, _ = self._tire_forces(vy, r, vx, delta)
+        state_f, state_r = self._tire_forces(vy, r, vx, delta)
+        Fy_f = state_f.Fy
+        Fy_r = state_r.Fy
 
         # Equations of motion
         vy_dot = (Fy_f + Fy_r) / self.p.m - vx * r
@@ -98,18 +102,28 @@ class DynamicBicycleModel:
         Y = states[4]
 
         # Reconstruct secondary quantities
-        delta = np.array([delta_func(ti) for ti in t])
+        delta = np.array([
+            float(np.clip(delta_func(ti), -self.p.delta_max, self.p.delta_max))
+            for ti in t
+        ])
         alpha_f = np.zeros_like(t)
         alpha_r = np.zeros_like(t)
         Fy_f = np.zeros_like(t)
         Fy_r = np.zeros_like(t)
-        ay = np.zeros_like(t)
+        ay_force = np.zeros_like(t)
+        ay_vehicle = np.zeros_like(t)
+
+        # Approximate vy_dot from gradient for ay_vehicle
+        vy_dot = np.gradient(vy, t)
 
         for i, ti in enumerate(t):
-            Fy_f[i], Fy_r[i], alpha_f[i], alpha_r[i] = self._tire_forces(
-                vy[i], r[i], vx, delta[i]
-            )
-            ay[i] = (Fy_f[i] + Fy_r[i]) / self.p.m
+            state_f, state_r = self._tire_forces(vy[i], r[i], vx, delta[i])
+            alpha_f[i] = state_f.slip_angle
+            alpha_r[i] = state_r.slip_angle
+            Fy_f[i] = state_f.Fy
+            Fy_r[i] = state_r.Fy
+            ay_force[i] = (Fy_f[i] + Fy_r[i]) / self.p.m
+            ay_vehicle[i] = vy_dot[i] + vx * r[i]
 
         return LateralSimulationResult(
             time=t,
@@ -122,7 +136,8 @@ class DynamicBicycleModel:
             alpha_r=alpha_r,
             Fy_f=Fy_f,
             Fy_r=Fy_r,
-            ay=ay,
+            ay_force=ay_force,
+            ay_vehicle=ay_vehicle,
             X=X,
             Y=Y,
         )
