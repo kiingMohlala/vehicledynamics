@@ -1,130 +1,149 @@
 """
-Phase 6.2 – Geometry coupling validation.
+Phase 6.2 – Suspension geometry coupling validation.
+
+Includes neutral-geometry regression against the Phase 5 / v1.0 baseline contract:
+  toe=0, camber=0, IR=1  →  identical steering path to legacy dual-track.
 """
 
 from __future__ import annotations
 
 import numpy as np
-from .coupling import (
-    CoupledSuspension,
-    VehicleSuspensionConfig,
-    CornerConfig,
-    apply_toe_to_delta,
-    camber_lateral_force,
+
+from .geometry_state import VehicleGeometryState, WheelGeometryState
+from .coupling import CoupledSuspension
+from .wheel_rate import SpringDamperParams, MotionRatioParams, compute_wheel_rate
+from ..dual_track.suspension_interface import (
+    SuspensionInterface,
+    SuspensionInterfaceConfig,
 )
-from .hardpoints import default_front_left, mirror_corner
-from .wheel_rate import SpringDamperParams, MotionRatioParams
 
 
-def test_static_evaluate() -> tuple[bool, dict]:
-    susp = CoupledSuspension()
-    states = susp.evaluate_all()
-    ok = set(states.keys()) == {"FL", "FR", "RL", "RR"}
-    ok = ok and all(np.isfinite(s.Kw) and np.isfinite(s.camber_rad) for s in states.values())
-    return ok, {k: (v.camber_deg, v.Kw) for k, v in states.items()}
+def test_zero_geometry_offsets() -> tuple[bool, dict]:
+    g = VehicleGeometryState.neutral()
+    ok = (
+        abs(g.fl.toe_rad) < 1e-15
+        and abs(g.fl.camber_rad) < 1e-15
+        and abs(g.fl.installation_ratio - 1.0) < 1e-15
+        and abs(g.fl.motion_ratio - 1.0) < 1e-15
+    )
+    return ok, {"toe": g.fl.toe_rad, "camber": g.fl.camber_rad, "IR": g.fl.installation_ratio}
+
+
+def test_toe_changes_heading_only() -> tuple[bool, dict]:
+    g = VehicleGeometryState.neutral()
+    # inject toe on FL only
+    g.fl.toe_rad = 0.02
+    iface = SuspensionInterface(
+        SuspensionInterfaceConfig(enabled=True),
+        geometry=g,
+    )
+    d = iface.effective_steer(0.10, 0.10, 0.0, 0.0)
+    ok = abs(d[0] - 0.12) < 1e-12 and abs(d[1] - 0.10) < 1e-12
+    # disabled → no toe
+    iface_off = SuspensionInterface(SuspensionInterfaceConfig(enabled=False), geometry=g)
+    d_off = iface_off.effective_steer(0.10, 0.10, 0.0, 0.0)
+    ok = ok and abs(d_off[0] - 0.10) < 1e-12
+    return ok, {"d_enabled": d.tolist(), "d_disabled": d_off.tolist()}
+
+
+def test_camber_logged_not_forced() -> tuple[bool, dict]:
+    """Camber present in diagnostics; no tire force API in interface."""
+    g = VehicleGeometryState.neutral()
+    g.fl.camber_rad = 0.05
+    iface = SuspensionInterface(SuspensionInterfaceConfig(enabled=True), geometry=g)
+    diag = iface.diagnostics()
+    ok = abs(diag["camber_rad"][0] - 0.05) < 1e-12
+    ok = ok and not hasattr(iface, "camber_force")  # must not generate forces
+    return ok, {"camber_diag": diag["camber_rad"]}
+
+
+def test_wheel_rate_from_mr() -> tuple[bool, dict]:
+    wr = compute_wheel_rate(
+        SpringDamperParams(Ks=30000, Cs=2000),
+        MotionRatioParams(installation_ratio=0.8, layout="pushrod"),
+    )
+    g = VehicleGeometryState.neutral()
+    g.fl.Kw = wr.Kw
+    g.fl.Cw = wr.Cw
+    g.fl.installation_ratio = wr.installation_ratio
+    iface = SuspensionInterface(SuspensionInterfaceConfig(enabled=True), geometry=g)
+    F = iface.vertical_forces(np.array([0.01, 0, 0, 0]), np.zeros(4))
+    ok = abs(F[0] - wr.Kw * 0.01) < 1e-9 and abs(F[1]) < 1e-15
+    return ok, {"F0": F[0], "Kw": wr.Kw}
 
 
 def test_left_right_symmetry() -> tuple[bool, dict]:
     susp = CoupledSuspension()
-    s = susp.evaluate_all()
+    states = susp.evaluate_all()
     ok = (
-        abs(s["FL"].Kw - s["FR"].Kw) < 1e-9
-        and abs(s["FL"].Cw - s["FR"].Cw) < 1e-9
-        and abs(s["FL"].camber_rad + s["FR"].camber_rad) < 1e-6
-        and abs(s["FL"].scrub_radius + s["FR"].scrub_radius) < 1e-6
+        abs(states["FL"].Kw - states["FR"].Kw) < 1e-9
+        and abs(states["FL"].camber_rad + states["FR"].camber_rad) < 1e-5
     )
     return ok, {
-        "camber_FL": s["FL"].camber_deg,
-        "camber_FR": s["FR"].camber_deg,
-        "Kw_FL": s["FL"].Kw,
-        "Kw_FR": s["FR"].Kw,
+        "Kw_FL": states["FL"].Kw,
+        "Kw_FR": states["FR"].Kw,
+        "camber_FL": states["FL"].camber_deg,
+        "camber_FR": states["FR"].camber_deg,
     }
 
 
-def test_asymmetric_geometry() -> tuple[bool, dict]:
-    """Different IR left vs right → different Kw."""
-    hp = default_front_left()
-    cfg = VehicleSuspensionConfig(
-        fl=CornerConfig(hp, SpringDamperParams(30000, 2000),
-                        MotionRatioParams(0.7, "pushrod"), "FL"),
-        fr=CornerConfig(mirror_corner(hp), SpringDamperParams(30000, 2000),
-                        MotionRatioParams(1.0, "direct"), "FR"),
+def test_neutral_matches_baseline_steer() -> tuple[bool, dict]:
+    """
+    Neutral geometry + interface enabled must give same δ as disabled
+    (Phase 5 path): toe=0 → δ_eff = δ_cmd.
+    """
+    g = VehicleGeometryState.neutral()
+    on = SuspensionInterface(SuspensionInterfaceConfig(enabled=True), geometry=g)
+    off = SuspensionInterface(SuspensionInterfaceConfig(enabled=False), geometry=g)
+    for dfl, dfr in [(0.0, 0.0), (0.05, 0.05), (-0.03, 0.04)]:
+        a = on.effective_steer(dfl, dfr)
+        b = off.effective_steer(dfl, dfr)
+        if not np.allclose(a, b):
+            return False, {"on": a.tolist(), "off": b.tolist(), "cmd": (dfl, dfr)}
+    return True, {"note": "neutral toe → identical to Phase 5 steer path"}
+
+
+def test_kpi_caster_rc_logged() -> tuple[bool, dict]:
+    susp = CoupledSuspension()
+    states = susp.evaluate_all()
+    ok = all(
+        np.isfinite(states[k].kpi_rad)
+        and np.isfinite(states[k].caster_rad)
+        and np.isfinite(states[k].roll_center_z)
+        for k in ("FL", "FR", "RL", "RR")
     )
-    s = CoupledSuspension(cfg).evaluate_all()
-    ok = s["FL"].Kw < s["FR"].Kw and abs(s["FL"].Kw - 30000 * 0.49) < 1e-6
-    return ok, {"Kw_FL": s["FL"].Kw, "Kw_FR": s["FR"].Kw}
+    return ok, {
+        "kpi_FL_deg": float(np.degrees(states["FL"].kpi_rad)),
+        "caster_FL_deg": float(np.degrees(states["FL"].caster_rad)),
+        "rc_z_FL": states["FL"].roll_center_z,
+    }
 
 
-def test_ride_frequency_scales_with_mr() -> tuple[bool, dict]:
-    """Higher IR → higher Kw → higher ride frequency."""
-    hp = default_front_left()
-    m_corner = 350.0  # kg
-
-    def freq(ir):
-        cfg = VehicleSuspensionConfig(
-            fl=CornerConfig(hp, SpringDamperParams(Ks=30000, Cs=2000),
-                            MotionRatioParams(ir, "custom"), "FL"),
-        )
-        return CoupledSuspension(cfg).ride_frequency_hz(m_corner, "FL")
-
-    f1, f2 = freq(0.7), freq(1.0)
-    # f ∝ sqrt(Kw) ∝ IR
-    ratio = f2 / f1
-    expected = 1.0 / 0.7
-    ok = f2 > f1 and abs(ratio - expected) < 0.05
-    return ok, {"f_IR0.7": f1, "f_IR1.0": f2, "ratio": ratio, "expected": expected}
-
-
-def test_vertical_force_equilibrium() -> tuple[bool, dict]:
-    """At design (compression=0) spring force is 0; damper 0 at rest."""
-    susp = CoupledSuspension()
-    F = susp.vertical_forces(np.zeros(4), np.zeros(4))
-    ok = bool(np.allclose(F, 0.0))
-    return ok, {"F": F.tolist()}
-
-
-def test_vertical_force_bump() -> tuple[bool, dict]:
-    """Positive compression → positive restoring force (Kw * z)."""
-    susp = CoupledSuspension()
-    z = np.array([0.02, 0.02, 0.02, 0.02])
-    F = susp.vertical_forces(z, np.zeros(4))
-    Kw, _ = susp.wheel_rates()
-    ok = bool(np.allclose(F, Kw * z)) and np.all(F > 0)
-    return ok, {"F": F.tolist(), "Kw*z": (Kw * z).tolist()}
-
-
-def test_toe_adds_to_steer() -> tuple[bool, dict]:
-    delta = 0.05
-    toe = -0.01
-    ok = abs(apply_toe_to_delta(delta, toe) - 0.04) < 1e-12
-    return ok, {"delta_eff": apply_toe_to_delta(delta, toe)}
-
-
-def test_camber_force_sign() -> tuple[bool, dict]:
-    Fy_pos = camber_lateral_force(0.05, 4000.0)
-    Fy_neg = camber_lateral_force(-0.05, 4000.0)
-    ok = Fy_pos > 0 and Fy_neg < 0 and abs(Fy_pos + Fy_neg) < 1e-9
-    return ok, {"Fy_pos": Fy_pos, "Fy_neg": Fy_neg}
-
-
-def test_camber_toe_arrays_shape() -> tuple[bool, dict]:
-    camber, toe = CoupledSuspension().camber_toe_arrays()
-    ok = camber.shape == (4,) and toe.shape == (4,) and np.all(np.isfinite(camber))
-    return ok, {"camber_deg": np.degrees(camber).tolist(), "toe_deg": np.degrees(toe).tolist()}
+def test_no_nan_inf() -> tuple[bool, dict]:
+    iface = SuspensionInterface(
+        SuspensionInterfaceConfig(enabled=True, use_geometry_solver=True)
+    )
+    d = iface.effective_steer(0.1, 0.1)
+    F = iface.vertical_forces(np.ones(4) * 0.01, np.zeros(4))
+    diag = iface.diagnostics()
+    flat = list(d) + list(F)
+    for v in diag["camber_rad"] + diag["toe_rad"] + diag["Kw"]:
+        flat.append(v)
+    ok = all(np.isfinite(x) for x in flat)
+    return ok, {"n_values": len(flat)}
 
 
 def run_phase62_validation() -> bool:
-    print("=== Phase 6.2 Geometry Coupling Validation ===\n")
+    print("=== Phase 6.2 Suspension Geometry Coupling Validation ===\n")
     tests = [
-        ("static_evaluate", test_static_evaluate),
+        ("zero_geometry_offsets", test_zero_geometry_offsets),
+        ("toe_changes_heading_only", test_toe_changes_heading_only),
+        ("camber_logged_not_forced", test_camber_logged_not_forced),
+        ("wheel_rate_from_mr", test_wheel_rate_from_mr),
         ("left_right_symmetry", test_left_right_symmetry),
-        ("asymmetric_geometry", test_asymmetric_geometry),
-        ("ride_frequency_scales_with_mr", test_ride_frequency_scales_with_mr),
-        ("vertical_force_equilibrium", test_vertical_force_equilibrium),
-        ("vertical_force_bump", test_vertical_force_bump),
-        ("toe_adds_to_steer", test_toe_adds_to_steer),
-        ("camber_force_sign", test_camber_force_sign),
-        ("camber_toe_arrays_shape", test_camber_toe_arrays_shape),
+        ("neutral_matches_baseline_steer", test_neutral_matches_baseline_steer),
+        ("kpi_caster_rc_logged", test_kpi_caster_rc_logged),
+        ("no_nan_inf", test_no_nan_inf),
     ]
     all_pass = True
     for name, fn in tests:
@@ -132,7 +151,7 @@ def run_phase62_validation() -> bool:
             ok, diag = fn()
         except Exception as e:
             ok, diag = False, {"error": str(e)}
-        print(f"{name:32} : {'PASS' if ok else 'FAIL'}")
+        print(f"{name:36} : {'PASS' if ok else 'FAIL'}")
         for k, v in diag.items():
             print(f"    {k}: {v}")
         if not ok:

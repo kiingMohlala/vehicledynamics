@@ -1,14 +1,8 @@
 """
-Phase 6.2 – Geometry coupling bridge.
+Phase 6.2 – Geometry coupling bridge (hardpoints → CornerState).
 
-Connects standalone kinematics (6.0) and wheel-rate (6.1) to per-corner
-quantities the dual-track model can consume:
-
-  camber, toe, installation ratio, Kw, Cw
-
-Vertical spring forces and full 3D tire orientation are prepared here;
-force injection into DualTrackVehicle remains opt-in so the Phase 5
-baseline is unchanged unless explicitly enabled.
+Camber is diagnostic only — do not feed into tire forces in this phase.
+Toe is applied only via SuspensionInterface.effective_steer.
 """
 
 from __future__ import annotations
@@ -25,11 +19,11 @@ from .wheel_rate import (
     compute_wheel_rate,
     WheelRateResult,
 )
+from .geometry_state import WheelGeometryState
 
 
 @dataclass
 class CornerConfig:
-    """One suspension corner: geometry + spring/damper + MR layout."""
     hardpoints: WishboneHardpoints
     spring: SpringDamperParams = field(default_factory=SpringDamperParams)
     mr: MotionRatioParams = field(default_factory=MotionRatioParams)
@@ -38,7 +32,6 @@ class CornerConfig:
 
 @dataclass
 class CornerState:
-    """Coupled outputs for one wheel at the current configuration."""
     name: str
     camber_rad: float
     toe_rad: float
@@ -62,6 +55,21 @@ class CornerState:
     def toe_deg(self) -> float:
         return float(np.degrees(self.toe_rad))
 
+    def to_wheel_geometry_state(self) -> WheelGeometryState:
+        return WheelGeometryState(
+            camber_rad=self.camber_rad,
+            toe_rad=self.toe_rad,
+            kpi_rad=self.kpi_rad,
+            caster_rad=self.caster_rad,
+            scrub_radius=self.scrub_radius,
+            trail=self.trail,
+            roll_center_z=self.roll_center_z,
+            installation_ratio=self.installation_ratio,
+            motion_ratio=self.motion_ratio,
+            Kw=self.Kw,
+            Cw=self.Cw,
+        )
+
 
 def _geom_to_state(name: str, geom: GeometryResult, wr: WheelRateResult) -> CornerState:
     return CornerState(
@@ -83,13 +91,6 @@ def _geom_to_state(name: str, geom: GeometryResult, wr: WheelRateResult) -> Corn
 
 
 class CornerSuspension:
-    """
-    Evaluates geometry + wheel rates for one corner.
-
-    Static for Phase 6.2 (design ride height). Travel-dependent MR/camber
-    curves arrive in 6.3–6.4.
-    """
-
     def __init__(self, config: CornerConfig):
         self.config = config
         self._geom = analyze(config.hardpoints)
@@ -99,17 +100,14 @@ class CornerSuspension:
         return _geom_to_state(self.config.name, self._geom, self._wr)
 
     def wheel_spring_force(self, wheel_compression: float) -> float:
-        """Vertical force at wheel from spring: F = Kw * z_wheel."""
         return self._wr.Kw * float(wheel_compression)
 
     def wheel_damper_force(self, wheel_velocity: float) -> float:
-        """Vertical damping force at wheel: F = Cw * zdot_wheel."""
         return self._wr.Cw * float(wheel_velocity)
 
 
 @dataclass
 class VehicleSuspensionConfig:
-    """Four corners. Defaults: mirrored L/R, same spring rates."""
     fl: CornerConfig = None
     fr: CornerConfig = None
     rl: CornerConfig = None
@@ -117,9 +115,11 @@ class VehicleSuspensionConfig:
 
     def __post_init__(self):
         if self.fl is None:
-            hp = default_front_left()
-            self.fl = CornerConfig(hardpoints=hp, name="FL",
-                                  mr=MotionRatioParams(1.0, "direct"))
+            self.fl = CornerConfig(
+                hardpoints=default_front_left(),
+                name="FL",
+                mr=MotionRatioParams(1.0, "direct"),
+            )
         if self.fr is None:
             self.fr = CornerConfig(
                 hardpoints=mirror_corner(self.fl.hardpoints),
@@ -128,10 +128,8 @@ class VehicleSuspensionConfig:
                 name="FR",
             )
         if self.rl is None:
-            # simple rear: copy front geometry shifted (illustrative)
-            hp = default_front_left()
             self.rl = CornerConfig(
-                hardpoints=hp,
+                hardpoints=default_front_left(),
                 spring=SpringDamperParams(Ks=28000, Cs=1800),
                 mr=MotionRatioParams(0.9, "pushrod"),
                 name="RL",
@@ -146,15 +144,6 @@ class VehicleSuspensionConfig:
 
 
 class CoupledSuspension:
-    """
-    Four-corner coupling facade for the vehicle model.
-
-    Provides:
-      - per-wheel camber / toe (for tire orientation)
-      - per-wheel Kw / Cw (for vertical force path)
-      - ride-frequency estimate from unsprung-ignored quarter-car
-    """
-
     def __init__(self, config: VehicleSuspensionConfig = None):
         self.config = config or VehicleSuspensionConfig()
         self.corners = {
@@ -168,15 +157,14 @@ class CoupledSuspension:
         return {k: c.evaluate() for k, c in self.corners.items()}
 
     def camber_toe_arrays(self) -> tuple[np.ndarray, np.ndarray]:
-        """Return camber[4], toe[4] in radians, order FL,FR,RL,RR."""
         order = ["FL", "FR", "RL", "RR"]
         states = [self.corners[k].evaluate() for k in order]
-        camber = np.array([s.camber_rad for s in states])
-        toe = np.array([s.toe_rad for s in states])
-        return camber, toe
+        return (
+            np.array([s.camber_rad for s in states]),
+            np.array([s.toe_rad for s in states]),
+        )
 
     def wheel_rates(self) -> tuple[np.ndarray, np.ndarray]:
-        """Kw[4], Cw[4]."""
         order = ["FL", "FR", "RL", "RR"]
         states = [self.corners[k].evaluate() for k in order]
         return (
@@ -189,10 +177,6 @@ class CoupledSuspension:
         compression: np.ndarray,
         compression_rate: np.ndarray,
     ) -> np.ndarray:
-        """
-        Per-wheel vertical suspension force (positive upward on body).
-        compression: wheel bump travel [m], shape (4,)
-        """
         order = ["FL", "FR", "RL", "RR"]
         F = np.zeros(4)
         for i, k in enumerate(order):
@@ -203,30 +187,8 @@ class CoupledSuspension:
         return F
 
     def ride_frequency_hz(self, sprung_mass_corner: float, corner: str = "FL") -> float:
-        """
-        Undamped ride frequency for one corner (quarter-car, no tire):
-          f = (1/2π) * sqrt(Kw / m_corner)
-        """
         st = self.corners[corner].evaluate()
-        return float((1.0 / (2.0 * np.pi)) * np.sqrt(st.Kw / max(sprung_mass_corner, 1.0)))
-
-
-# ---- tire orientation helpers (camber / toe → slip frame) ----
-
-def apply_toe_to_delta(delta_steer: float, toe: float) -> float:
-    """Effective steer angle including static toe."""
-    return float(delta_steer + toe)
-
-
-def camber_lateral_force(
-    camber_rad: float,
-    Fz: float,
-    Cy_camber: float = 1000.0,
-) -> float:
-    """
-    Simple linear camber thrust: Fy_γ ≈ Cγ * γ  (scaled mildly by load).
-    Cγ default is conservative; replace with tire-model camber stiffness later.
-    """
-    # normalize around nominal Fz=4000 N
-    scale = float(Fz) / 4000.0
-    return float(Cy_camber * scale * camber_rad)
+        return float(
+            (1.0 / (2.0 * np.pi))
+            * np.sqrt(st.Kw / max(sprung_mass_corner, 1.0))
+        )
