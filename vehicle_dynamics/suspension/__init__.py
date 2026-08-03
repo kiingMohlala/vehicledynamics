@@ -11,6 +11,15 @@ from .wheel_rate import (
     effective_wheel_damping,
     motion_ratio_from_ir,
 )
+from .coupling import (
+    CornerConfig,
+    CornerState,
+    CornerSuspension,
+    VehicleSuspensionConfig,
+    CoupledSuspension,
+    apply_toe_to_delta,
+    camber_lateral_force,
+)
 
 __all__ = [
     "Point3",
@@ -26,4 +35,11 @@ __all__ = [
     "effective_wheel_rate",
     "effective_wheel_damping",
     "motion_ratio_from_ir",
+    "CornerConfig",
+    "CornerState",
+    "CornerSuspension",
+    "VehicleSuspensionConfig",
+    "CoupledSuspension",
+    "apply_toe_to_delta",
+    "camber_lateral_force",
 ]
