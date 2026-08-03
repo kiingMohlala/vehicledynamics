@@ -1,24 +1,20 @@
 # Project Milestones
 
-## v0.5.0-phase5.0-dual-track (2026-07-31)
+## v0.5.1-phase5.1-ackermann (2026-08-03)
 
-**Status:** Frozen – Implementation Validated (Initial)
+**Status:** Frozen – Implementation Validated
 
-### Phase 5.0 – Dual-Track Architecture: Implementation Validated (Initial)
+### Phase 5.1 – Ackermann Steering & Independent Front Wheel Steering: Implementation Validated
 
-✅ FL/FR/RL/RR independent wheels  
-✅ Lateral load-transfer feedback  
-✅ Symmetric regression vs Phase 4.2 bicycle (expected ~10–15% steady yaw difference)  
-✅ No Ackermann / no ESC yet
-
-### Regression Philosophy
-Phase 4.2 bicycle is the regression reference, not ground truth. Wheel-level kinematics and load-transfer fidelity intentionally produce small steady-state differences.
+✅ Independent δ_fl / δ_fr via classical Ackermann  
+✅ Phase 5.0 equal-steer regression preserved (`use_ackermann=False`)  
+✅ Geometry + simulation validation suite green
 
 ### Recommended Git Tag
 ```bash
-git tag -a v0.5.0-phase5.0-dual-track \
-  -m "Phase 5.0 Dual-Track Architecture: Implementation Validated (Initial)"
-git push origin v0.5.0-phase5.0-dual-track
+git tag -a v0.5.1-phase5.1-ackermann \
+  -m "Phase 5.1 Ackermann Steering & Independent Front Wheel Steering: Implementation Validated"
+git push origin v0.5.1-phase5.1-ackermann
 ```
 
 ---
@@ -27,8 +23,8 @@ git push origin v0.5.0-phase5.0-dual-track
 
 | Tag | Description |
 |-----|-------------|
-| v0.4.2-phase4.2-combined | Combined Braking & Steering: Implementation Validated |
-| v0.4.1-phase4.1-load-transfer | Load Transfer Diagnostics: Implementation Validated |
-| v0.4.0-phase4-frozen | Dynamic Bicycle Model: Implementation Validated |
-| v0.3.4-phase3.4-combined-slip | Combined-Slip Dugoff: Integrated & Regression Validated |
-| v0.3.3-phase3-frozen | Braking + ABS + Standard Dugoff |
+| v0.5.0-phase5.0-dual-track | Dual-Track Architecture: Implementation Validated (Initial) |
+| v0.4.2-phase4.2-combined | Combined Braking & Steering |
+| v0.4.1-phase4.1-load-transfer | Load Transfer Diagnostics |
+| v0.4.0-phase4-frozen | Dynamic Bicycle Model |
+| v0.3.4-phase3.4-combined-slip | Combined-Slip Dugoff |

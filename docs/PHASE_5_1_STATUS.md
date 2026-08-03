@@ -1,35 +1,59 @@
 # Phase 5.1 Status
 
-## Phase 5.1 – Ackermann Steering & Independent Front Wheel Angles
+## Phase 5.1 – Ackermann Steering & Independent Front Wheel Steering: Implementation Validated ✅
 
-**Status:** Implementation in progress (validation required before freeze)
+**Frozen:** 2026-08-03
 
-### Delivered
+### Freeze Summary
 
-- `dual_track/steering.py` – Ackermann geometry + `SteeringParameters`
-- Independent `delta_fl` / `delta_fr` (rear remain 0)
-- Slip-angle / force transforms use per-wheel steer angles
-- `use_ackermann=False` recovers Phase 5.0 equal-steer behaviour
-- Tire API, braking, load-transfer feedback unchanged
+✅ `dual_track/steering.py` – Ackermann geometry + `SteeringParameters`  
+✅ Independent `delta_fl` / `delta_fr` (rear remain 0)  
+✅ Per-wheel slip-angle and force transforms use wheel-specific steer  
+✅ `use_ackermann=False` recovers Phase 5.0 equal-steer behaviour  
+✅ Tire API, braking, load-transfer feedback unchanged  
+✅ Full geometry + simulation validation passed  
+✅ Phase 5.0 regression suite passes unchanged with equal steer
 
-### Validation suite – `validation_steering.py`
+### Validation Results (2026-08-03)
 
-| Test | Intent |
+| Gate | Result |
 |------|--------|
-| zero_steer | δ=0 → both front angles 0 |
-| left_right_symmetry | −δ mirrors +δ |
-| inside_outside | |δ_inside| > |δ_outside| |
-| low_speed_geometry | cot residual ≈ 0 |
-| phase50_equal_steer_compat | equal-steer mode matches Phase 5.0 |
-| ackermann_simulation_smoke | dynamics finite with Ackermann on |
+| zero_steer | PASS |
+| left_right_symmetry | PASS |
+| inside_outside | PASS |
+| low_speed_geometry (cot residual) | PASS |
+| Phase 5.0 pure steering (equal) | PASS |
+| Phase 5.0 pure braking | PASS |
+| Phase 5.0 load-transfer feedback | PASS |
+| Phase 5.0 no NaN / util ≤ 1 | PASS |
+| Ackermann simulation smoke | PASS |
+| Parallel vs Ackermann comparison | PASS |
 
-### How to run
+### Parallel vs Ackermann (5° step, 15 m/s)
+
+| Metric | Parallel | Ackermann |
+|--------|----------|-----------|
+| r_ss [rad/s] | 0.448 | 0.441 |
+| path radius [m] | 33.9 | 34.5 |
+| δ_fl [deg] | 5.00 | 5.13 |
+| δ_fr [deg] | 5.00 | 4.88 |
+| max utilization | 0.883 | 0.876 |
+
+### Recommended Git Tag
 
 ```bash
-python -m vehicle_dynamics.dual_track.validation_steering
+git tag -a v0.5.1-phase5.1-ackermann \
+  -m "Phase 5.1 Ackermann Steering & Independent Front Wheel Steering: Implementation Validated"
+git push origin v0.5.1-phase5.1-ackermann
 ```
 
-### Not yet in this milestone
+### Known Scope Limits
 
-- Per-wheel ABS / independent brake pressure modulation beyond equal axle split
-- Dynamic roll, longitudinal load-transfer feedback, ESC
+- Per-axle ABS (not per-wheel pressure)
+- No ESC / torque vectoring
+- No longitudinal load-transfer feedback
+- No dynamic roll DOF
+
+### Next
+
+Phase 5.2 – ESC foundation / brake vectoring, or per-wheel brake modulation.

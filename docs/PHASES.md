@@ -3,22 +3,15 @@
 ## Phase 1 – Suspension Dynamics
 ## Phase 3 – Braking System ✅
 ## Phase 4 – Lateral Dynamics ✅
-- 4.0 Bicycle · 4.1 Load-transfer diagnostics · 4.2 Combined braking & steering
-
 ## Phase 5 – Dual-Track & Control
 
-### Phase 5.0 – Dual-Track Architecture ✅ FROZEN (Initial)
-- FL/FR/RL/RR independent wheels
-- Lateral load-transfer feedback
-- Symmetric regression vs bicycle (expected ~10–15% steady yaw difference)
+### Phase 5.0 – Dual-Track Architecture ✅ FROZEN
+### Phase 5.1 – Ackermann Steering ✅ FROZEN
+- Independent front road-wheel angles
+- Classical Ackermann geometry
+- Equal-steer mode for Phase 5.0 regression
 
-### Phase 5.1 – Ackermann Steering & Independent Front Angles (current)
-- `steering.py` Ackermann geometry
-- Independent `delta_fl` / `delta_fr`
-- `use_ackermann=False` recovers Phase 5.0 equal-steer
-- Validation: zero steer, symmetry, inside/outside, geometry residual, Phase 5.0 compat
-
-### Phase 5.2+ (later)
+### Phase 5.2+ (next)
 - ESC / brake vectoring
+- Per-wheel brake modulation
 - Differentials and torque distribution
-- Optional dynamic roll
