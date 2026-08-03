@@ -1,18 +1,14 @@
 # Development Phases
 
-## Phase 5 – Dual-Track & Control (PLATFORM FROZEN)
+## Phase 5 – Dual-Track & Control ✅ PLATFORM FROZEN (v1.0-engineering-baseline)
+
+## Phase 6 – Suspension Kinematics (active)
 
 | Phase | Description | Status |
 |-------|-------------|--------|
-| 5.0 | Dual-Track Architecture | ✅ |
-| 5.1 | Ackermann Steering | ✅ |
-| 5.2 | Per-Wheel ABS | ✅ |
-| 5.3 | ESC | ✅ |
-| 5.4 | Active Torque Vectoring | ✅ |
-| **5.5** | **System Integration & Benchmark** | ✅ **FROZEN** |
-
-### Next options
-
-- Phase 5.6 – Longitudinal Load Transfer Feedback
-- Phase 5.7 – Differential Models
-- Phase 6 – Suspension Kinematics
+| **6.0** | **Geometry Solver (hardpoints → IC/RC/KPI/camber)** | In progress |
+| 6.1 | Wheel rate & motion ratio | Planned |
+| 6.2 | Geometry coupling to vehicle | Planned |
+| 6.3 | Bump steer | Planned |
+| 6.4 | Camber gain | Planned |
+| 6.5 | Roll center migration | Planned |
