@@ -1,11 +1,9 @@
 # Project Milestones
 
-## v0.6.2-phase6.2-geometry-coupling (2026-08-03)
+## v0.6.3-phase6.3-bump-steer (2026-08-03)
 
-Phase 6.2 – Suspension Geometry Coupling: Implementation Validated
-
-Neutral geometry preserves v1.0-engineering-baseline.
+Phase 6.3 – Bump Steer: Implementation Validated
 
 ## Prior
 
-v0.6.1-phase6.1-wheel-rate · v0.6.0-phase6.0-geometry · v1.0-engineering-baseline
+v0.6.2 · v0.6.1 · v0.6.0 · v1.0-engineering-baseline
