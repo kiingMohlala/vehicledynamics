@@ -1,41 +1,49 @@
 # Phase 5.2 Status
 
-## Phase 5.2 – Independent Wheel Braking & Per-Wheel ABS
+## Phase 5.2 – Independent Wheel Braking & Per-Wheel ABS: Implementation Validated ✅
 
-**Status:** Implementation complete — validation required before freeze
+**Frozen:** 2026-08-03
 
-### Delivered
+### Freeze Summary
 
-| Module | Role |
-|--------|------|
-| `brakes.py` | Four-wheel torque distribution + optional per-wheel scale |
-| `abs_per_wheel.py` | Four independent ABSController instances |
-| `slip.py` | Per-wheel κ helpers |
-| `simulation.py` | Wired to per-wheel T and ABS; optional `mu_wheels` for split-μ |
-| `validation_brakes.py` | Validation gates |
-| `result.py` | Logs `brake_torque`, `abs_pressure` |
+✅ Four independent wheel brake torques  
+✅ Four independent ABS controllers  
+✅ Per-wheel slip ratio regulation  
+✅ Optional `mu_wheels` for split-μ tests  
+✅ Optional per-wheel torque scale (ESC-ready)  
+✅ Dugoff tire API unchanged  
+✅ Load-transfer feedback unchanged  
+✅ Ackermann / Phase 5.1 steering regression preserved  
+✅ RK45 retained
 
-### Preserved
+### Validation Results (2026-08-03)
 
-- Dugoff tire API
-- Lateral load-transfer feedback
-- Ackermann / equal-steer
-- RK45
+| Gate | Result | Notes |
+|------|--------|-------|
+| Zero-brake regression | PASS | vx constant, κ ≈ 0 |
+| Symmetric emergency braking | PASS | Straight stop, max_r ≈ 0 |
+| Wheel lock without ABS | PASS | High κ, numerically stable |
+| Per-wheel ABS recovery | PASS | FL modulates; FR/RL/RR stay 1.0 |
+| Split-μ braking | PASS | Yaw toward low-μ side |
+| Phase 5.1 steering regression | PASS | r_ss ≈ 0.33 rad/s |
+| Numerical robustness | PASS | No NaN/Inf; util ≤ 1; pressure bounds |
 
-### Validation gates
+### Recommended Git Tag
 
 ```bash
-python -m vehicle_dynamics.dual_track.validation_brakes
+git tag -a v0.5.2-phase5.2-per-wheel-abs \
+  -m "Phase 5.2 Independent Wheel Braking & Per-Wheel ABS: Implementation Validated"
+git push origin v0.5.2-phase5.2-per-wheel-abs
 ```
 
-- Zero brake → κ ≈ 0
-- Symmetric braking → straight stop
-- Per-wheel ABS independence
-- Wheel lock without ABS
-- Split-μ braking
-- Phase 5.1 braking regression
+### Architecture ready for
 
-### Freeze target (after green suite)
+- Phase 5.3 – ESC (selective per-wheel braking)
+- Phase 5.4 – Torque vectoring
 
-Phase 5.2 – Independent Wheel Braking & Per-Wheel ABS: Implementation Validated  
-Tag: `v0.5.2-phase5.2-per-wheel-abs`
+### Known Scope Limits
+
+- No ESC yaw controller yet
+- No longitudinal load-transfer feedback
+- No differential model
+- ABS is slip-threshold FSM (not optimal-slip tracking)
