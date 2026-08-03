@@ -1,16 +1,22 @@
 {
-  "phase_5_0_dual_track": {"status": "IMPLEMENTATION_VALIDATED_INITIAL", "freeze_tag": "v0.5.0-phase5.0-dual-track"},
-  "phase_5_1_ackermann": {"status": "IMPLEMENTATION_VALIDATED", "freeze_tag": "v0.5.1-phase5.1-ackermann"},
-  "phase_5_2_per_wheel_abs": {"status": "IMPLEMENTATION_VALIDATED", "freeze_tag": "v0.5.2-phase5.2-per-wheel-abs"},
-  "phase_5_3_esc": {
-    "esc_disabled_regression": "PASS",
-    "oversteer_recovery": "PASS",
-    "understeer_assistance": "PASS",
-    "split_mu_with_esc": "PASS",
-    "esc_abs_coexistence": "PASS",
-    "numerical_robustness": "PASS",
+  "phase_5_0": {"status": "VALIDATED", "tag": "v0.5.0-phase5.0-dual-track"},
+  "phase_5_1": {"status": "VALIDATED", "tag": "v0.5.1-phase5.1-ackermann"},
+  "phase_5_2": {"status": "VALIDATED", "tag": "v0.5.2-phase5.2-per-wheel-abs"},
+  "phase_5_3": {"status": "VALIDATED", "tag": "v0.5.3-phase5.3-esc"},
+  "phase_5_4": {
+    "open_differential": "PASS",
+    "fixed_bias": "PASS",
+    "active_delta_T": "PASS",
+    "controller_yaw_response": "PASS",
+    "torque_balance": "PASS",
+    "straight_acceleration": "PASS",
+    "corner_exit": "PASS",
+    "low_mu_corner": "PASS",
+    "split_mu_acceleration": "PASS",
+    "esc_tv_coexistence": "PASS",
+    "numerical_stability": "PASS",
     "status": "IMPLEMENTATION_VALIDATED",
-    "freeze_tag": "v0.5.3-phase5.3-esc",
+    "freeze_tag": "v0.5.4-phase5.4-torque-vectoring",
     "freeze_date": "2026-08-03"
   }
 }
