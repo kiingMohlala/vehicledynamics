@@ -12,11 +12,11 @@
 - Lateral load-transfer feedback
 - Symmetric regression vs bicycle (expected ~10–15% steady yaw difference)
 
-### Phase 5.1 – Ackermann Steering & Independent Wheel Control (next)
-- Ackermann geometry
-- Per-wheel brake commands
-- Low-speed scrub reduction check
-- Re-run Phase 5.0 regressions
+### Phase 5.1 – Ackermann Steering & Independent Front Angles (current)
+- `steering.py` Ackermann geometry
+- Independent `delta_fl` / `delta_fr`
+- `use_ackermann=False` recovers Phase 5.0 equal-steer
+- Validation: zero steer, symmetry, inside/outside, geometry residual, Phase 5.0 compat
 
 ### Phase 5.2+ (later)
 - ESC / brake vectoring

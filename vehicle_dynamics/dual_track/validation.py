@@ -1,19 +1,28 @@
 """
 Phase 5.0 – Symmetric regression against Phase 4.2 bicycle model.
 
-Targets:
-  ~5% on steady-state metrics
-  ~10% on transient metrics
+Uses equal front steer (use_ackermann=False) so results remain comparable
+to the frozen Phase 5.0 baseline. Ackermann-specific checks live in
+validation_steering.py (Phase 5.1).
 """
 
 import numpy as np
 from .simulation import DualTrackVehicleModel
+from .parameters import DualTrackParameters
+from .steering import SteeringParameters
 from .kinematics import FL, FR, RL, RR
 from ..combined.simulation import CombinedVehicleModel
 
+
+def _equal_steer_model(use_abs: bool = False) -> DualTrackVehicleModel:
+    params = DualTrackParameters()
+    params.steering = SteeringParameters(use_ackermann=False)
+    return DualTrackVehicleModel(params=params, use_abs=use_abs)
+
+
 def test_symmetric_pure_steering():
     delta = np.deg2rad(3.0)
-    dual = DualTrackVehicleModel(use_abs=False)
+    dual = _equal_steer_model(use_abs=False)
     bike = CombinedVehicleModel(use_abs=False)
 
     res_d = dual.simulate(
@@ -35,8 +44,9 @@ def test_symmetric_pure_steering():
     ok = rel < 0.15
     return ok, {"r_dual": r_d, "r_bike": r_b, "rel_error": rel}
 
+
 def test_symmetric_pure_braking():
-    dual = DualTrackVehicleModel(use_abs=True)
+    dual = _equal_steer_model(use_abs=True)
     bike = CombinedVehicleModel(use_abs=True)
 
     res_d = dual.simulate(
@@ -61,8 +71,9 @@ def test_symmetric_pure_braking():
         "max_vy_dual": float(np.max(np.abs(res_d.vy))),
     }
 
+
 def test_load_transfer_feedback():
-    dual = DualTrackVehicleModel(use_abs=False)
+    dual = _equal_steer_model(use_abs=False)
     delta = np.deg2rad(3.0)
     res = dual.simulate(
         vx0=18.0, t_span=(0, 6),
@@ -79,8 +90,9 @@ def test_load_transfer_feedback():
         "Fz_RR": float(Fz_mean[3]),
     }
 
+
 def test_no_nan():
-    dual = DualTrackVehicleModel(use_abs=True)
+    dual = _equal_steer_model(use_abs=True)
     res = dual.simulate(
         vx0=18.0, t_span=(0, 5),
         delta_func=lambda t: np.deg2rad(2.0) if t > 0.3 else 0.0,
@@ -89,8 +101,9 @@ def test_no_nan():
     ok = all(np.all(np.isfinite(a)) for a in [res.vx, res.vy, res.r, res.Fx, res.Fy, res.Fz])
     return ok, {}
 
+
 def run_regression_gates():
-    print("=== Phase 5.0 Dual-Track Regression Gates ===\n")
+    print("=== Phase 5.0 Dual-Track Regression Gates (equal steer) ===\n")
     tests = [
         ("Symmetric pure steering", test_symmetric_pure_steering),
         ("Symmetric pure braking", test_symmetric_pure_braking),
@@ -107,6 +120,7 @@ def run_regression_gates():
             all_pass = False
     print("\nOverall:", "ALL GATES PASSED" if all_pass else "GATES FAILED")
     return all_pass
+
 
 if __name__ == "__main__":
     run_regression_gates()
