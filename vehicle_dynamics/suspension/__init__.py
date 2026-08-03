@@ -11,15 +11,16 @@ from .wheel_rate import (
     effective_wheel_damping,
     motion_ratio_from_ir,
 )
+from .geometry_state import WheelGeometryState, VehicleGeometryState
 from .coupling import (
     CornerConfig,
     CornerState,
     CornerSuspension,
     VehicleSuspensionConfig,
     CoupledSuspension,
-    apply_toe_to_delta,
-    camber_lateral_force,
 )
+from .bump_state import BumpSteerParams, BumpSteerState
+from .bump_steer import compute_toe_bump, update_bump_state, BumpSteerModel
 
 __all__ = [
     "Point3",
@@ -35,11 +36,16 @@ __all__ = [
     "effective_wheel_rate",
     "effective_wheel_damping",
     "motion_ratio_from_ir",
+    "WheelGeometryState",
+    "VehicleGeometryState",
     "CornerConfig",
     "CornerState",
     "CornerSuspension",
     "VehicleSuspensionConfig",
     "CoupledSuspension",
-    "apply_toe_to_delta",
-    "camber_lateral_force",
+    "BumpSteerParams",
+    "BumpSteerState",
+    "compute_toe_bump",
+    "update_bump_state",
+    "BumpSteerModel",
 ]

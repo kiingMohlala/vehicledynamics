@@ -1,13 +1,10 @@
 """
-Phase 6.2 – Suspension geometry interface for the dual-track plant.
+Phase 6.2/6.3 – Suspension geometry + bump-steer interface.
 
-Opt-in: when disabled, behaviour matches the frozen Phase 5 baseline.
-When enabled:
-  · δ_eff = δ_command + toe   (orientation only)
-  · Kw, Cw available for vertical force path (if used)
-  · camber / KPI / caster / RC logged as diagnostics only
+δ_eff = δ_cmd + toe_static + toe_bump
 
-No camber thrust, no jacking forces, no tire-model changes.
+Opt-in: disabled → Phase 5 baseline.
+bump_steer gain = 0 → Phase 6.2 baseline.
 """
 
 from __future__ import annotations
@@ -16,15 +13,16 @@ from dataclasses import dataclass
 import numpy as np
 
 from ..suspension.geometry_state import VehicleGeometryState, WheelGeometryState
-from ..suspension.coupling import CoupledSuspension, VehicleSuspensionConfig
+from ..suspension.coupling import CoupledSuspension
+from ..suspension.bump_steer import BumpSteerModel
+from ..suspension.bump_state import BumpSteerParams, BumpSteerState
 
 
 @dataclass
 class SuspensionInterfaceConfig:
     enabled: bool = False
-    """If False → neutral geometry (Phase 5 equivalent)."""
     use_geometry_solver: bool = False
-    """If True, build state from CoupledSuspension hardpoints."""
+    bump_steer_enabled: bool = False
 
 
 class SuspensionInterface:
@@ -33,6 +31,7 @@ class SuspensionInterface:
         config: SuspensionInterfaceConfig = None,
         geometry: VehicleGeometryState = None,
         coupled: CoupledSuspension = None,
+        bump_params: BumpSteerParams = None,
     ):
         self.config = config or SuspensionInterfaceConfig()
         self._coupled = coupled
@@ -43,6 +42,9 @@ class SuspensionInterface:
             self._geometry = self._from_coupled(self._coupled)
         else:
             self._geometry = VehicleGeometryState.neutral()
+
+        self.bump = BumpSteerModel(bump_params or BumpSteerParams.neutral())
+        self._last_bump: BumpSteerState = BumpSteerState()
 
     @staticmethod
     def _from_coupled(coupled: CoupledSuspension) -> VehicleGeometryState:
@@ -74,20 +76,49 @@ class SuspensionInterface:
     def geometry(self) -> VehicleGeometryState:
         return self._geometry
 
+    def set_wheel_travel(self, wheel_travel: np.ndarray) -> BumpSteerState:
+        """
+        Update bump-steer from current wheel travel [m] (+ = compression).
+        Call once per step before effective_steer when bump_steer_enabled.
+        """
+        toe_static = self._geometry.toe_array()
+        if not (self.config.enabled and self.config.bump_steer_enabled):
+            self._last_bump = BumpSteerState(
+                wheel_travel=np.asarray(wheel_travel, dtype=float).reshape(4),
+                toe_bump=np.zeros(4),
+                toe_static=toe_static.copy(),
+                toe_total=toe_static.copy(),
+            )
+            return self._last_bump
+        self._last_bump = self.bump.evaluate(wheel_travel, toe_static)
+        return self._last_bump
+
     def effective_steer(
         self,
         delta_fl: float,
         delta_fr: float,
         delta_rl: float = 0.0,
         delta_rr: float = 0.0,
+        wheel_travel: np.ndarray | None = None,
     ) -> np.ndarray:
         """
-        Per-wheel heading = command + toe.
-        Rear steer defaults to 0 + rear toe.
+        δ_eff = δ_cmd + toe_static + toe_bump
+
+        If wheel_travel is provided, bump state is refreshed first.
         """
         if not self.config.enabled:
             return np.array([delta_fl, delta_fr, delta_rl, delta_rr], dtype=float)
-        toe = self._geometry.toe_array()
+
+        if wheel_travel is not None:
+            self.set_wheel_travel(wheel_travel)
+
+        toe_static = self._geometry.toe_array()
+        if self.config.bump_steer_enabled:
+            toe_bump = self._last_bump.toe_bump
+        else:
+            toe_bump = np.zeros(4)
+
+        toe = toe_static + toe_bump
         return np.array([
             delta_fl + toe[0],
             delta_fr + toe[1],
@@ -97,25 +128,31 @@ class SuspensionInterface:
 
     def diagnostics(self) -> dict:
         g = self._geometry
-        return {
+        d = {
             "enabled": self.config.enabled,
+            "bump_steer_enabled": self.config.bump_steer_enabled,
             "camber_rad": g.camber_array().tolist(),
-            "toe_rad": g.toe_array().tolist(),
+            "toe_static_rad": g.toe_array().tolist(),
             "Kw": g.Kw_array().tolist(),
             "Cw": g.Cw_array().tolist(),
-            "roll_center_z": [g.fl.roll_center_z, g.fr.roll_center_z,
-                              g.rl.roll_center_z, g.rr.roll_center_z],
+            "roll_center_z": [
+                g.fl.roll_center_z, g.fr.roll_center_z,
+                g.rl.roll_center_z, g.rr.roll_center_z,
+            ],
             "kpi_rad": [g.fl.kpi_rad, g.fr.kpi_rad, g.rl.kpi_rad, g.rr.kpi_rad],
-            "caster_rad": [g.fl.caster_rad, g.fr.caster_rad,
-                           g.rl.caster_rad, g.rr.caster_rad],
+            "caster_rad": [
+                g.fl.caster_rad, g.fr.caster_rad,
+                g.rl.caster_rad, g.rr.caster_rad,
+            ],
         }
+        d.update(self._last_bump.diagnostics())
+        return d
 
     def vertical_forces(
         self,
         compression: np.ndarray,
         compression_rate: np.ndarray,
     ) -> np.ndarray:
-        """F = Kw*z + Cw*zdot (positive compression → positive force)."""
         Kw = self._geometry.Kw_array()
         Cw = self._geometry.Cw_array()
         return Kw * np.asarray(compression, dtype=float) + Cw * np.asarray(
