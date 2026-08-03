@@ -1,30 +1,41 @@
 {
+  "documentation_note": "Entries below list only checks that exist as committed, re-runnable code. Historical ad-hoc sandbox runs are not recorded as PASS unless a suite file implements them.",
   "phase_3_0_braking": {
+    "source": "vehicle_dynamics/braking/validation.py",
     "static_axle_loads": "PASS",
     "weight_transfer": "PASS",
+    "abs_emergency_stop_smoke": "PASS",
     "status": "VALIDATED"
   },
   "phase_3_2_abs": {
+    "source": "vehicle_dynamics/braking/validation_abs.py",
     "pressure_bounds": "PASS",
     "pressure_modulation": "PASS",
     "state_machine": "PASS",
-    "status": "VALIDATED"
+    "status": "VALIDATED",
+    "note": "Unit tests committed 2026-08-03 (remediation of documentation drift)."
   },
-  "phase_3_3_dugoff": {
+  "phase_3_3_dugoff_longitudinal": {
+    "source": "vehicle_dynamics/tire/validation_longitudinal.py",
     "zero_slip": "PASS",
     "friction_limit": "PASS",
     "symmetry": "PASS",
-    "status": "IMPLEMENTATION_VALIDATED"
+    "linear_region": "PASS",
+    "status": "IMPLEMENTATION_VALIDATED",
+    "note": "Pure-longitudinal (α=0) path of the combined-slip model; committed 2026-08-03."
   },
   "phase_3_4_combined_slip": {
-    "numerical_validation": "PASS",
-    "visual_validation": "PASS",
-    "integration": "PASS",
-    "regression": "PASS",
+    "source": "vehicle_dynamics/tire/validation_combined.py",
+    "phase33_compatibility": "PASS",
+    "pure_lateral": "PASS",
+    "combined_coupling": "PASS",
+    "friction_limit": "PASS",
+    "surface_continuity": "PASS",
     "clamp_activation_pct": 0.0,
     "max_utilization": 0.978,
     "status": "INTEGRATED_AND_REGRESSION_VALIDATED"
   },
   "freeze_tag": "v0.3.4-phase3.4-combined-slip",
-  "freeze_date": "2026-07-31"
+  "freeze_date": "2026-07-31",
+  "remediation_date": "2026-08-03"
 }

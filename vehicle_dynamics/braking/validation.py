@@ -1,11 +1,18 @@
 """
 Phase 3 Braking Validation Suite
+
+Includes:
+  - Phase 3.0 plant checks (static axle loads, weight transfer)
+  - ABS emergency-stop smoke test
+  - Phase 3.2 ABS unit suite (see validation_abs.py)
 """
 
 import numpy as np
 from .simulation import BrakeSimulation
 from .parameters import VehicleLongitudinalParams
 from .weight_transfer import WeightTransfer
+from .validation_abs import run_abs_validation
+
 
 def test_static_axle_loads():
     params = VehicleLongitudinalParams()
@@ -15,6 +22,7 @@ def test_static_axle_loads():
     expected = params.mass * 9.81
     return abs(total - expected) < 1e-3
 
+
 def test_weight_transfer():
     params = VehicleLongitudinalParams()
     wt = WeightTransfer(params)
@@ -23,6 +31,7 @@ def test_weight_transfer():
     total = Fz_f + Fz_r
     return abs(total - params.mass * 9.81) < 1e-3
 
+
 def run_full_validation():
     print("=== Phase 3 Braking Validation ===\n")
     results = []
@@ -30,7 +39,6 @@ def run_full_validation():
     results.append(("Static axle loads", test_static_axle_loads()))
     results.append(("Weight transfer", test_weight_transfer()))
 
-    # Basic simulation smoke test
     try:
         sim = BrakeSimulation()
         res = sim.run(v0=22.22, use_abs=True)
@@ -40,7 +48,7 @@ def run_full_validation():
         results.append(("ABS emergency stop", False))
         print("  Simulation error:", e)
 
-    print("\n=== Validation Summary ===")
+    print("\n--- Phase 3.0 / system smoke ---")
     all_pass = True
     for name, passed in results:
         status = "PASS" if passed else "FAIL"
@@ -48,8 +56,13 @@ def run_full_validation():
         if not passed:
             all_pass = False
 
+    print()
+    abs_ok = run_abs_validation()
+    all_pass = all_pass and abs_ok
+
     print("\n" + ("ALL TESTS PASSED" if all_pass else "SOME TESTS FAILED"))
     return all_pass
+
 
 if __name__ == "__main__":
     run_full_validation()
