@@ -3,6 +3,8 @@ from ..lateral.parameters import BicycleParameters
 from ..lateral.load_transfer import LoadTransferParameters
 from ..braking.parameters import VehicleLongitudinalParams, BrakeParams
 from ..tire.dugoff import DugoffParams
+from .steering import SteeringParameters
+
 
 @dataclass
 class DualTrackParameters:
@@ -11,6 +13,7 @@ class DualTrackParameters:
     longitudinal: VehicleLongitudinalParams = field(default_factory=VehicleLongitudinalParams)
     brake: BrakeParams = field(default_factory=BrakeParams)
     tire: DugoffParams = field(default_factory=DugoffParams)
+    steering: SteeringParameters = field(default_factory=SteeringParameters)
 
     def __post_init__(self):
         self.longitudinal.mass = self.bicycle.m

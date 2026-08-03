@@ -1,8 +1,10 @@
 """
-Phase 5.0 – Dual-Track (4-wheel) planar vehicle model.
+Phase 5.0 / 5.1 – Dual-Track (4-wheel) planar vehicle model.
 
-Equal front steering, RK45, lateral load-transfer feedback only.
-Tire API unchanged. ABS reused (per-axle).
+Phase 5.1: independent front road-wheel angles via Ackermann geometry
+(delta_fl, delta_fr). Rear wheels remain unsteered.
+
+RK45, lateral load-transfer feedback only. Tire API unchanged. ABS per-axle.
 """
 
 import numpy as np
@@ -15,11 +17,13 @@ from .kinematics import (
     wheel_positions, wheel_body_velocity, wheel_frame_velocity,
     slip_ratio, slip_angle, body_forces_from_wheel,
 )
+from .steering import front_steer_angles
 from .normal_loads import four_wheel_normal_loads
 from ..tire.factory import TireFactory
 from ..braking.brake_torque import BrakeTorque
 from ..braking.abs_controller import ABSController
 from ..lateral.kinematics import inertial_rates
+
 
 class DualTrackVehicleModel:
     def __init__(self, params: DualTrackParameters = None, use_abs: bool = True):
@@ -34,6 +38,17 @@ class DualTrackVehicleModel:
         bp = self.p.bicycle
         lt = self.p.load_transfer
         self.x_w, self.y_w = wheel_positions(bp.a, bp.b, lt.track_f, lt.track_r)
+
+    def _steer_pair(self, delta_cmd: float) -> tuple[float, float]:
+        bp = self.p.bicycle
+        lt = self.p.load_transfer
+        return front_steer_angles(
+            delta_cmd,
+            wheelbase=bp.L,
+            track_f=lt.track_f,
+            delta_max=bp.delta_max,
+            use_ackermann=self.p.steering.use_ackermann,
+        )
 
     def _body_longitudinal_from_tire(self, tire_Fx, kappa):
         if kappa > 0.0:
@@ -55,7 +70,6 @@ class DualTrackVehicleModel:
         if pedal_func is None:
             pedal_func = lambda t: 0.0
 
-        # State: vx, vy, r, psi, X, Y, w_fl, w_fr, w_rl, w_rr
         w0 = vx0 / self.R
         y0 = [vx0, 0.0, 0.0, 0.0, 0.0, 0.0, w0, w0, w0, w0]
         bp = self.p.bicycle
@@ -65,14 +79,14 @@ class DualTrackVehicleModel:
             if vx < 0.2:
                 return [0.0] * 10
 
-            delta = float(np.clip(delta_func(t), -bp.delta_max, bp.delta_max))
+            delta_cmd = float(np.clip(delta_func(t), -bp.delta_max, bp.delta_max))
             pedal = float(np.clip(pedal_func(t), 0.0, 1.0))
             omegas = [w_fl, w_fr, w_rl, w_rr]
-            deltas = [delta, delta, 0.0, 0.0]  # equal front steer, no Ackermann
 
-            # Provisional ay from previous forces ~ use kinematic ay for load transfer
-            # Use simple estimate ay ~= vx*r for quasi-static load transfer feedback
-            ay_est = vx * r  # will be refined; acceptable for Level feedback
+            d_fl, d_fr = self._steer_pair(delta_cmd)
+            deltas = [d_fl, d_fr, 0.0, 0.0]
+
+            ay_est = vx * r
             Fzs = four_wheel_normal_loads(
                 ay_est, bp.m, bp.a, bp.b, self.p.load_transfer
             )
@@ -86,7 +100,6 @@ class DualTrackVehicleModel:
                 kappa = slip_ratio(Vx_w, omegas[i], self.R, bp.v_eps)
                 alpha = slip_angle(Vx_w, Vy_w, bp.v_eps)
                 st = self.tire.longitudinal_lateral_force(kappa, alpha, Fzs[i])
-                # Map tire Fx to wheel-frame longitudinal force on vehicle
                 Fx_w = self._body_longitudinal_from_tire(st.Fx, kappa)
                 Fy_w = st.Fy
                 Fxb, Fyb = body_forces_from_wheel(Fx_w, Fy_w, deltas[i])
@@ -94,7 +107,6 @@ class DualTrackVehicleModel:
                 Fx_body.append(Fxb)
                 Fy_body.append(Fyb)
 
-            # ABS per axle using mean axle kappa
             kappa_f = 0.5 * (kappas[FL] + kappas[FR])
             kappa_r = 0.5 * (kappas[RL] + kappas[RR])
             if self.use_abs and pedal > 1e-4:
@@ -104,7 +116,6 @@ class DualTrackVehicleModel:
                 p_f = p_r = 1.0
 
             T_f_des, T_r_des = self.brake.desired(pedal)
-            # Split axle torque equally left/right
             T = [
                 0.5 * T_f_des * p_f,
                 0.5 * T_f_des * p_f,
@@ -125,10 +136,7 @@ class DualTrackVehicleModel:
             r_dot = yaw_m / Iz
             X_dot, Y_dot = inertial_rates(vx, vy, psi)
 
-            w_dots = []
-            for i in range(4):
-                # Road torque on wheel opposes body longitudinal force direction
-                w_dots.append((-Fx_body[i] * self.R - T[i]) / self.Iw)
+            w_dots = [(-Fx_body[i] * self.R - T[i]) / self.Iw for i in range(4)]
 
             return [vx_dot, vy_dot, r_dot, r, X_dot, Y_dot,
                     w_dots[0], w_dots[1], w_dots[2], w_dots[3]]
@@ -151,11 +159,15 @@ class DualTrackVehicleModel:
 
         n = len(t)
         vy, r, psi, X, Y = st[1], st[2], st[3], st[4], st[5]
-        omegas = st[6:10].T  # (n, 4)
+        omegas = st[6:10].T
 
-        delta = np.array([float(np.clip(delta_func(ti), -bp.delta_max, bp.delta_max)) for ti in t])
+        delta = np.array([
+            float(np.clip(delta_func(ti), -bp.delta_max, bp.delta_max)) for ti in t
+        ])
         pedal = np.array([float(np.clip(pedal_func(ti), 0.0, 1.0)) for ti in t])
 
+        delta_fl = np.zeros(n)
+        delta_fr = np.zeros(n)
         kappa = np.zeros((n, 4))
         alpha = np.zeros((n, 4))
         Fx = np.zeros((n, 4))
@@ -164,25 +176,32 @@ class DualTrackVehicleModel:
         util = np.zeros((n, 4))
 
         for i in range(n):
+            d_fl, d_fr = self._steer_pair(delta[i])
+            delta_fl[i], delta_fr[i] = d_fl, d_fr
+            deltas = [d_fl, d_fr, 0.0, 0.0]
             ay_est = vx[i] * r[i]
             Fzs = four_wheel_normal_loads(
                 ay_est, bp.m, bp.a, bp.b, self.p.load_transfer
             )
             Fz[i, :] = Fzs
-            deltas = [delta[i], delta[i], 0.0, 0.0]
             for w in range(4):
-                Vx_b, Vy_b = wheel_body_velocity(vx[i], vy[i], r[i], self.x_w[w], self.y_w[w])
+                Vx_b, Vy_b = wheel_body_velocity(
+                    vx[i], vy[i], r[i], self.x_w[w], self.y_w[w]
+                )
                 Vx_w, Vy_w = wheel_frame_velocity(Vx_b, Vy_b, deltas[w])
                 kappa[i, w] = slip_ratio(Vx_w, omegas[i, w], self.R, bp.v_eps)
                 alpha[i, w] = slip_angle(Vx_w, Vy_w, bp.v_eps)
-                st_t = self.tire.longitudinal_lateral_force(kappa[i, w], alpha[i, w], Fzs[w])
+                st_t = self.tire.longitudinal_lateral_force(
+                    kappa[i, w], alpha[i, w], Fzs[w]
+                )
                 Fx[i, w] = self._body_longitudinal_from_tire(st_t.Fx, kappa[i, w])
                 Fy[i, w] = st_t.Fy
                 util[i, w] = st_t.utilization
 
         return DualTrackResult(
             time=t, vx=vx, vy=vy, r=r, psi=psi,
-            delta=delta, pedal=pedal,
+            delta=delta, delta_fl=delta_fl, delta_fr=delta_fr,
+            pedal=pedal,
             kappa=kappa, alpha=alpha, Fx=Fx, Fy=Fy, Fz=Fz,
             omega=omegas, utilization=util, X=X, Y=Y,
         )
