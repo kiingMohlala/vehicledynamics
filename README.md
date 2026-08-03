@@ -1,6 +1,6 @@
 # Vehicle Dynamics Simulation Framework
 
-Modular, validated vehicle dynamics library through dual-track per-wheel ABS.
+Modular, validated vehicle dynamics through dual-track ESC.
 
 **Repository:** https://github.com/kiingMohlala/vehicledynamics
 
@@ -8,15 +8,14 @@ Modular, validated vehicle dynamics library through dual-track per-wheel ABS.
 
 | Phase | Description | Status |
 |-------|-------------|--------|
-| 3.x | Braking + ABS + Combined-Slip Dugoff | ✅ |
-| 4.0–4.2 | Bicycle + load transfer + combined | ✅ |
 | 5.0 | Dual-Track Architecture | ✅ |
 | 5.1 | Ackermann Steering | ✅ |
-| **5.2** | **Independent Wheel Braking & Per-Wheel ABS** | ✅ **Validated** |
+| 5.2 | Per-Wheel ABS | ✅ |
+| **5.3** | **Electronic Stability Control** | ✅ **Validated** |
 
 ## Next
 
-**Phase 5.3 – ESC** (selective per-wheel brake intervention)
+**Phase 5.4 – Torque Vectoring**
 
 ## License
 

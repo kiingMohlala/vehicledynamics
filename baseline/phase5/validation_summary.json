@@ -1,22 +1,16 @@
 {
-  "phase_5_0_dual_track": {
-    "status": "IMPLEMENTATION_VALIDATED_INITIAL",
-    "freeze_tag": "v0.5.0-phase5.0-dual-track"
-  },
-  "phase_5_1_ackermann": {
-    "status": "IMPLEMENTATION_VALIDATED",
-    "freeze_tag": "v0.5.1-phase5.1-ackermann"
-  },
-  "phase_5_2_per_wheel_abs": {
-    "zero_brake": "PASS",
-    "symmetric_braking": "PASS",
-    "wheel_lock_no_abs": "PASS",
-    "per_wheel_abs": "PASS",
-    "split_mu": "PASS",
-    "phase51_steering": "PASS",
+  "phase_5_0_dual_track": {"status": "IMPLEMENTATION_VALIDATED_INITIAL", "freeze_tag": "v0.5.0-phase5.0-dual-track"},
+  "phase_5_1_ackermann": {"status": "IMPLEMENTATION_VALIDATED", "freeze_tag": "v0.5.1-phase5.1-ackermann"},
+  "phase_5_2_per_wheel_abs": {"status": "IMPLEMENTATION_VALIDATED", "freeze_tag": "v0.5.2-phase5.2-per-wheel-abs"},
+  "phase_5_3_esc": {
+    "esc_disabled_regression": "PASS",
+    "oversteer_recovery": "PASS",
+    "understeer_assistance": "PASS",
+    "split_mu_with_esc": "PASS",
+    "esc_abs_coexistence": "PASS",
     "numerical_robustness": "PASS",
     "status": "IMPLEMENTATION_VALIDATED",
-    "freeze_tag": "v0.5.2-phase5.2-per-wheel-abs",
+    "freeze_tag": "v0.5.3-phase5.3-esc",
     "freeze_date": "2026-08-03"
   }
 }

@@ -1,46 +1,45 @@
 # Phase 5.3 Status
 
-## Phase 5.3 – Electronic Stability Control
+## Phase 5.3 – Electronic Stability Control: Implementation Validated ✅
 
-**Status:** Control layer implemented & unit-validated (plant closed-loop integration optional next step)
+**Frozen:** 2026-08-03
 
-### Modules
+### Freeze Summary
 
+✅ Modular ESC control layer (reference, controller, allocator, diagnostics)  
+✅ Fixed-step dual-track integration (`dual_track/fixed_step.py`)  
+✅ ESC updates every Δt with additive `esc_scale` brake torque  
+✅ ESC optional (`enable_esc=True/False`)  
+✅ ABS coexistence  
+✅ No changes to tire, load-transfer, or Ackermann physics
+
+### Closed-Loop Validation (2026-08-03)
+
+| Gate | Result | Notes |
+|------|--------|-------|
+| ESC disabled regression | PASS | Matches Phase 5.2 steering behaviour |
+| Oversteer recovery | PASS | max\|r\| 0.714 → 0.695; 45% activation |
+| Understeer assistance | PASS | Stable; util ≤ 1 |
+| Split-μ with ESC | PASS | Finite; util ≤ 1 |
+| ESC + ABS coexistence | PASS | Both active; pressure bounds |
+| Numerical robustness | PASS | No NaN/Inf |
+
+### Recommended Git Tag
+
+```bash
+git tag -a v0.5.3-phase5.3-esc \
+  -m "Phase 5.3 Electronic Stability Control: Implementation Validated"
+git push origin v0.5.3-phase5.3-esc
 ```
-vehicle_dynamics/esc/
-├── parameters.py
-├── reference_model.py   # r_ref bicycle steady-state + lag
-├── controller.py        # yaw-error PD + hysteresis + β assist
-├── brake_allocator.py   # Mz → per-wheel esc_scale
-├── diagnostics.py
-├── validation.py
-└── integration.py       # ESCVehicle helper
+
+### How to run
+
+```bash
+python -m vehicle_dynamics.esc.validation
+python -m vehicle_dynamics.esc.validation_closed_loop
 ```
 
-### Control-layer validation (2026-08-03)
+### Next
 
-| Gate | Result |
-|------|--------|
-| reference_model | PASS |
-| inactive_region | PASS |
-| oversteer_correction | PASS (right-side brake) |
-| understeer_correction | PASS (left-side brake) |
-| hysteresis | PASS (1 transition) |
-| allocator_limits | PASS |
-| disabled_zero_output | PASS |
-
-### Plant interface
-
-- `FourWheelBrakeDistributor.desired(..., esc_scale=)` adds ESC torque even when pedal = 0
-- Phase 5.2 plant unchanged when `esc_scale` is None / zeros
-
-### Not yet frozen
-
-Full closed-loop ESC ↔ dual-track RK45 coupling (fixed-step stepper or `esc_scale_func` inside `solve_ivp`) remains a follow-up before the official freeze tag.
-
-### Freeze target (after closed-loop plant gates)
-
-```
-Phase 5.3 – Electronic Stability Control: Implementation Validated
-Tag: v0.5.3-phase5.3-esc
-```
+- Phase 5.4 – Torque Vectoring
+- Phase 5.5 – Longitudinal Load Transfer Feedback
