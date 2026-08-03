@@ -1,54 +1,64 @@
 # Phase 6.2 Status
 
-## Phase 6.2 – Geometry Coupling to Vehicle: Implementation Validated ✅
+## Phase 6.2 – Suspension Geometry Coupling: Implementation Validated ✅
 
 **Frozen:** 2026-08-03
 
-### What this phase delivers
+### Scope (as specified)
 
-Bridge between standalone kinematics and the vehicle model:
+| Item | Behaviour |
+|------|-----------|
+| Wheel rate | Kw, Cw from IR model |
+| Toe | δ_eff = δ_cmd + toe (heading only) |
+| Camber | Logged / diagnostic only |
+| KPI / caster / RC | Diagnostics only |
+| Tire model | Unchanged (no camber thrust) |
+| Phase 5 baseline | Preserved when geometry neutral |
+
+### Modules
 
 ```
-Hardpoints + Spring/Damper + IR
-        ↓
-CornerState (camber, toe, Kw, Cw, MR)
-        ↓
-CoupledSuspension (4 corners)
-        ↓
-  · camber/toe arrays for tire orientation
-  · Kw/Cw for vertical force path
-  · ride-frequency estimate
-  · optional camber thrust / toe→steer
+suspension/
+  geometry_state.py      # WheelGeometryState, VehicleGeometryState
+  coupling.py            # hardpoints → CornerState
+  validation_coupling.py
+dual_track/
+  suspension_interface.py  # opt-in bridge to plant
 ```
 
-Phase 5 dual-track baseline remains the default; coupling is **opt-in**.
-
-### Module
-
-`vehicle_dynamics/suspension/coupling.py`
-
-### Validation (9/9 PASS)
+### Validation (8/8 PASS)
 
 | Gate | Result |
 |------|--------|
-| static_evaluate | PASS |
+| zero_geometry_offsets | PASS |
+| toe_changes_heading_only | PASS |
+| camber_logged_not_forced | PASS |
+| wheel_rate_from_mr | PASS |
 | left_right_symmetry | PASS |
-| asymmetric_geometry | PASS |
-| ride_frequency_scales_with_mr | PASS |
-| vertical_force_equilibrium | PASS |
-| vertical_force_bump | PASS |
-| toe_adds_to_steer | PASS |
-| camber_force_sign | PASS |
-| camber_toe_arrays_shape | PASS |
+| neutral_matches_baseline_steer | PASS |
+| kpi_caster_rc_logged | PASS |
+| no_nan_inf | PASS |
+
+### Neutral regression contract
+
+```
+toe = 0, camber = 0, IR = 1
+→ effective_steer identical to Phase 5 path
+→ v1.0-engineering-baseline behaviour preserved
+```
+
+### Out of scope (later phases)
+
+Camber thrust · bump steer · jacking forces · compliance · nonlinear bushings · tire-model changes
 
 ### Tag
 
 ```bash
 git tag -a v0.6.2-phase6.2-geometry-coupling \
-  -m "Phase 6.2 Geometry Coupling to Vehicle: Implementation Validated"
+  -m "Phase 6.2 Suspension Geometry Coupling: Implementation Validated"
 git push origin v0.6.2-phase6.2-geometry-coupling
 ```
 
 ### Next
 
-**Phase 6.3 – Bump Steer** (toe vs wheel travel)
+**Phase 6.3 – Bump Steer**
