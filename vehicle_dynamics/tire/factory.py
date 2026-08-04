@@ -1,28 +1,27 @@
+"""
+Tire model factory — select Dugoff or Pacejka without API changes.
+"""
+
+from __future__ import annotations
+
 from .dugoff import DugoffTire, DugoffParams
-from .base import TireModel
+from .pacejka import PacejkaTire
+from .pacejka_parameters import PacejkaParams, default_passenger_car, high_mu_race, low_mu_wet
 
 
-class TireFactory:
-    @staticmethod
-    def create(name: str = "dugoff_standard", params: DugoffParams = None) -> TireModel:
-        """
-        Create a tire model instance.
-
-        Parameters
-        ----------
-        name : str
-            "dugoff" / "dugoff_standard" / "standard" — with camber support
-            "dugoff_no_camber" — camber_enabled=False (Phase 3.4 equivalent)
-        params : DugoffParams, optional
-        """
-        if name in ("dugoff", "dugoff_standard", "standard"):
-            p = params if params is not None else DugoffParams()
-            return DugoffTire(p)
-        if name in ("dugoff_no_camber", "phase34"):
-            p = params if params is not None else DugoffParams()
-            p.camber_enabled = False
-            return DugoffTire(p)
-        raise ValueError(
-            f"Unknown tire model: {name}. "
-            "Available: dugoff / dugoff_standard / dugoff_no_camber"
-        )
+def create_tire(model: str = "dugoff", **kwargs):
+    """
+    model: "dugoff" | "pacejka" | "pacejka_race" | "pacejka_wet"
+    """
+    key = model.lower().strip()
+    if key in ("dugoff", "dugoff_standard", "standard_dugoff"):
+        params = kwargs.get("params") or DugoffParams()
+        return DugoffTire(params)
+    if key in ("pacejka", "pacejka_default", "mf"):
+        params = kwargs.get("params") or default_passenger_car()
+        return PacejkaTire(params)
+    if key in ("pacejka_race", "race"):
+        return PacejkaTire(kwargs.get("params") or high_mu_race())
+    if key in ("pacejka_wet", "wet"):
+        return PacejkaTire(kwargs.get("params") or low_mu_wet())
+    raise ValueError(f"Unknown tire model: {model!r}")
