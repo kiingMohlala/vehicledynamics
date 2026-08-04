@@ -4,8 +4,10 @@
 
 | Phase | Status |
 |-------|--------|
-| 7.0–7.5 Tire core | ✅ |
-| **7.6 Combined-slip Pacejka** | ✅ **Validated** |
+| 7.0–7.6 Tire forces | ✅ |
+| **7.7 Aligning torque Mz** | ✅ **Validated** |
+
+Tire subsystem first-order complete.
 
 ## Next
 
