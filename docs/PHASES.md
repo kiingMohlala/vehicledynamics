@@ -1,6 +1,6 @@
 # Development Phases
 
-## Phase 5–7 ✅ | Phase 8
+## Phase 5–8 ✅
 
 | Phase | Status |
 |-------|--------|
@@ -9,10 +9,14 @@
 | **8.2 Modal analysis** | ✅ **Implementation Validated** |
 | **8.3 Chassis flex coupling** | ✅ **Implementation Validated** |
 | **8.4 Nonlinear frame** | ✅ **Implementation Validated** |
-| 8.5 Crash / energy absorption | Next |
+| **8.5 Crash & energy absorption** | ✅ **Implementation Validated** |
+| 9.0 Aerodynamics | Next |
+| 10.0 Powertrain | Later |
+| 11.0 Multi-physics optimization | Later |
 
-### Phase 8.4 deliverables
-- Total-Lagrangian material forces + geometric stiffness K_G
-- Newton–Raphson residual equilibrium R = F − F_int
-- Load stepping, tension stiffening / compression softening
-- validation_8_4.py — **10/10 PASS**
+### Phase 8.5 deliverables
+- Plastic materials + hinge state machine (elastic → yield → plastic → fail)
+- Quasi-static progressive collapse with stiffness degradation
+- Load cases: frontal, rear, side, roof crush, harness
+- Energy account + intrusion metrics
+- validation_8_5.py — **10/10 PASS**
