@@ -21,6 +21,8 @@ from .coupling import (
 )
 from .bump_state import BumpSteerParams, BumpSteerState
 from .bump_steer import compute_toe_bump, update_bump_state, BumpSteerModel
+from .camber_state import CamberGainParams, CamberState
+from .camber_gain import compute_camber_gain, update_camber_state, CamberGainModel
 
 __all__ = [
     "Point3",
@@ -48,4 +50,9 @@ __all__ = [
     "compute_toe_bump",
     "update_bump_state",
     "BumpSteerModel",
+    "CamberGainParams",
+    "CamberState",
+    "compute_camber_gain",
+    "update_camber_state",
+    "CamberGainModel",
 ]

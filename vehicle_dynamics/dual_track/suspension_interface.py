@@ -1,10 +1,14 @@
 """
-Phase 6.2/6.3 – Suspension geometry + bump-steer interface.
+Phase 6.2–6.4 – Suspension geometry + bump-steer + camber-gain interface.
 
 δ_eff = δ_cmd + toe_static + toe_bump
 
+Camber is diagnostic only (no tire force modification):
+  camber_total = camber_static + camber_gain
+
 Opt-in: disabled → Phase 5 baseline.
-bump_steer gain = 0 → Phase 6.2 baseline.
+bump gain = 0 → Phase 6.2 baseline.
+camber gain = 0 → Phase 6.3 baseline.
 """
 
 from __future__ import annotations
@@ -16,6 +20,8 @@ from ..suspension.geometry_state import VehicleGeometryState, WheelGeometryState
 from ..suspension.coupling import CoupledSuspension
 from ..suspension.bump_steer import BumpSteerModel
 from ..suspension.bump_state import BumpSteerParams, BumpSteerState
+from ..suspension.camber_gain import CamberGainModel
+from ..suspension.camber_state import CamberGainParams, CamberState
 
 
 @dataclass
@@ -23,6 +29,7 @@ class SuspensionInterfaceConfig:
     enabled: bool = False
     use_geometry_solver: bool = False
     bump_steer_enabled: bool = False
+    camber_gain_enabled: bool = False
 
 
 class SuspensionInterface:
@@ -32,6 +39,7 @@ class SuspensionInterface:
         geometry: VehicleGeometryState = None,
         coupled: CoupledSuspension = None,
         bump_params: BumpSteerParams = None,
+        camber_params: CamberGainParams = None,
     ):
         self.config = config or SuspensionInterfaceConfig()
         self._coupled = coupled
@@ -44,7 +52,9 @@ class SuspensionInterface:
             self._geometry = VehicleGeometryState.neutral()
 
         self.bump = BumpSteerModel(bump_params or BumpSteerParams.neutral())
+        self.camber = CamberGainModel(camber_params or CamberGainParams.neutral())
         self._last_bump: BumpSteerState = BumpSteerState()
+        self._last_camber: CamberState = CamberState()
 
     @staticmethod
     def _from_coupled(coupled: CoupledSuspension) -> VehicleGeometryState:
@@ -76,22 +86,34 @@ class SuspensionInterface:
     def geometry(self) -> VehicleGeometryState:
         return self._geometry
 
-    def set_wheel_travel(self, wheel_travel: np.ndarray) -> BumpSteerState:
+    def set_wheel_travel(self, wheel_travel: np.ndarray) -> None:
         """
-        Update bump-steer from current wheel travel [m] (+ = compression).
-        Call once per step before effective_steer when bump_steer_enabled.
+        Update bump-steer and camber-gain from current wheel travel [m]
+        (+ = compression). Call once per step before effective_steer.
         """
+        z = np.asarray(wheel_travel, dtype=float).reshape(4)
         toe_static = self._geometry.toe_array()
-        if not (self.config.enabled and self.config.bump_steer_enabled):
+        camber_static = self._geometry.camber_array()
+
+        if self.config.enabled and self.config.bump_steer_enabled:
+            self._last_bump = self.bump.evaluate(z, toe_static)
+        else:
             self._last_bump = BumpSteerState(
-                wheel_travel=np.asarray(wheel_travel, dtype=float).reshape(4),
+                wheel_travel=z.copy(),
                 toe_bump=np.zeros(4),
                 toe_static=toe_static.copy(),
                 toe_total=toe_static.copy(),
             )
-            return self._last_bump
-        self._last_bump = self.bump.evaluate(wheel_travel, toe_static)
-        return self._last_bump
+
+        if self.config.enabled and self.config.camber_gain_enabled:
+            self._last_camber = self.camber.evaluate(z, camber_static)
+        else:
+            self._last_camber = CamberState(
+                wheel_travel=z.copy(),
+                camber_static=camber_static.copy(),
+                camber_gain=np.zeros(4),
+                camber_total=camber_static.copy(),
+            )
 
     def effective_steer(
         self,
@@ -104,7 +126,8 @@ class SuspensionInterface:
         """
         δ_eff = δ_cmd + toe_static + toe_bump
 
-        If wheel_travel is provided, bump state is refreshed first.
+        Camber does not affect steering. If wheel_travel is provided,
+        bump and camber states are refreshed first.
         """
         if not self.config.enabled:
             return np.array([delta_fl, delta_fr, delta_rl, delta_rr], dtype=float)
@@ -126,12 +149,17 @@ class SuspensionInterface:
             delta_rr + toe[3],
         ], dtype=float)
 
+    def camber_total_array(self) -> np.ndarray:
+        """Current total camber [rad] for FL,FR,RL,RR (diagnostic)."""
+        return self._last_camber.camber_total.copy()
+
     def diagnostics(self) -> dict:
         g = self._geometry
         d = {
             "enabled": self.config.enabled,
             "bump_steer_enabled": self.config.bump_steer_enabled,
-            "camber_rad": g.camber_array().tolist(),
+            "camber_gain_enabled": self.config.camber_gain_enabled,
+            "camber_rad": g.camber_array().tolist(),  # static from geometry
             "toe_static_rad": g.toe_array().tolist(),
             "Kw": g.Kw_array().tolist(),
             "Cw": g.Cw_array().tolist(),
@@ -146,6 +174,7 @@ class SuspensionInterface:
             ],
         }
         d.update(self._last_bump.diagnostics())
+        d.update(self._last_camber.diagnostics())
         return d
 
     def vertical_forces(
