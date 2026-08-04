@@ -1,13 +1,7 @@
 """
 Phase 6.6 – Geometry at prescribed wheel travel.
 
-Length-preserving YZ kinematics:
-  - Upper/lower arm lengths fixed (from design)
-  - Lower outer vertical position tracks wheel travel
-  - Outer lateral positions solved on spheres about arm inners
-  - Upright length between outers held approximately constant
-
-This produces genuine camber and RC change vs pure vertical shift.
+Length-preserving YZ kinematics with exact design hardpoints at z=0.
 """
 
 from __future__ import annotations
@@ -20,25 +14,25 @@ from .geometry import average_inner
 
 
 def _solve_y_on_circle(cy: float, cz: float, radius: float, z: float, y_hint: float) -> float:
-    """Intersection of horizontal line at z with circle centered (cy,cz)."""
     dz = z - cz
     r2 = radius * radius - dz * dz
     if r2 < 0:
-        # clamp to vertical extreme
         return float(y_hint)
     dy = np.sqrt(r2)
     y1, y2 = cy + dy, cy - dy
-    # pick branch nearest design
     return float(y1 if abs(y1 - y_hint) <= abs(y2 - y_hint) else y2)
 
 
 def displace_kinematic(hp: WishboneHardpoints, wheel_travel: float) -> WishboneHardpoints:
     """
     Approximate double-wishbone motion in the front view (YZ).
-
     wheel_travel > 0: compression (wheel up relative to body).
+    At travel ≈ 0 returns the original hardpoints unchanged (Phase 6.0 regression).
     """
     dz = float(wheel_travel)
+    if abs(dz) < 1e-12:
+        return hp
+
     ui = average_inner(hp.upper_front, hp.upper_rear)
     li = average_inner(hp.lower_front, hp.lower_rear)
 
@@ -48,22 +42,17 @@ def displace_kinematic(hp: WishboneHardpoints, wheel_travel: float) -> WishboneH
     Ll = float(np.hypot(lo[1] - li.y, lo[2] - li.z))
     upright_len = float(np.linalg.norm(uo - lo))
 
-    # Lower outer follows travel primarily in z
     lo_z = lo[2] + dz
     lo_y = _solve_y_on_circle(li.y, li.z, Ll, lo_z, lo[1])
 
-    # Upper outer: keep upright length and upper arm length
-    # Solve for (uy, uz) on circle about ui with radius Lu, distance to lower outer ≈ upright_len
-    # Parameterize upper by angle; pick closest to design relative angle.
     best = None
     best_err = 1e9
-    for ang in np.linspace(-np.pi, np.pi, 361):
+    for ang in np.linspace(-np.pi, np.pi, 721):
         uy = ui.y + Lu * np.cos(ang)
         uz = ui.z + Lu * np.sin(ang)
         dist = np.hypot(uy - lo_y, uz - lo_z)
         err = abs(dist - upright_len)
-        # prefer near design upper position
-        err += 0.01 * np.hypot(uy - uo[1], uz - uo[2])
+        err += 0.05 * np.hypot(uy - uo[1], uz - uo[2])
         if err < best_err:
             best_err = err
             best = (uy, uz)
@@ -72,7 +61,6 @@ def displace_kinematic(hp: WishboneHardpoints, wheel_travel: float) -> WishboneH
     def P(x, y, z):
         return Point3(float(x), float(y), float(z))
 
-    # Wheel center and tierod outer move with upright (average outer motion)
     d_y = 0.5 * ((uy - uo[1]) + (lo_y - lo[1]))
     d_z = 0.5 * ((uz - uo[2]) + (lo_z - lo[2]))
 
