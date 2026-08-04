@@ -4,8 +4,8 @@
 
 | Phase | Status |
 |-------|--------|
-| 7.0–7.4 Tire core + relaxation | ✅ |
-| **7.5 Load-sensitive friction** | ✅ **Validated** |
+| 7.0–7.5 Tire core | ✅ |
+| **7.6 Combined-slip Pacejka** | ✅ **Validated** |
 
 ## Next
 
