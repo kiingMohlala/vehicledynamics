@@ -1,12 +1,15 @@
 # Development Phases
 
-## Phase 5 ✅ FROZEN (v1.0-engineering-baseline)
-## Phase 6 ✅ Suspension Kinematics COMPLETE
-
-## Phase 7 – Tire / Handling Coupling
+## Phase 5 ✅ Controls baseline (v1.0)
+## Phase 6 ✅ Suspension kinematics complete
+## Phase 7 – Tire / handling coupling
 
 | Phase | Description | Status |
 |-------|-------------|--------|
-| **7.0** | **Camber Thrust & Tire Extension** | ✅ **Validated** |
-| 7.1 | Dual-track consumes dynamic camber | Next |
-| 7.2 | Handling metrics (US gradient, ay max) | Planned |
+| 7.0 | Camber thrust in Dugoff | ✅ |
+| **7.1** | **Dual-track consumes camber** | ✅ **Validated** |
+| 7.2 | Handling metrics | Planned |
+
+### Recommended next
+
+**Phase 5.6 – Longitudinal load transfer**
