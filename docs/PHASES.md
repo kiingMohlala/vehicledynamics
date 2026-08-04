@@ -7,13 +7,13 @@
 | **8.0 Beam FEM foundation** | ✅ **Validated** |
 | **8.1 Space-frame / roll-cage** | ✅ **Implementation Validated** |
 | **8.2 Modal analysis** | ✅ **Implementation Validated** |
-| 8.3 Chassis flex coupling | Next |
-| 8.4 Nonlinear frame | Later |
+| **8.3 Chassis flex coupling** | ✅ **Implementation Validated** |
+| 8.4 Nonlinear frame | Next |
 | 8.5 Crash / energy absorption | Later |
 
-### Phase 8.2 deliverables
-- Consistent + lumped beam mass matrices
-- Generalized eigen solve Kφ = λMφ
-- Free-free rigid-body handling, mode classification
-- Mass normalization, visualization, report
-- validation_modal.py — **11/11 PASS**
+### Phase 8.3 deliverables
+- Pickup mapping onto FEM nodes
+- Full / reduced / disabled compliance modes
+- Camber, toe, track, RC, twist from deformation
+- Tire-coupling interface (geometry deltas)
+- validation_8_3.py — **10/10 PASS**
