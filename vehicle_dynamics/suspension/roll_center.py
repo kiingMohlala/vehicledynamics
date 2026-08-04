@@ -9,6 +9,9 @@ vertical wheel travel to the upright (outer ball joints).
 Diagnostic only — no jacking forces, no load-transfer feedback.
 
 At z_FL = z_FR = z_RL = z_RR = 0 the result matches Phase 6.0.
+
+When control arms become parallel (IC at infinity), RC height falls back
+to contact-patch height so results remain finite for logging/solvers.
 """
 
 from __future__ import annotations
@@ -18,7 +21,7 @@ import numpy as np
 
 from .hardpoints import WishboneHardpoints, Point3, default_front_left, mirror_corner
 from .geometry import instant_center_yz, average_inner
-from .wishbone import roll_center_front_view, analyze
+from .wishbone import roll_center_front_view
 from .roll_center_state import RollCenterState
 
 
@@ -49,9 +52,10 @@ def _shift_outer_vertical(hp: WishboneHardpoints, z: float) -> WishboneHardpoint
 def roll_center_height(hp: WishboneHardpoints) -> tuple[float, float, float]:
     """
     Returns (rc_z, ic_y, ic_z).
-    rc_z may be nan if arms are parallel.
+
+    Parallel arms → IC at infinity; use contact-patch height as finite
+    fallback so migration diagnostics never emit NaN under normal travel.
     """
-    rc = roll_center_front_view(hp)
     ui = average_inner(hp.upper_front, hp.upper_rear)
     li = average_inner(hp.lower_front, hp.lower_rear)
     ic = instant_center_yz(
@@ -60,18 +64,18 @@ def roll_center_height(hp: WishboneHardpoints) -> tuple[float, float, float]:
         li.y, li.z,
         hp.lower_outer.y, hp.lower_outer.z,
     )
-    if rc is None:
-        rc_z = float("nan")
-    else:
-        rc_z = float(rc[1])
     if ic is None:
-        return rc_z, float("nan"), float("nan")
-    return rc_z, float(ic[0]), float(ic[1])
+        # Parallel (or nearly): pure lateral kinematics → RC at ground plane
+        return float(hp.contact_patch.z), 1.0e4, float(hp.contact_patch.z)
+
+    rc = roll_center_front_view(hp)
+    if rc is None:
+        return float(hp.contact_patch.z), float(ic[0]), float(ic[1])
+    return float(rc[1]), float(ic[0]), float(ic[1])
 
 
 @dataclass
 class AxleHardpoints:
-    """Left and right corner hardpoints for one axle."""
     left: WishboneHardpoints
     right: WishboneHardpoints
 
@@ -82,7 +86,6 @@ def default_front_axle() -> AxleHardpoints:
 
 
 def default_rear_axle() -> AxleHardpoints:
-    """Illustrative rear — same pattern as front for solver validation."""
     return default_front_axle()
 
 
@@ -91,45 +94,19 @@ def axle_roll_center(
     z_left: float,
     z_right: float,
 ) -> tuple[float, float, float]:
-    """
-    RC height for an axle with independent L/R wheel travel.
-
-    Uses mean of left-side and right-side constructions so single-wheel
-    bump remains finite and symmetric bump is consistent.
-    """
+    """RC height for an axle with independent L/R wheel travel."""
     hp_l = _shift_outer_vertical(axle.left, z_left)
     hp_r = _shift_outer_vertical(axle.right, z_right)
     rc_l, icy_l, icz_l = roll_center_height(hp_l)
     rc_r, icy_r, icz_r = roll_center_height(hp_r)
 
-    if np.isfinite(rc_l) and np.isfinite(rc_r):
-        rc = 0.5 * (rc_l + rc_r)
-    elif np.isfinite(rc_l):
-        rc = rc_l
-    elif np.isfinite(rc_r):
-        rc = rc_r
-    else:
-        rc = float("nan")
-
-    # representative IC: average when both finite
-    if np.isfinite(icy_l) and np.isfinite(icy_r):
-        icy = 0.5 * (icy_l + icy_r)
-        icz = 0.5 * (icz_l + icz_r)
-    elif np.isfinite(icy_l):
-        icy, icz = icy_l, icz_l
-    else:
-        icy, icz = icy_r, icz_r
-
+    rc = 0.5 * (rc_l + rc_r)
+    icy = 0.5 * (icy_l + icy_r)
+    icz = 0.5 * (icz_l + icz_r)
     return float(rc), float(icy), float(icz)
 
 
 class RollCenterModel:
-    """
-    Stateful front/rear roll-center evaluator.
-
-    Static heights cached at construction for migration diagnostics.
-    """
-
     def __init__(
         self,
         front: AxleHardpoints = None,
@@ -167,9 +144,6 @@ class RollCenterModel:
         )
 
     def evaluate(self, wheel_travel: np.ndarray) -> RollCenterState:
-        """
-        wheel_travel: (4,) [FL, FR, RL, RR], + = compression.
-        """
         z = np.asarray(wheel_travel, dtype=float).reshape(4)
         rc_f, icy_f, icz_f = axle_roll_center(self.front, z[0], z[1])
         rc_r, icy_r, icz_r = axle_roll_center(self.rear, z[2], z[3])
@@ -179,10 +153,8 @@ class RollCenterModel:
             rc_rear_z=rc_r,
             rc_front_static_z=self.rc_front_static,
             rc_rear_static_z=self.rc_rear_static,
-            rc_front_migration=rc_f - self.rc_front_static
-            if np.isfinite(rc_f) else float("nan"),
-            rc_rear_migration=rc_r - self.rc_rear_static
-            if np.isfinite(rc_r) else float("nan"),
+            rc_front_migration=rc_f - self.rc_front_static,
+            rc_rear_migration=rc_r - self.rc_rear_static,
             ic_front_y=icy_f,
             ic_front_z=icz_f,
             ic_rear_y=icy_r,
