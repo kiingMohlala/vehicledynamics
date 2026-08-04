@@ -1,8 +1,8 @@
 """
-Phase 5.0–7.1 – Dual-Track (4-wheel) planar vehicle model.
+Phase 5.0–7.1 + 5.6 – Dual-Track planar vehicle model.
 
-Phase 7.1: per-wheel camber_total from SuspensionInterface → tire camber_rad.
-Default (no suspension / zero camber) reproduces Phase 5/6.5 behaviour.
+Phase 5.6: longitudinal load transfer (ax) combined with lateral (ay).
+Phase 7.1: per-wheel camber → tire.
 """
 
 from __future__ import annotations
@@ -36,10 +36,6 @@ class DualTrackVehicleModel:
         suspension: SuspensionInterface | None = None,
         wheel_travel_func=None,
     ):
-        """
-        suspension : optional SuspensionInterface (camber → tire).
-        wheel_travel_func : callable(t) -> (4,) wheel travel [m]; default zeros.
-        """
         self.p = params or DualTrackParameters()
         self.use_abs = use_abs
         self.tire = TireFactory.create("dugoff_standard", params=self.p.tire)
@@ -120,6 +116,7 @@ class DualTrackVehicleModel:
 
         abs_pressure = np.ones(4)
         last_abs_t = [t_span[0]]
+        last_ax = [0.0]  # Phase 5.6: lagged longitudinal accel for Fz
 
         def dynamics(t, y):
             nonlocal abs_pressure
@@ -137,8 +134,9 @@ class DualTrackVehicleModel:
             deltas = [d_fl, d_fr, 0.0, 0.0]
 
             ay_est = vx * r
+            ax_est = last_ax[0]
             Fzs = four_wheel_normal_loads(
-                ay_est, bp.m, bp.a, bp.b, self.p.load_transfer
+                ay_est, bp.m, bp.a, bp.b, self.p.load_transfer, ax=ax_est
             )
 
             kappas = []
@@ -172,6 +170,7 @@ class DualTrackVehicleModel:
             Iz = bp.Iz
             sum_Fx = sum(Fx_body)
             sum_Fy = sum(Fy_body)
+            last_ax[0] = sum_Fx / m  # update for next evaluation
             yaw_m = sum(
                 self.x_w[i] * Fy_body[i] - self.y_w[i] * Fx_body[i] for i in range(4)
             )
@@ -220,9 +219,12 @@ class DualTrackVehicleModel:
         util = np.zeros((n, 4))
         camber = np.zeros((n, 4))
         brake_torque = np.zeros((n, 4))
-        abs_pressure = np.zeros((n, 4))
+        abs_pressure_log = np.zeros((n, 4))
 
         abs_log = FourWheelABS()
+        # Estimate ax from speed history for logging
+        ax_log = np.gradient(vx, t) if n > 1 else np.zeros(n)
+
         for i in range(n):
             self._refresh_camber(t[i])
             camber[i, :] = self._camber
@@ -231,7 +233,7 @@ class DualTrackVehicleModel:
             deltas = [d_fl, d_fr, 0.0, 0.0]
             ay_est = vx[i] * r[i]
             Fzs = four_wheel_normal_loads(
-                ay_est, bp.m, bp.a, bp.b, self.p.load_transfer
+                ay_est, bp.m, bp.a, bp.b, self.p.load_transfer, ax=float(ax_log[i])
             )
             Fz[i, :] = Fzs
             kappas_i = np.zeros(4)
@@ -249,12 +251,12 @@ class DualTrackVehicleModel:
                 util[i, w] = st_t.utilization
 
             if self.use_abs and pedal[i] > 1e-4:
-                abs_pressure[i, :] = abs_log.update(kappas_i, dt_out, active=True)
+                abs_pressure_log[i, :] = abs_log.update(kappas_i, dt_out, active=True)
             else:
-                abs_pressure[i, :] = 1.0
+                abs_pressure_log[i, :] = 1.0
             scale = np.asarray(wheel_scale_func(t[i]), dtype=float).reshape(4)
             cmd = self.brake_dist.desired(pedal[i], wheel_scale=scale)
-            brake_torque[i, :] = cmd.T * abs_pressure[i, :]
+            brake_torque[i, :] = cmd.T * abs_pressure_log[i, :]
 
         return DualTrackResult(
             time=t, vx=vx, vy=vy, r=r, psi=psi,
@@ -262,7 +264,7 @@ class DualTrackVehicleModel:
             pedal=pedal,
             kappa=kappa, alpha=alpha, Fx=Fx, Fy=Fy, Fz=Fz,
             omega=omegas, utilization=util,
-            brake_torque=brake_torque, abs_pressure=abs_pressure,
+            brake_torque=brake_torque, abs_pressure=abs_pressure_log,
             X=X, Y=Y,
             camber=camber,
         )
