@@ -1,15 +1,38 @@
 """
-Steady-state Pacejka Magic Formula with optional load-sensitive friction (Phase 7.5).
+Steady-state Pacejka Magic Formula with combined-slip weighting (Phase 7.6).
 
-load_sensitive=False → identical to Phase 7.3/7.4 baseline.
+Flow:
+    pure MF Fx/Fy  →  Gx(α), Gy(κ) reduction  →  safety clamp  →  TireState
+
+combined_slip=False → identical to Phase 7.5 (pure MF + clamp only).
 """
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 import numpy as np
 from .pacejka_parameters import PacejkaParams, default_passenger_car
-from .dugoff import TireState
 from .load_sensitivity import effective_mu
+
+
+@dataclass
+class TireState:
+    Fx: float
+    Fy: float
+    Fx_linear: float
+    Fy_linear: float
+    slip_ratio: float
+    slip_angle: float
+    lambda_: float
+    utilization: float
+    saturated: bool
+    clamp_activated: bool = False
+    clamp_scale: float = 1.0
+    # Phase 7.6 diagnostics (optional)
+    combined_Gx: float = 1.0
+    combined_Gy: float = 1.0
+    Fx_pure: float = 0.0
+    Fy_pure: float = 0.0
 
 
 def _magic_formula(
@@ -18,6 +41,18 @@ def _magic_formula(
     xs = x + Sh
     Bx = B * xs
     return float(D * np.sin(C * np.arctan(Bx - E * (Bx - np.arctan(Bx)))) + Sv)
+
+
+def combined_weight_x(alpha: float, alpha_c: float) -> float:
+    """Gx(α) ≤ 1 — lateral slip reduces available longitudinal force."""
+    ac = max(float(alpha_c), 1e-6)
+    return float(1.0 / np.sqrt(1.0 + (float(alpha) / ac) ** 2))
+
+
+def combined_weight_y(kappa: float, kappa_c: float) -> float:
+    """Gy(κ) ≤ 1 — longitudinal slip reduces available lateral force."""
+    kc = max(float(kappa_c), 1e-6)
+    return float(1.0 / np.sqrt(1.0 + (float(kappa) / kc) ** 2))
 
 
 class PacejkaTire:
@@ -65,10 +100,18 @@ class PacejkaTire:
         kappa = float(np.clip(slip_ratio, -p.kappa_clip, p.kappa_clip))
         alpha = float(np.clip(slip_angle, -p.alpha_clip, p.alpha_clip))
 
-        Fx0 = self.longitudinal_force(kappa, Fz)
-        Fy0 = self.lateral_force(alpha, Fz, camber_rad=camber_rad)
+        Fx_pure = self.longitudinal_force(kappa, Fz)
+        Fy_pure = self.lateral_force(alpha, Fz, camber_rad=camber_rad)
 
-        Fx, Fy = Fx0, Fy0
+        if p.combined_slip:
+            Gx = combined_weight_x(alpha, p.alpha_combined)
+            Gy = combined_weight_y(kappa, p.kappa_combined)
+        else:
+            Gx, Gy = 1.0, 1.0
+
+        Fx = Fx_pure * Gx
+        Fy = Fy_pure * Gy
+
         clamp_activated = False
         clamp_scale = 1.0
 
@@ -85,14 +128,14 @@ class PacejkaTire:
         utilization = float(np.hypot(Fx, Fy) / (F_max + 1e-8))
         saturated = utilization > 0.98 or clamp_activated
 
-        demand = float(np.hypot(Fx0, Fy0)) + 1e-8
+        demand = float(np.hypot(Fx_pure, Fy_pure)) + 1e-8
         lambda_ = float(min(1.0, F_max / (2.0 * demand)))
 
         return TireState(
             Fx=float(Fx),
             Fy=float(Fy),
-            Fx_linear=float(Fx0),
-            Fy_linear=float(Fy0),
+            Fx_linear=float(Fx_pure),
+            Fy_linear=float(Fy_pure),
             slip_ratio=kappa,
             slip_angle=alpha,
             lambda_=lambda_,
@@ -100,4 +143,8 @@ class PacejkaTire:
             saturated=saturated,
             clamp_activated=clamp_activated,
             clamp_scale=float(clamp_scale),
+            combined_Gx=float(Gx),
+            combined_Gy=float(Gy),
+            Fx_pure=float(Fx_pure),
+            Fy_pure=float(Fy_pure),
         )

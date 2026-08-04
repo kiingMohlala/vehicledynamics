@@ -1,5 +1,5 @@
-from .dugoff import DugoffTire, DugoffParams, TireState
-from .pacejka import PacejkaTire
+from .dugoff import DugoffTire, DugoffParams, TireState as DugoffTireState
+from .pacejka import PacejkaTire, TireState
 from .pacejka_parameters import (
     PacejkaParams,
     default_passenger_car,
@@ -16,6 +16,7 @@ from .load_sensitivity import effective_mu
 __all__ = [
     "DugoffTire",
     "DugoffParams",
+    "DugoffTireState",
     "TireState",
     "PacejkaTire",
     "PacejkaParams",

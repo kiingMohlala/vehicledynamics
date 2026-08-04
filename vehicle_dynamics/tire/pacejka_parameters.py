@@ -1,4 +1,4 @@
-"""Pacejka Magic Formula parameter sets (Phase 7.3 + 7.5 load sensitivity)."""
+"""Pacejka Magic Formula parameter sets (Phases 7.3–7.6)."""
 
 from __future__ import annotations
 
@@ -37,6 +37,11 @@ class PacejkaParams:
     # Phase 7.5
     load_sensitive: bool = False
     load_exponent: float = 0.08
+
+    # Phase 7.6 – combined-slip weighting
+    combined_slip: bool = True
+    alpha_combined: float = 0.15   # α_c [rad]
+    kappa_combined: float = 0.12   # κ_c [-]
 
 
 def default_passenger_car() -> PacejkaParams:
