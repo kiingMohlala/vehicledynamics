@@ -13,4 +13,9 @@
 | 6.4 | Camber Gain | ✅ |
 | **6.5** | **Roll Center Migration** | ✅ **Validated** |
 
-All Phase 6 outputs are kinematics/diagnostics except wheel-rate (Kw/Cw) and toe (steering path). Tire forces remain Dugoff without camber thrust or jacking.
+### Suggested next
+
+- Phase 7: Camber thrust / tire model extension
+- Phase 5.6: Longitudinal load transfer feedback
+- Phase 5.7: Differential models
+- Full geometry-based bump/camber curves (replace linear gains)

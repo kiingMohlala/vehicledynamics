@@ -7,15 +7,12 @@
 ### Behaviour
 
 ```
-RC(t) = GeometrySolver(current wheel positions)
+RC(t) = GeometrySolver(hardpoints with outer points displaced by wheel travel)
 ```
 
-Outer ball joints move with wheel travel; body pivots fixed; contact patch on ground.
-Parallel-arm case → finite fallback (RC at contact-patch height).
-
-**Diagnostic only** — no jacking forces, no load-transfer feedback.
-
-At `z = 0` all wheels → Phase 6.0 static RC.
+- Front/rear RC heights recomputed each step
+- Parallel-arm (IC → ∞) → fall back to design RC (finite)
+- **Diagnostic only** — no jacking forces, no load-transfer feedback
 
 ### Modules
 
@@ -23,21 +20,28 @@ At `z = 0` all wheels → Phase 6.0 static RC.
 suspension/roll_center.py
 suspension/roll_center_state.py
 suspension/validation_roll_center.py
-dual_track/suspension_interface.py  # updated
+dual_track/suspension_interface.py  # roll_center_enabled
 ```
 
-### Validation
+### Validation (8/8 PASS)
 
 | Gate | Result |
 |------|--------|
 | static_matches_phase60 | PASS |
 | symmetric_bump | PASS |
 | left_right_symmetry | PASS |
-| independent_wheel_finite | PASS |
+| independent_wheel_bump_finite | PASS |
 | roll_input_smooth | PASS |
-| neutral_reproduces_static | PASS |
+| neutral_reproduces_phase64_steer | PASS |
 | diagnostics_logged | PASS |
 | no_nan_inf | PASS |
+
+### Phase 6 kinematics complete
+
+```
+6.0 Geometry → 6.1 Motion Ratio → 6.2 Coupling
+  → 6.3 Bump Steer → 6.4 Camber Gain → 6.5 Roll Center Migration
+```
 
 ### Tag
 
@@ -47,9 +51,6 @@ git tag -a v0.6.5-phase6.5-roll-center \
 git push origin v0.6.5-phase6.5-roll-center
 ```
 
-### Phase 6 pipeline complete
+### Out of scope (later)
 
-```
-6.0 Geometry → 6.1 Motion Ratio → 6.2 Coupling
-  → 6.3 Bump Steer → 6.4 Camber Gain → 6.5 Roll Center Migration
-```
+Jacking forces · roll-axis moments · RC load-transfer feedback · compliance · roll-steer
