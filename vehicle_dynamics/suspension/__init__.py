@@ -23,6 +23,8 @@ from .bump_state import BumpSteerParams, BumpSteerState
 from .bump_steer import compute_toe_bump, update_bump_state, BumpSteerModel
 from .camber_state import CamberGainParams, CamberState
 from .camber_gain import compute_camber_gain, update_camber_state, CamberGainModel
+from .roll_center_state import RollCenterState
+from .roll_center import RollCenterModel, axle_roll_center, default_front_axle
 
 __all__ = [
     "Point3",
@@ -55,4 +57,8 @@ __all__ = [
     "compute_camber_gain",
     "update_camber_state",
     "CamberGainModel",
+    "RollCenterState",
+    "RollCenterModel",
+    "axle_roll_center",
+    "default_front_axle",
 ]

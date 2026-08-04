@@ -1,14 +1,11 @@
 """
-Phase 6.2–6.4 – Suspension geometry + bump-steer + camber-gain interface.
+Phase 6.2–6.5 – Suspension geometry interface.
 
 δ_eff = δ_cmd + toe_static + toe_bump
+camber_total = camber_static + camber_gain   (diagnostic)
+RC_front/rear from geometric migration        (diagnostic)
 
-Camber is diagnostic only (no tire force modification):
-  camber_total = camber_static + camber_gain
-
-Opt-in: disabled → Phase 5 baseline.
-bump gain = 0 → Phase 6.2 baseline.
-camber gain = 0 → Phase 6.3 baseline.
+No jacking forces, no tire-model changes.
 """
 
 from __future__ import annotations
@@ -22,6 +19,8 @@ from ..suspension.bump_steer import BumpSteerModel
 from ..suspension.bump_state import BumpSteerParams, BumpSteerState
 from ..suspension.camber_gain import CamberGainModel
 from ..suspension.camber_state import CamberGainParams, CamberState
+from ..suspension.roll_center import RollCenterModel
+from ..suspension.roll_center_state import RollCenterState
 
 
 @dataclass
@@ -30,6 +29,7 @@ class SuspensionInterfaceConfig:
     use_geometry_solver: bool = False
     bump_steer_enabled: bool = False
     camber_gain_enabled: bool = False
+    roll_center_enabled: bool = False
 
 
 class SuspensionInterface:
@@ -40,6 +40,7 @@ class SuspensionInterface:
         coupled: CoupledSuspension = None,
         bump_params: BumpSteerParams = None,
         camber_params: CamberGainParams = None,
+        roll_center_model: RollCenterModel = None,
     ):
         self.config = config or SuspensionInterfaceConfig()
         self._coupled = coupled
@@ -53,8 +54,10 @@ class SuspensionInterface:
 
         self.bump = BumpSteerModel(bump_params or BumpSteerParams.neutral())
         self.camber = CamberGainModel(camber_params or CamberGainParams.neutral())
+        self.roll_center = roll_center_model or RollCenterModel()
         self._last_bump: BumpSteerState = BumpSteerState()
         self._last_camber: CamberState = CamberState()
+        self._last_rc: RollCenterState = self.roll_center.last
 
     @staticmethod
     def _from_coupled(coupled: CoupledSuspension) -> VehicleGeometryState:
@@ -87,10 +90,6 @@ class SuspensionInterface:
         return self._geometry
 
     def set_wheel_travel(self, wheel_travel: np.ndarray) -> None:
-        """
-        Update bump-steer and camber-gain from current wheel travel [m]
-        (+ = compression). Call once per step before effective_steer.
-        """
         z = np.asarray(wheel_travel, dtype=float).reshape(4)
         toe_static = self._geometry.toe_array()
         camber_static = self._geometry.camber_array()
@@ -115,6 +114,13 @@ class SuspensionInterface:
                 camber_total=camber_static.copy(),
             )
 
+        if self.config.enabled and self.config.roll_center_enabled:
+            self._last_rc = self.roll_center.evaluate(z)
+        else:
+            # static RC only
+            self._last_rc = self.roll_center.evaluate(np.zeros(4))
+            self._last_rc.wheel_travel = z.copy()
+
     def effective_steer(
         self,
         delta_fl: float,
@@ -123,12 +129,6 @@ class SuspensionInterface:
         delta_rr: float = 0.0,
         wheel_travel: np.ndarray | None = None,
     ) -> np.ndarray:
-        """
-        δ_eff = δ_cmd + toe_static + toe_bump
-
-        Camber does not affect steering. If wheel_travel is provided,
-        bump and camber states are refreshed first.
-        """
         if not self.config.enabled:
             return np.array([delta_fl, delta_fr, delta_rl, delta_rr], dtype=float)
 
@@ -136,11 +136,11 @@ class SuspensionInterface:
             self.set_wheel_travel(wheel_travel)
 
         toe_static = self._geometry.toe_array()
-        if self.config.bump_steer_enabled:
-            toe_bump = self._last_bump.toe_bump
-        else:
-            toe_bump = np.zeros(4)
-
+        toe_bump = (
+            self._last_bump.toe_bump
+            if self.config.bump_steer_enabled
+            else np.zeros(4)
+        )
         toe = toe_static + toe_bump
         return np.array([
             delta_fl + toe[0],
@@ -150,7 +150,6 @@ class SuspensionInterface:
         ], dtype=float)
 
     def camber_total_array(self) -> np.ndarray:
-        """Current total camber [rad] for FL,FR,RL,RR (diagnostic)."""
         return self._last_camber.camber_total.copy()
 
     def diagnostics(self) -> dict:
@@ -159,14 +158,11 @@ class SuspensionInterface:
             "enabled": self.config.enabled,
             "bump_steer_enabled": self.config.bump_steer_enabled,
             "camber_gain_enabled": self.config.camber_gain_enabled,
-            "camber_rad": g.camber_array().tolist(),  # static from geometry
+            "roll_center_enabled": self.config.roll_center_enabled,
+            "camber_rad": g.camber_array().tolist(),
             "toe_static_rad": g.toe_array().tolist(),
             "Kw": g.Kw_array().tolist(),
             "Cw": g.Cw_array().tolist(),
-            "roll_center_z": [
-                g.fl.roll_center_z, g.fr.roll_center_z,
-                g.rl.roll_center_z, g.rr.roll_center_z,
-            ],
             "kpi_rad": [g.fl.kpi_rad, g.fr.kpi_rad, g.rl.kpi_rad, g.rr.kpi_rad],
             "caster_rad": [
                 g.fl.caster_rad, g.fr.caster_rad,
@@ -175,6 +171,7 @@ class SuspensionInterface:
         }
         d.update(self._last_bump.diagnostics())
         d.update(self._last_camber.diagnostics())
+        d.update(self._last_rc.diagnostics())
         return d
 
     def vertical_forces(
