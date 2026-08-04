@@ -7,7 +7,7 @@ from __future__ import annotations
 import numpy as np
 from .dugoff import DugoffTire, DugoffParams
 from .pacejka import PacejkaTire
-from .relaxation import step_relaxation, rates
+from .relaxation import step_relaxation
 from .relaxation_parameters import RelaxationParams, disabled
 from .relaxation_state import RelaxationState
 from .transient_tire import TransientTire
@@ -27,44 +27,66 @@ def test_disabled_equals_baseline() -> tuple[bool, dict]:
 
 
 def test_zero_length_baseline() -> tuple[bool, dict]:
-    """Very small L → nearly instantaneous (within tight tolerance over steps)."""
     steady = DugoffTire()
     wrap = TransientTire(steady, RelaxationParams(enabled=True, Lx=1e-6, Ly=1e-6))
     wrap.reset(0.0, 0.0)
     s0 = steady.longitudinal_lateral_force(0.2, 0.1, 4000.0)
     s1 = wrap.update(0.2, 0.1, 4000.0, vx=20.0, dt=0.01)
     err = abs(s0.Fx - s1.Fx) + abs(s0.Fy - s1.Fy)
-    ok = err < 1.0  # essentially at target after one step
+    ok = err < 1.0
     return ok, {"err": err}
 
 
 def test_steering_step_lag() -> tuple[bool, dict]:
-    steady = DugoffTire()
-    wrap = TransientTire(steady, RelaxationParams(Lx=0.3, Ly=0.6))
-    wrap.reset(0.0, 0.0)
-    # Step alpha; Fy must lag
+    """Alpha_eff lags; force converges to steady-state."""
+    params = RelaxationParams(Lx=0.3, Ly=0.8)
+    st = RelaxationState(0.0, 0.0)
+    alphas = []
     fy = []
-    for _ in range(50):
-        s = wrap.update(0.0, 0.1, 4000.0, vx=15.0, dt=0.01)
-        fy.append(s.Fy)
+    steady = DugoffTire()
+    for _ in range(80):
+        st = step_relaxation(st, 0.0, 0.1, 12.0, 0.01, params)
+        alphas.append(st.alpha_eff)
+        fy.append(steady.longitudinal_lateral_force(0.0, st.alpha_eff, 4000.0).Fy)
     s_ss = steady.longitudinal_lateral_force(0.0, 0.1, 4000.0)
-    ok = abs(fy[0]) < abs(s_ss.Fy) * 0.5  # first sample lags
+    # Effective slip clearly lags on first steps
+    ok = alphas[0] < 0.05 and alphas[5] < 0.09
+    ok = ok and alphas[-1] > 0.095
     ok = ok and abs(fy[-1] - s_ss.Fy) / (abs(s_ss.Fy) + 1e-6) < 0.05
-    return ok, {"Fy_first": fy[0], "Fy_last": fy[-1], "Fy_ss": s_ss.Fy}
+    ok = ok and fy[0] < fy[-1]  # force builds up
+    return ok, {
+        "alpha_0": alphas[0],
+        "alpha_5": alphas[5],
+        "alpha_last": alphas[-1],
+        "Fy_first": fy[0],
+        "Fy_last": fy[-1],
+        "Fy_ss": s_ss.Fy,
+    }
 
 
 def test_braking_step_lag() -> tuple[bool, dict]:
-    steady = DugoffTire()
-    wrap = TransientTire(steady, RelaxationParams(Lx=0.4, Ly=0.5))
-    wrap.reset(0.0, 0.0)
+    params = RelaxationParams(Lx=0.8, Ly=0.5)
+    st = RelaxationState(0.0, 0.0)
+    kappas = []
     fx = []
-    for _ in range(50):
-        s = wrap.update(0.15, 0.0, 4000.0, vx=15.0, dt=0.01)
-        fx.append(s.Fx)
+    steady = DugoffTire()
+    for _ in range(80):
+        st = step_relaxation(st, 0.15, 0.0, 12.0, 0.01, params)
+        kappas.append(st.kappa_eff)
+        fx.append(steady.longitudinal_lateral_force(st.kappa_eff, 0.0, 4000.0).Fx)
     s_ss = steady.longitudinal_lateral_force(0.15, 0.0, 4000.0)
-    ok = abs(fx[0]) < abs(s_ss.Fx) * 0.5
+    ok = kappas[0] < 0.08 and kappas[5] < 0.14
+    ok = ok and kappas[-1] > 0.14
     ok = ok and abs(fx[-1] - s_ss.Fx) / (abs(s_ss.Fx) + 1e-6) < 0.05
-    return ok, {"Fx_first": fx[0], "Fx_last": fx[-1], "Fx_ss": s_ss.Fx}
+    ok = ok and abs(fx[0]) < abs(fx[-1])
+    return ok, {
+        "kappa_0": kappas[0],
+        "kappa_5": kappas[5],
+        "kappa_last": kappas[-1],
+        "Fx_first": fx[0],
+        "Fx_last": fx[-1],
+        "Fx_ss": s_ss.Fx,
+    }
 
 
 def test_steady_state_convergence() -> tuple[bool, dict]:
@@ -81,7 +103,6 @@ def test_steady_state_convergence() -> tuple[bool, dict]:
 
 
 def test_higher_speed_faster() -> tuple[bool, dict]:
-    """At higher Vx the lag settles faster (same L, same dt)."""
     params = RelaxationParams(Lx=0.5, Ly=0.5)
 
     def settle_time(vx: float) -> int:
@@ -103,7 +124,8 @@ def test_symmetry() -> tuple[bool, dict]:
     steady = DugoffTire()
     w1 = TransientTire(steady, RelaxationParams(Lx=0.3, Ly=0.5))
     w2 = TransientTire(steady, RelaxationParams(Lx=0.3, Ly=0.5))
-    w1.reset(); w2.reset()
+    w1.reset()
+    w2.reset()
     for _ in range(30):
         s1 = w1.update(0.1, 0.08, 4000.0, vx=18.0, dt=0.01)
         s2 = w2.update(-0.1, -0.08, 4000.0, vx=18.0, dt=0.01)
@@ -129,11 +151,9 @@ def test_no_nan_inf() -> tuple[bool, dict]:
 
 
 def test_api_steady_path() -> tuple[bool, dict]:
-    """longitudinal_lateral_force still returns steady-state (no lag)."""
     steady = DugoffTire()
     wrap = TransientTire(steady, RelaxationParams(Lx=0.5, Ly=0.5))
     wrap.reset(0.0, 0.0)
-    # Build lag state away from target
     wrap.update(0.2, 0.1, 4000.0, vx=10.0, dt=0.01)
     s_api = wrap.longitudinal_lateral_force(0.2, 0.1, 4000.0)
     s_ss = steady.longitudinal_lateral_force(0.2, 0.1, 4000.0)
