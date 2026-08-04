@@ -2,20 +2,15 @@
 
 **Repository:** https://github.com/kiingMohlala/vehicledynamics
 
-## Baseline
+## Status
 
-**`v1.0-engineering-baseline`** — validated dynamics + controls (through Phase 5.5).
+| Area | Status |
+|------|--------|
+| Phase 5 controls | Frozen (`v1.0-engineering-baseline`) |
+| Phase 6 suspension kinematics | Complete |
+| **Phase 7.0 camber thrust** | ✅ Validated |
 
-## Phase 6 – Suspension Kinematics ✅ Complete
-
-| Phase | Description |
-|-------|-------------|
-| 6.0 | Geometry solver (IC ≠ midpoint) |
-| 6.1 | Wheel rate & motion ratio |
-| 6.2 | Geometry coupling (opt-in) |
-| 6.3 | Bump steer |
-| 6.4 | Camber gain (diagnostic) |
-| 6.5 | Roll center migration (diagnostic) |
+Camber from suspension can now affect tire lateral force.
 
 ## License
 
