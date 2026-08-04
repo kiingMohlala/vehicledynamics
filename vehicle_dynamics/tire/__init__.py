@@ -7,6 +7,10 @@ from .pacejka_parameters import (
     low_mu_wet,
 )
 from .factory import create_tire
+from .relaxation_parameters import RelaxationParams, disabled as relaxation_disabled
+from .relaxation_state import RelaxationState
+from .relaxation import step_relaxation
+from .transient_tire import TransientTire
 
 __all__ = [
     "DugoffTire",
@@ -18,4 +22,9 @@ __all__ = [
     "high_mu_race",
     "low_mu_wet",
     "create_tire",
+    "RelaxationParams",
+    "relaxation_disabled",
+    "RelaxationState",
+    "step_relaxation",
+    "TransientTire",
 ]
