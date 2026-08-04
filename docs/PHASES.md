@@ -1,15 +1,18 @@
 # Development Phases
 
-## Phase 5 ✅ Controls baseline (v1.0)
-## Phase 6 ✅ Suspension kinematics complete
-## Phase 7 – Tire / handling coupling
+## Phase 5 – Vehicle + Controls
 
-| Phase | Description | Status |
-|-------|-------------|--------|
-| 7.0 | Camber thrust in Dugoff | ✅ |
-| **7.1** | **Dual-track consumes camber** | ✅ **Validated** |
-| 7.2 | Handling metrics | Planned |
+| Phase | Status |
+|-------|--------|
+| 5.0–5.5 | ✅ Frozen (v1.0 baseline) |
+| **5.6 Longitudinal load transfer** | ✅ **Validated** |
 
-### Recommended next
+## Phase 6 – Suspension ✅ Complete
+## Phase 7 – Tire coupling
 
-**Phase 5.6 – Longitudinal load transfer**
+| 7.0 Camber thrust | ✅ |
+| 7.1 Dual-track camber | ✅ |
+
+### Next
+
+6.6 Nonlinear geometry · 6.7 Jacking · 7.2 Handling metrics
