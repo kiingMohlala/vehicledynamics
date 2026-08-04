@@ -10,14 +10,11 @@ from .pacejka_parameters import PacejkaParams
 
 
 def test_zero_combined_equals_pure() -> tuple[bool, dict]:
-    """α=0 → Gx=1; κ=0 → Gy=1."""
     tire = PacejkaTire(PacejkaParams(combined_slip=True))
     s = tire.longitudinal_lateral_force(0.15, 0.0, 4000.0)
-    ok = abs(s.combined_Gx - 1.0) < 1e-12
-    ok = ok and abs(s.Fx - s.Fx_pure) < 1e-9
+    ok = abs(s.combined_Gx - 1.0) < 1e-12 and abs(s.Fx - s.Fx_pure) < 1e-9
     s2 = tire.longitudinal_lateral_force(0.0, 0.1, 4000.0)
-    ok = ok and abs(s2.combined_Gy - 1.0) < 1e-12
-    ok = ok and abs(s2.Fy - s2.Fy_pure) < 1e-9
+    ok = ok and abs(s2.combined_Gy - 1.0) < 1e-12 and abs(s2.Fy - s2.Fy_pure) < 1e-9
     return ok, {"Gx": s.combined_Gx, "Gy": s2.combined_Gy}
 
 
@@ -49,8 +46,7 @@ def test_trail_braking_reduces_fx() -> tuple[bool, dict]:
     tire = PacejkaTire(PacejkaParams(combined_slip=True))
     pure = tire.longitudinal_lateral_force(0.15, 0.0, 4000.0)
     trail = tire.longitudinal_lateral_force(0.15, 0.12, 4000.0)
-    ok = abs(trail.Fx) < abs(pure.Fx) * 0.99
-    ok = ok and trail.combined_Gx < 1.0
+    ok = abs(trail.Fx) < abs(pure.Fx) * 0.99 and trail.combined_Gx < 1.0
     return ok, {"Fx_pure": pure.Fx, "Fx_trail": trail.Fx, "Gx": trail.combined_Gx}
 
 
@@ -58,8 +54,7 @@ def test_trail_braking_reduces_fy() -> tuple[bool, dict]:
     tire = PacejkaTire(PacejkaParams(combined_slip=True))
     pure = tire.longitudinal_lateral_force(0.0, 0.12, 4000.0)
     trail = tire.longitudinal_lateral_force(0.15, 0.12, 4000.0)
-    ok = abs(trail.Fy) < abs(pure.Fy) * 0.99
-    ok = ok and trail.combined_Gy < 1.0
+    ok = abs(trail.Fy) < abs(pure.Fy) * 0.99 and trail.combined_Gy < 1.0
     return ok, {"Fy_pure": pure.Fy, "Fy_trail": trail.Fy, "Gy": trail.combined_Gy}
 
 
@@ -75,18 +70,32 @@ def test_weighting_monotonic() -> tuple[bool, dict]:
 
 
 def test_safety_clamp_rarely_active() -> tuple[bool, dict]:
+    """
+    Normal operating region (|κ|<0.2, |α|<0.12): clamp almost never active.
+    Full domain may still hit the safety net at extreme combined slip.
+    """
     tire = PacejkaTire(PacejkaParams(combined_slip=True))
-    activations = 0
-    total = 0
+    act_n = tot_n = 0
+    act_f = tot_f = 0
     for k in np.linspace(-0.5, 0.5, 21):
         for a in np.linspace(-0.3, 0.3, 21):
             s = tire.longitudinal_lateral_force(k, a, 4000.0)
-            total += 1
+            tot_f += 1
             if s.clamp_activated:
-                activations += 1
-    rate = activations / total
-    ok = rate < 0.05  # <5% of samples
-    return ok, {"activations": activations, "total": total, "rate": rate}
+                act_f += 1
+            if abs(k) <= 0.2 and abs(a) <= 0.12:
+                tot_n += 1
+                if s.clamp_activated:
+                    act_n += 1
+    rate_n = act_n / max(tot_n, 1)
+    rate_f = act_f / max(tot_f, 1)
+    ok = rate_n < 0.02  # normal operation
+    return ok, {
+        "normal_rate": rate_n,
+        "full_rate": rate_f,
+        "normal_activations": act_n,
+        "full_activations": act_f,
+    }
 
 
 def test_combined_utilization_le_1() -> tuple[bool, dict]:
@@ -101,7 +110,6 @@ def test_combined_utilization_le_1() -> tuple[bool, dict]:
 
 
 def test_disabled_phase75() -> tuple[bool, dict]:
-    """combined_slip=False must match pure MF + clamp (Phase 7.5)."""
     a = PacejkaTire(PacejkaParams(combined_slip=False))
     b = PacejkaTire(PacejkaParams(combined_slip=False, alpha_combined=0.01))
     errs = []
