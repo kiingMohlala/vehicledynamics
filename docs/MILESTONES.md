@@ -1,12 +1,11 @@
 # Project Milestones
 
-## v0.7.7-phase7.7-aligning-torque (2026-08-04)
+## v0.8.0-phase8.0-beam-fem (2026-08-04)
 
-Phase 7.7 – Tire Aligning Torque (Mz): Implementation Validated
+Phase 8.0 – Beam FEM Foundation: Implementation Validated
 
-Tire subsystem: Dugoff, Pacejka, camber, relaxation, load sensitivity,
-combined-slip, self-aligning torque.
+3D Euler-Bernoulli beam solver, standalone.
 
 ## Prior
 
-v0.7.6 · v0.7.5 · v0.7.4 · v1.0-engineering-baseline
+v0.7.7 · v0.7.6 · v0.7.5 · v1.0-engineering-baseline

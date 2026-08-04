@@ -1,14 +1,9 @@
 # Development Phases
 
-## Phase 5 ✅ | Phase 6 ✅ | Phase 7 ✅
+## Phase 5–7 ✅ | Phase 8
 
 | Phase | Status |
 |-------|--------|
-| 7.0–7.6 Tire forces | ✅ |
-| **7.7 Aligning torque Mz** | ✅ **Validated** |
-
-Tire subsystem first-order complete.
-
-## Next
-
-Phase 8.0 – Flexible chassis / Phase 9.0 – Aerodynamics
+| **8.0 Beam FEM foundation** | ✅ **Validated** |
+| 8.1 Space-frame / roll-cage | Next |
+| 8.2 Mount compliance coupling | Later |
