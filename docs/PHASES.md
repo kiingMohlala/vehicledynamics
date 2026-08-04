@@ -9,6 +9,6 @@
 | 6.0 | Geometry Solver | ✅ |
 | 6.1 | Wheel Rate & Motion Ratio | ✅ |
 | 6.2 | Geometry Coupling | ✅ |
-| **6.3** | **Bump Steer** | ✅ **Validated** |
-| 6.4 | Camber gain | Next |
-| 6.5 | Roll center migration | Planned |
+| 6.3 | Bump Steer | ✅ |
+| **6.4** | **Camber Gain** | ✅ **Validated** |
+| 6.5 | Roll center migration | Next |
