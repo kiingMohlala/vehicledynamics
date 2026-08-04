@@ -11,6 +11,7 @@ from .relaxation_parameters import RelaxationParams, disabled as relaxation_disa
 from .relaxation_state import RelaxationState
 from .relaxation import step_relaxation
 from .transient_tire import TransientTire
+from .load_sensitivity import effective_mu
 
 __all__ = [
     "DugoffTire",
@@ -27,4 +28,5 @@ __all__ = [
     "RelaxationState",
     "step_relaxation",
     "TransientTire",
+    "effective_mu",
 ]
