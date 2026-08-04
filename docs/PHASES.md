@@ -6,5 +6,6 @@
 |-------|--------|
 | 7.0 Camber thrust | ✅ |
 | 7.1 Dual-track camber | ✅ |
-| **7.2 Handling metrics** | ✅ **Validated** |
-| 7.3 Pacejka | Next |
+| 7.2 Handling metrics | ✅ |
+| **7.3 Pacejka MF** | ✅ **Validated** |
+| 7.4 Relaxation length | Next |
