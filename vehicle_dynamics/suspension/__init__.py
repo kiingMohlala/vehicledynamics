@@ -24,11 +24,11 @@ from .bump_steer import compute_toe_bump, update_bump_state, BumpSteerModel
 from .camber_state import CamberGainParams, CamberState
 from .camber_gain import compute_camber_gain, update_camber_state, CamberGainModel
 from .roll_center_state import RollCenterState
-from .roll_center import (
-    RollCenterGeometry,
-    RollCenterModel,
-    compute_roll_centers,
-)
+from .roll_center import RollCenterGeometry, RollCenterModel, compute_roll_centers
+from .nonlinear_geometry import NonlinearGeometrySolver, FourCornerNonlinearGeometry
+from .jacking_state import JackingParams, JackingState
+from .jacking import compute_jacking, apply_jacking_to_loads
+from .load_transfer_feedback import JackingFeedback
 
 __all__ = [
     "Point3",
@@ -65,4 +65,11 @@ __all__ = [
     "RollCenterGeometry",
     "RollCenterModel",
     "compute_roll_centers",
+    "NonlinearGeometrySolver",
+    "FourCornerNonlinearGeometry",
+    "JackingParams",
+    "JackingState",
+    "compute_jacking",
+    "apply_jacking_to_loads",
+    "JackingFeedback",
 ]
