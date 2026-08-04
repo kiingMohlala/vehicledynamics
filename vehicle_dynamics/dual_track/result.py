@@ -1,4 +1,8 @@
-from dataclasses import dataclass
+"""Dual-track simulation result container."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
 import numpy as np
 
 
@@ -13,7 +17,6 @@ class DualTrackResult:
     delta_fl: np.ndarray
     delta_fr: np.ndarray
     pedal: np.ndarray
-    # Per-wheel arrays shape (n, 4) order FL, FR, RL, RR
     kappa: np.ndarray
     alpha: np.ndarray
     Fx: np.ndarray
@@ -21,8 +24,9 @@ class DualTrackResult:
     Fz: np.ndarray
     omega: np.ndarray
     utilization: np.ndarray
-    # Phase 5.2 brake diagnostics
-    brake_torque: np.ndarray = None   # (n, 4) commanded torque after ABS
-    abs_pressure: np.ndarray = None   # (n, 4) ABS pressure factors
-    X: np.ndarray = None
-    Y: np.ndarray = None
+    brake_torque: np.ndarray
+    abs_pressure: np.ndarray
+    X: np.ndarray
+    Y: np.ndarray
+    # Phase 7.1 – per-wheel camber used by tire [rad]
+    camber: np.ndarray = field(default_factory=lambda: np.zeros((0, 4)))

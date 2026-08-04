@@ -1,8 +1,5 @@
 """
-Fixed-step dual-track integration with optional ESC and torque vectoring.
-
-RK4 at fixed Δt. Plant physics unchanged; drive torque is additive on the
-wheel equation: Iw·ω̇ = −Fx·R − T_brake + T_drive.
+Fixed-step dual-track integration with optional ESC, TV, and camber (Phase 7.1).
 """
 
 from __future__ import annotations
@@ -19,6 +16,7 @@ from .steering import front_steer_angles
 from .normal_loads import four_wheel_normal_loads
 from .brakes import FourWheelBrakeDistributor
 from .abs_per_wheel import FourWheelABS
+from .suspension_interface import SuspensionInterface
 from ..tire.factory import TireFactory
 from ..lateral.kinematics import inertial_rates
 from ..esc.parameters import ESCParameters
@@ -42,6 +40,8 @@ class FixedStepDualTrack:
         tv_params: TVParameters = None,
         mu_wheels: np.ndarray | None = None,
         dt: float = 0.001,
+        suspension: SuspensionInterface | None = None,
+        wheel_travel_func=None,
     ):
         self.p = params or DualTrackParameters()
         self.use_abs = use_abs
@@ -67,6 +67,18 @@ class FixedStepDualTrack:
         self.tv = TorqueVectoringController(bp.L, tv_params or TVParameters())
         self.tv_params = tv_params or TVParameters()
         self.tv_diagnostics = TVDiagnostics()
+        self.suspension = suspension
+        self.wheel_travel_func = wheel_travel_func or (lambda t: np.zeros(4))
+        self._camber = np.zeros(4)
+
+    def _refresh_camber(self, t: float) -> np.ndarray:
+        if self.suspension is None:
+            self._camber = np.zeros(4)
+            return self._camber
+        z = np.asarray(self.wheel_travel_func(t), dtype=float).reshape(4)
+        self.suspension.set_wheel_travel(z)
+        self._camber = self.suspension.camber_total_array()
+        return self._camber
 
     def _steer_pair(self, delta_cmd: float):
         bp = self.p.bicycle
@@ -85,14 +97,19 @@ class FixedStepDualTrack:
     def _tire(self, kappa, alpha, Fz, i):
         mu_saved = self.tire.p.mu
         self.tire.p.mu = float(self.mu_wheels[i])
-        st = self.tire.longitudinal_lateral_force(kappa, alpha, Fz)
+        st = self.tire.longitudinal_lateral_force(
+            kappa, alpha, Fz,
+            camber_rad=float(self._camber[i]),
+        )
         self.tire.p.mu = mu_saved
         return st
 
-    def _derivatives(self, y, delta_cmd, pedal, esc_scale, abs_pressure, T_drive):
+    def _derivatives(self, y, delta_cmd, pedal, esc_scale, abs_pressure, T_drive, t=0.0):
         vx, vy, r, psi, X, Y, w_fl, w_fr, w_rl, w_rr = y
         if vx < 0.2:
             return np.zeros(10), np.zeros(4), (0.0, 0.0)
+
+        self._refresh_camber(t)
 
         bp = self.p.bicycle
         d_fl, d_fr = self._steer_pair(delta_cmd)
@@ -129,7 +146,6 @@ class FixedStepDualTrack:
         vy_dot = sum_Fy / m - vx * r
         r_dot = yaw_m / Iz
         X_dot, Y_dot = inertial_rates(vx, vy, psi)
-        # Drive increases ω; brake decreases ω
         w_dots = [
             (-Fx_body[i] * self.R - T_brake[i] + T_drive[i]) / self.Iw
             for i in range(4)
@@ -185,6 +201,7 @@ class FixedStepDualTrack:
         log_util = [np.zeros(4)]
         log_T = [np.zeros(4)]
         log_abs = [np.ones(4)]
+        log_camber = [np.zeros(4)]
         next_log = t0 + dt_out
 
         esc_scale = np.zeros(4)
@@ -212,14 +229,13 @@ class FixedStepDualTrack:
                 )
                 self.tv_diagnostics.log(t, tv_diag)
             else:
-                # Open differential drive if throttle without TV controller
                 if throttle > 1e-6:
                     T_drive = distribute_drive(throttle, self.tv_params, rear_delta_T=0.0)
                 else:
                     T_drive = np.zeros(4)
 
             _, kappas0, _ = self._derivatives(
-                y, delta_cmd, pedal, esc_scale, abs_pressure, T_drive
+                y, delta_cmd, pedal, esc_scale, abs_pressure, T_drive, t=t
             )
             if self.use_abs and (pedal > 1e-4 or np.any(esc_scale > 1e-4)):
                 abs_pressure = self.abs.update(kappas0, dt, active=True)
@@ -228,7 +244,7 @@ class FixedStepDualTrack:
 
             def f(yy):
                 dydt, _, _ = self._derivatives(
-                    yy, delta_cmd, pedal, esc_scale, abs_pressure, T_drive
+                    yy, delta_cmd, pedal, esc_scale, abs_pressure, T_drive, t=t
                 )
                 return dydt
 
@@ -252,6 +268,7 @@ class FixedStepDualTrack:
                 Fy = np.zeros(4)
                 util = np.zeros(4)
                 omegas = y[6:10]
+                self._refresh_camber(t)
                 for i in range(4):
                     Vx_b, Vy_b = wheel_body_velocity(
                         y[0], y[1], y[2], self.x_w[i], self.y_w[i]
@@ -280,6 +297,7 @@ class FixedStepDualTrack:
                 log_util.append(util)
                 log_T.append(T)
                 log_abs.append(abs_pressure.copy())
+                log_camber.append(self._camber.copy())
                 next_log += dt_out
 
         Ys = np.asarray(log_y)
@@ -300,4 +318,5 @@ class FixedStepDualTrack:
             brake_torque=np.asarray(log_T),
             abs_pressure=np.asarray(log_abs),
             X=Ys[:, 4], Y=Ys[:, 5],
+            camber=np.asarray(log_camber),
         )

@@ -1,11 +1,8 @@
 """
-Phase 5.0–5.2 – Dual-Track (4-wheel) planar vehicle model.
+Phase 5.0–7.1 – Dual-Track (4-wheel) planar vehicle model.
 
-Phase 5.1: independent front road-wheel angles (Ackermann).
-Phase 5.2: independent wheel brake torques + per-wheel ABS.
-
-RK45, lateral load-transfer feedback. Tire API unchanged.
-Optional per-wheel friction coefficients for split-μ tests.
+Phase 7.1: per-wheel camber_total from SuspensionInterface → tire camber_rad.
+Default (no suspension / zero camber) reproduces Phase 5/6.5 behaviour.
 """
 
 from __future__ import annotations
@@ -24,6 +21,7 @@ from .steering import front_steer_angles
 from .normal_loads import four_wheel_normal_loads
 from .brakes import FourWheelBrakeDistributor
 from .abs_per_wheel import FourWheelABS
+from .suspension_interface import SuspensionInterface, SuspensionInterfaceConfig
 from ..tire.factory import TireFactory
 from ..tire.dugoff import DugoffParams
 from ..lateral.kinematics import inertial_rates
@@ -35,10 +33,12 @@ class DualTrackVehicleModel:
         params: DualTrackParameters = None,
         use_abs: bool = True,
         mu_wheels: np.ndarray | None = None,
+        suspension: SuspensionInterface | None = None,
+        wheel_travel_func=None,
     ):
         """
-        mu_wheels : optional (4,) friction overrides per wheel for split-μ tests.
-                    If None, tire.p.mu is used for all wheels.
+        suspension : optional SuspensionInterface (camber → tire).
+        wheel_travel_func : callable(t) -> (4,) wheel travel [m]; default zeros.
         """
         self.p = params or DualTrackParameters()
         self.use_abs = use_abs
@@ -54,6 +54,19 @@ class DualTrackVehicleModel:
             self.mu_wheels = np.full(4, self.p.tire.mu)
         else:
             self.mu_wheels = np.asarray(mu_wheels, dtype=float).reshape(4)
+
+        self.suspension = suspension
+        self.wheel_travel_func = wheel_travel_func or (lambda t: np.zeros(4))
+        self._camber = np.zeros(4)
+
+    def _refresh_camber(self, t: float) -> np.ndarray:
+        if self.suspension is None:
+            self._camber = np.zeros(4)
+            return self._camber
+        z = np.asarray(self.wheel_travel_func(t), dtype=float).reshape(4)
+        self.suspension.set_wheel_travel(z)
+        self._camber = self.suspension.camber_total_array()
+        return self._camber
 
     def _steer_pair(self, delta_cmd: float) -> tuple[float, float]:
         bp = self.p.bicycle
@@ -74,10 +87,12 @@ class DualTrackVehicleModel:
         return tire_Fx
 
     def _tire_force(self, kappa, alpha, Fz, wheel_idx):
-        # Temporarily override mu for this wheel if split-μ is active
         mu_saved = self.tire.p.mu
         self.tire.p.mu = float(self.mu_wheels[wheel_idx])
-        st = self.tire.longitudinal_lateral_force(kappa, alpha, Fz)
+        st = self.tire.longitudinal_lateral_force(
+            kappa, alpha, Fz,
+            camber_rad=float(self._camber[wheel_idx]),
+        )
         self.tire.p.mu = mu_saved
         return st
 
@@ -103,7 +118,6 @@ class DualTrackVehicleModel:
         y0 = [vx0, 0.0, 0.0, 0.0, 0.0, 0.0, w0, w0, w0, w0]
         bp = self.p.bicycle
 
-        # Carry last ABS pressures between solver steps (approx continuous)
         abs_pressure = np.ones(4)
         last_abs_t = [t_span[0]]
 
@@ -112,6 +126,8 @@ class DualTrackVehicleModel:
             vx, vy, r, psi, X, Y, w_fl, w_fr, w_rl, w_rr = y
             if vx < 0.2:
                 return [0.0] * 10
+
+            self._refresh_camber(t)
 
             delta_cmd = float(np.clip(delta_func(t), -bp.delta_max, bp.delta_max))
             pedal = float(np.clip(pedal_func(t), 0.0, 1.0))
@@ -141,7 +157,6 @@ class DualTrackVehicleModel:
                 Fx_body.append(Fxb)
                 Fy_body.append(Fyb)
 
-            # Per-wheel ABS update (fixed-step approximation)
             dt_abs = max(t - last_abs_t[0], abs_dt)
             last_abs_t[0] = t
             if self.use_abs and pedal > 1e-4:
@@ -203,12 +218,14 @@ class DualTrackVehicleModel:
         Fy = np.zeros((n, 4))
         Fz = np.zeros((n, 4))
         util = np.zeros((n, 4))
+        camber = np.zeros((n, 4))
         brake_torque = np.zeros((n, 4))
         abs_pressure = np.zeros((n, 4))
 
-        # Replay ABS offline for logging (approximate)
         abs_log = FourWheelABS()
         for i in range(n):
+            self._refresh_camber(t[i])
+            camber[i, :] = self._camber
             d_fl, d_fr = self._steer_pair(delta[i])
             delta_fl[i], delta_fr[i] = d_fl, d_fr
             deltas = [d_fl, d_fr, 0.0, 0.0]
@@ -247,4 +264,5 @@ class DualTrackVehicleModel:
             omega=omegas, utilization=util,
             brake_torque=brake_torque, abs_pressure=abs_pressure,
             X=X, Y=Y,
+            camber=camber,
         )
