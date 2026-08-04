@@ -1,13 +1,10 @@
 # Development Phases
 
-## Phase 5 ✅ (+ 5.6 longitudinal load)
-## Phase 6 – Suspension ✅
+## Phase 5 ✅ | Phase 6 ✅ | Phase 7
 
-| 6.0–6.5 kinematics | ✅ |
-| 6.6 nonlinear geometry | ✅ |
-| **6.7 jacking forces** | ✅ **Validated** |
-
-## Phase 7 – Tire / handling
-
-| 7.0–7.1 camber coupling | ✅ |
-| 7.2 handling metrics | Next |
+| Phase | Status |
+|-------|--------|
+| 7.0 Camber thrust | ✅ |
+| 7.1 Dual-track camber | ✅ |
+| **7.2 Handling metrics** | ✅ **Validated** |
+| 7.3 Pacejka | Next |
