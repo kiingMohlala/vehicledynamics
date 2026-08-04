@@ -1,16 +1,10 @@
 """
-Steady-state Pacejka Magic Formula with combined-slip weighting (Phase 7.6).
+Steady-state Pacejka Magic Formula with combined-slip and aligning torque (Phase 7.7).
 
-Flow:
-    pure MF Fx/Fy  →  Gx(α), Gy(κ) reduction  →  safety clamp  →  TireState
+Mz = −Fy · tp
+tp = t0 · exp(−(|α|/αt)²)
 
-combined_slip=False → identical to Phase 7.5 (pure MF + clamp only).
-
-Weighting (simplified):
-    Gx = 1 / sqrt(1 + (α/αc)²)   # lateral slip reduces Fx
-    Gy = 1 / sqrt(1 + (κ/κc)²)   # longitudinal slip reduces Fy
-
-Pure braking (α=0) and pure cornering (κ=0) are unchanged.
+aligning_torque=False → Phase 7.6 forces unchanged, Mz=0.
 """
 
 from __future__ import annotations
@@ -38,6 +32,9 @@ class TireState:
     combined_Gy: float = 1.0
     Fx_pure: float = 0.0
     Fy_pure: float = 0.0
+    # Phase 7.7
+    Mz: float = 0.0
+    pneumatic_trail: float = 0.0
 
 
 def _magic_formula(
@@ -49,15 +46,19 @@ def _magic_formula(
 
 
 def combined_weight_x(alpha: float, alpha_c: float) -> float:
-    """Gx(α) ≤ 1 — lateral slip reduces available longitudinal force."""
     ac = max(float(alpha_c), 1e-6)
     return float(1.0 / np.sqrt(1.0 + (float(alpha) / ac) ** 2))
 
 
 def combined_weight_y(kappa: float, kappa_c: float) -> float:
-    """Gy(κ) ≤ 1 — longitudinal slip reduces available lateral force."""
     kc = max(float(kappa_c), 1e-6)
     return float(1.0 / np.sqrt(1.0 + (float(kappa) / kc) ** 2))
+
+
+def pneumatic_trail(alpha: float, t0: float, alpha_t: float) -> float:
+    """tp = t0 · exp(−(|α|/αt)²)"""
+    at = max(float(alpha_t), 1e-6)
+    return float(t0 * np.exp(-((abs(float(alpha)) / at) ** 2)))
 
 
 class PacejkaTire:
@@ -136,6 +137,14 @@ class PacejkaTire:
         demand = float(np.hypot(Fx_pure, Fy_pure)) + 1e-8
         lambda_ = float(min(1.0, F_max / (2.0 * demand)))
 
+        # Phase 7.7 – self-aligning torque
+        if p.aligning_torque:
+            tp = pneumatic_trail(alpha, p.trail0, p.trail_decay)
+            Mz = -Fy * tp
+        else:
+            tp = 0.0
+            Mz = 0.0
+
         return TireState(
             Fx=float(Fx),
             Fy=float(Fy),
@@ -152,4 +161,6 @@ class PacejkaTire:
             combined_Gy=float(Gy),
             Fx_pure=float(Fx_pure),
             Fy_pure=float(Fy_pure),
+            Mz=float(Mz),
+            pneumatic_trail=float(tp),
         )

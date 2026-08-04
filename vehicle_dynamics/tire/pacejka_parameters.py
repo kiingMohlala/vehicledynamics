@@ -1,4 +1,4 @@
-"""Pacejka Magic Formula parameter sets (Phases 7.3–7.6)."""
+"""Pacejka Magic Formula parameter sets (Phases 7.3–7.7)."""
 
 from __future__ import annotations
 
@@ -38,10 +38,15 @@ class PacejkaParams:
     load_sensitive: bool = False
     load_exponent: float = 0.08
 
-    # Phase 7.6 – combined-slip weighting
+    # Phase 7.6
     combined_slip: bool = True
-    alpha_combined: float = 0.15   # α_c [rad]
-    kappa_combined: float = 0.12   # κ_c [-]
+    alpha_combined: float = 0.15
+    kappa_combined: float = 0.12
+
+    # Phase 7.7 – self-aligning torque
+    aligning_torque: bool = True
+    trail0: float = 0.05       # pneumatic trail at α=0 [m]
+    trail_decay: float = 0.15  # α_t decay scale [rad]
 
 
 def default_passenger_car() -> PacejkaParams:
