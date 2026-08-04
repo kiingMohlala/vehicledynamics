@@ -11,27 +11,29 @@ from .section import Section
 
 @dataclass
 class BeamElement:
-    """
-    Two-node Euler-Bernoulli beam in 3D.
-
-    Local axes:
-      x : along beam (node i → node j)
-      y, z : principal bending axes of the section
-    """
-
     id: int
     node_i: Node
     node_j: Node
     material: Material
     section: Section
+    tag: str = ""
 
     def length(self) -> float:
         d = self.node_j.coords() - self.node_i.coords()
         L = float(np.linalg.norm(d))
         if L < 1e-12:
-            raise ValueError(f"Beam {self.id} has zero length")
+            raise ValueError(
+                f"Zero-length beam element id={self.id} "
+                f"(nodes {self.node_i.id} and {self.node_j.id})"
+            )
         return L
 
     def direction(self) -> np.ndarray:
         d = self.node_j.coords() - self.node_i.coords()
-        return d / np.linalg.norm(d)
+        n = np.linalg.norm(d)
+        if n < 1e-12:
+            raise ValueError(f"Zero-length beam {self.id}")
+        return d / n
+
+    def mass(self) -> float:
+        return self.material.rho * self.section.A * self.length()
