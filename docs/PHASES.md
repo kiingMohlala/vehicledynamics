@@ -4,11 +4,8 @@
 
 | Phase | Status |
 |-------|--------|
-| 7.0 Camber thrust | ✅ |
-| 7.1 Dual-track camber | ✅ |
-| 7.2 Handling metrics | ✅ |
-| 7.3 Pacejka MF | ✅ |
-| **7.4 Relaxation length** | ✅ **Validated** |
+| 7.0–7.4 Tire core + relaxation | ✅ |
+| **7.5 Load-sensitive friction** | ✅ **Validated** |
 
 ## Next
 
