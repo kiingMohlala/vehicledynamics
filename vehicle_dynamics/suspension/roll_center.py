@@ -4,6 +4,9 @@ Phase 6.5 – Dynamic roll-center migration.
 Displaces outer hardpoints with wheel travel, then recomputes instant center
 and roll-center height using the Phase 6.0 geometric construction.
 
+When arms become parallel (IC at infinity), falls back to the design-position
+RC for that corner so results remain finite.
+
 Diagnostic only: no jacking forces, no load-transfer feedback.
 """
 
@@ -25,8 +28,8 @@ from .roll_center_state import RollCenterState
 
 def displace_corner(hp: WishboneHardpoints, dz: float) -> WishboneHardpoints:
     """
-    Approximate wheel bump by vertically shifting outer upright attachments,
-    wheel center, and contact patch. Inner pivots stay fixed (body side).
+    Approximate wheel bump by vertically shifting outer upright attachments
+    and wheel center. Contact patch stays on ground (z=0). Inner pivots fixed.
     """
     dz = float(dz)
 
@@ -44,7 +47,6 @@ def displace_corner(hp: WishboneHardpoints, dz: float) -> WishboneHardpoints:
         tierod_outer=up(hp.tierod_outer),
         wheel_center=up(hp.wheel_center),
         contact_patch=Point3(hp.contact_patch.x, hp.contact_patch.y, 0.0),
-        # contact stays on ground; scrub geometry still uses upright axis
     )
 
 
@@ -80,7 +82,7 @@ class RollCenterGeometry:
         if self.fr is None:
             self.fr = mirror_corner(self.fl)
         if self.rl is None:
-            self.rl = default_front_left()  # illustrative rear copy
+            self.rl = default_front_left()
         if self.rr is None:
             self.rr = mirror_corner(self.rl)
 
@@ -95,10 +97,13 @@ def compute_roll_centers(
     wheel_travel : (4,) [m] FL, FR, RL, RR  (+ = compression / wheel up)
 
     Front RC = average of left/right corner RC heights after displacement.
-    Rear RC  = same for rear corners.
+    Parallel-arm corners fall back to design RC (finite).
     """
     geometry = geometry or RollCenterGeometry()
     z = np.asarray(wheel_travel, dtype=float).reshape(4)
+
+    static_hp = [geometry.fl, geometry.fr, geometry.rl, geometry.rr]
+    rc_static = np.array([corner_roll_center_z(h) for h in static_hp])
 
     corners_hp = [
         displace_corner(geometry.fl, z[0]),
@@ -106,14 +111,16 @@ def compute_roll_centers(
         displace_corner(geometry.rl, z[2]),
         displace_corner(geometry.rr, z[3]),
     ]
-    static_hp = [geometry.fl, geometry.fr, geometry.rl, geometry.rr]
 
-    rc = np.array([corner_roll_center_z(h) for h in corners_hp])
-    rc_static = np.array([corner_roll_center_z(h) for h in static_hp])
-
+    rc = np.zeros(4)
     ic_y = np.full(4, np.nan)
     ic_z = np.full(4, np.nan)
     for i, h in enumerate(corners_hp):
+        val = corner_roll_center_z(h)
+        if not np.isfinite(val):
+            # parallel arms / IC at infinity → keep design RC
+            val = rc_static[i]
+        rc[i] = val
         ic = corner_ic_yz(h)
         if ic is not None:
             ic_y[i], ic_z[i] = ic
