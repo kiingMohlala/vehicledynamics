@@ -2,7 +2,7 @@
 Steady-state Pacejka Magic Formula with combined-slip weighting (Phase 7.6).
 
 Flow:
-    pure MF Fx/Fy  →  Gx(α), Gy(κ) reduction  →  safety clamp  →  TireState
+    pure MF Fx/Fy  →  Gx(α,κ), Gy(κ,α) reduction  →  safety clamp  →  TireState
 
 combined_slip=False → identical to Phase 7.5 (pure MF + clamp only).
 """
@@ -28,7 +28,6 @@ class TireState:
     saturated: bool
     clamp_activated: bool = False
     clamp_scale: float = 1.0
-    # Phase 7.6 diagnostics (optional)
     combined_Gx: float = 1.0
     combined_Gy: float = 1.0
     Fx_pure: float = 0.0
@@ -43,16 +42,24 @@ def _magic_formula(
     return float(D * np.sin(C * np.arctan(Bx - E * (Bx - np.arctan(Bx)))) + Sv)
 
 
-def combined_weight_x(alpha: float, alpha_c: float) -> float:
-    """Gx(α) ≤ 1 — lateral slip reduces available longitudinal force."""
+def combined_weight_x(alpha: float, alpha_c: float, kappa: float = 0.0, kappa_c: float = 0.12) -> float:
+    """
+    Gx ≤ 1: lateral slip reduces longitudinal force; mild extra reduction when κ also large.
+    Gx = 1 / sqrt(1 + (α/αc)² + 0.25·(κ/κc)²)
+    """
     ac = max(float(alpha_c), 1e-6)
-    return float(1.0 / np.sqrt(1.0 + (float(alpha) / ac) ** 2))
-
-
-def combined_weight_y(kappa: float, kappa_c: float) -> float:
-    """Gy(κ) ≤ 1 — longitudinal slip reduces available lateral force."""
     kc = max(float(kappa_c), 1e-6)
-    return float(1.0 / np.sqrt(1.0 + (float(kappa) / kc) ** 2))
+    return float(1.0 / np.sqrt(1.0 + (float(alpha) / ac) ** 2 + 0.25 * (float(kappa) / kc) ** 2))
+
+
+def combined_weight_y(kappa: float, kappa_c: float, alpha: float = 0.0, alpha_c: float = 0.15) -> float:
+    """
+    Gy ≤ 1: longitudinal slip reduces lateral force; mild extra reduction when α also large.
+    Gy = 1 / sqrt(1 + (κ/κc)² + 0.25·(α/αc)²)
+    """
+    kc = max(float(kappa_c), 1e-6)
+    ac = max(float(alpha_c), 1e-6)
+    return float(1.0 / np.sqrt(1.0 + (float(kappa) / kc) ** 2 + 0.25 * (float(alpha) / ac) ** 2))
 
 
 class PacejkaTire:
@@ -104,8 +111,8 @@ class PacejkaTire:
         Fy_pure = self.lateral_force(alpha, Fz, camber_rad=camber_rad)
 
         if p.combined_slip:
-            Gx = combined_weight_x(alpha, p.alpha_combined)
-            Gy = combined_weight_y(kappa, p.kappa_combined)
+            Gx = combined_weight_x(alpha, p.alpha_combined, kappa, p.kappa_combined)
+            Gy = combined_weight_y(kappa, p.kappa_combined, alpha, p.alpha_combined)
         else:
             Gx, Gy = 1.0, 1.0
 
