@@ -1,0 +1,44 @@
+{
+  "project": "vehicledynamics",
+  "phase": "3.3",
+  "baseline_id": "phase3-braking-abs-dugoff-freeze",
+  "tag": "v0.3.3-phase3-frozen",
+  "date": "2026-07-31",
+  "description": "Validated braking dynamics, ABS controller, and Standard Dugoff longitudinal tire model before combined-slip extension.",
+  "simulation": {
+    "initial_speed_kmh": 80,
+    "initial_speed_ms": 22.22,
+    "surface": "dry_asphalt",
+    "timestep_s": 0.001,
+    "integrator": "explicit Euler (wheel + vehicle)"
+  },
+  "vehicle": {
+    "mass_kg": 1400.0,
+    "wheelbase_m": 2.70,
+    "cg_height_m": 0.45,
+    "cg_front_ratio": 0.55,
+    "wheel_radius_m": 0.33
+  },
+  "brake": {
+    "front_bias": 0.63,
+    "max_front_torque_Nm": 4500.0,
+    "max_rear_torque_Nm": 2800.0
+  },
+  "tire_models": [
+    "hard_saturation",
+    "simplified_dugoff",
+    "standard_dugoff"
+  ],
+  "abs": {
+    "target_slip": 0.18,
+    "slip_threshold_high": 0.22,
+    "slip_threshold_low": 0.12,
+    "valve_tau_s": 0.015
+  },
+  "known_limitations": [
+    "Pure longitudinal tire model only (no combined slip yet)",
+    "No experimental tire data validation",
+    "Generic tire parameters",
+    "No relaxation length / transient tire dynamics"
+  ]
+}

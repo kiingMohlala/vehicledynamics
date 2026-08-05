@@ -1,0 +1,28 @@
+{
+  "phase": "5.5",
+  "title": "System Integration & Benchmark",
+  "status": "PASS",
+  "n_pass": 12,
+  "n_total": 12,
+  "freeze_tag": "v0.5.5-phase5.5-system-benchmark",
+  "freeze_date": "2026-08-03",
+  "scenarios": [
+    {"name": "step_steer", "passed": true},
+    {"name": "sine_steer", "passed": true},
+    {"name": "double_lane_change", "passed": true},
+    {"name": "emergency_brake", "passed": true, "stop_dist_m": 56.2},
+    {"name": "split_mu_brake", "passed": true, "stop_dist_m": 48.4},
+    {"name": "trail_brake", "passed": true},
+    {"name": "straight_accel", "passed": true},
+    {"name": "corner_exit", "passed": true},
+    {"name": "split_mu_launch", "passed": true},
+    {"name": "power_on_oversteer", "passed": true},
+    {"name": "lift_off_oversteer", "passed": true},
+    {"name": "abs_esc_tv_combined", "passed": true}
+  ],
+  "invariants": {
+    "max_utilization": 1.0,
+    "no_nan_inf": true,
+    "max_peak_yaw_rad_s": 2.589
+  }
+}
