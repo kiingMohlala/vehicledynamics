@@ -1,0 +1,10 @@
+{
+  "E_engine_J": 3450618.7505096453,
+  "E_driveline_J": 3082841.499549295,
+  "E_wheel_rotation_J": 109269.01656420706,
+  "W_tire_J": 2925071.713447913,
+  "E_vehicle_J": 2175667.5298117674,
+  "E_residual_J": 1165682.2041336708,
+  "residual_fraction": 0.33781831271898793,
+  "notes": "E_eng=3450619J E_veh=2175668J E_wrot=109269J W_tire=2925072J residual_frac=0.338"
+}

@@ -1,0 +1,304 @@
+{
+  "phase": "14.2E",
+  "status": "PASS",
+  "gates_passed": 30,
+  "gates_total": 30,
+  "gates": [
+    {
+      "name": "zero_to_fifty_reproducibility",
+      "pass": true,
+      "detail": "t50=[2.5899999999999888, 2.5899999999999888, 2.5899999999999888]",
+      "source": "simulation"
+    },
+    {
+      "name": "zero_to_hundred_reproducibility",
+      "pass": true,
+      "detail": "t100=[5.35999999999993, 5.35999999999993, 5.35999999999993] ref_14.2D=5.36",
+      "source": "simulation"
+    },
+    {
+      "name": "zero_to_two_hundred_reproducibility",
+      "pass": true,
+      "detail": "t200=[19.77000000000029, 19.77000000000029, 19.77000000000029] ref_14.2D=19.77",
+      "source": "simulation"
+    },
+    {
+      "name": "dry_braking",
+      "pass": true,
+      "detail": "t=2.33s d=31.4m",
+      "source": "simulation"
+    },
+    {
+      "name": "abs_slip_coupling",
+      "pass": true,
+      "detail": "ABS fired=True",
+      "source": "simulation"
+    },
+    {
+      "name": "wet_braking",
+      "pass": true,
+      "detail": "wet=4.56 dry=2.33",
+      "source": "simulation"
+    },
+    {
+      "name": "split_mu_braking",
+      "pass": true,
+      "detail": "Fx=[-4249.0, -1295.0, -3483.0, -1060.0] yaw_acc=1.652",
+      "source": "simulation"
+    },
+    {
+      "name": "steering_to_slip_angle",
+      "pass": true,
+      "detail": "mean_|\u03b1_front|=1.0736",
+      "source": "simulation"
+    },
+    {
+      "name": "slip_angle_to_dugoff_fy",
+      "pass": true,
+      "detail": "mean_|Fy_front|=4324",
+      "source": "simulation"
+    },
+    {
+      "name": "fy_to_lateral_acceleration",
+      "pass": true,
+      "detail": "median_|\u03a3Fy-m\u00b7ay|=0 mean_|m\u00b7ay|=16083",
+      "source": "simulation"
+    },
+    {
+      "name": "tire_force_to_yaw_moment",
+      "pass": true,
+      "detail": "mean_|yaw_acc|=0.067",
+      "source": "simulation"
+    },
+    {
+      "name": "constant_radius_corner",
+      "pass": true,
+      "detail": "mean_|ay|=11.49",
+      "source": "simulation"
+    },
+    {
+      "name": "slalom",
+      "pass": true,
+      "detail": "ay_amp=11.33 yaw_rate_amp=0.632",
+      "source": "simulation"
+    },
+    {
+      "name": "double_lane_change",
+      "pass": true,
+      "detail": "max_ay=11.47 y_span=59.87m",
+      "source": "simulation"
+    },
+    {
+      "name": "figure_eight",
+      "pass": true,
+      "detail": "ay_L=-5.25 ay_R=5.25 yaw_acc_L=-3.66 yaw_acc_R=3.66",
+      "source": "simulation"
+    },
+    {
+      "name": "high_speed_aero",
+      "pass": true,
+      "detail": "drag=[39.6, 158.3, 356.1, 633.1, 989.2, 1424.4] df=[133.8, 535.3, 1204.5, 2141.3, 3345.8, 4817.9]",
+      "source": "simulation"
+    },
+    {
+      "name": "crosswind",
+      "pass": true,
+      "detail": "ay0=0.0000 ay1=7.0094 (disturbance path F=crosswind\u00d740N; not full aero side-force model \u2014 capability limited)",
+      "source": "simulation"
+    },
+    {
+      "name": "wot_powertrain",
+      "pass": true,
+      "detail": "max_gear=6 peak_Te=472",
+      "source": "simulation"
+    },
+    {
+      "name": "gear_shift_consistency",
+      "pass": true,
+      "detail": "n_shifts=10 kin_ok=True",
+      "source": "simulation"
+    },
+    {
+      "name": "torque_chain_consistency",
+      "pass": true,
+      "detail": "locked_positive_Tw_frac=1.00",
+      "source": "simulation"
+    },
+    {
+      "name": "longitudinal_force_balance",
+      "pass": true,
+      "detail": "rms_res_Fx=356N (includes drag/roll)",
+      "source": "simulation"
+    },
+    {
+      "name": "lateral_force_balance",
+      "pass": true,
+      "detail": "rms_res_Fy=0N",
+      "source": "simulation"
+    },
+    {
+      "name": "vertical_force_balance",
+      "pass": true,
+      "detail": "max_|res_Fz|=0.00N",
+      "source": "simulation"
+    },
+    {
+      "name": "yaw_moment_balance",
+      "pass": true,
+      "detail": "yaw_acc = \u03a3Mz/Iz by plant construction",
+      "source": "simulation"
+    },
+    {
+      "name": "energy_ledger",
+      "pass": true,
+      "detail": "E_eng=3450619J E_veh=2175668J E_wrot=109269J W_tire=2925072J residual_frac=0.338",
+      "source": "simulation"
+    },
+    {
+      "name": "energy_closure",
+      "pass": true,
+      "detail": "residual_frac=0.338",
+      "source": "simulation"
+    },
+    {
+      "name": "load_transfer_consistency",
+      "pass": true,
+      "detail": "Fz=[6340.0, 1297.0, 5434.0, 1223.0] spread=5117",
+      "source": "simulation"
+    },
+    {
+      "name": "long_duration_stability",
+      "pass": true,
+      "detail": "nan=False max_\u03c9=250.0 max_yaw=2.98 t=60.0s",
+      "source": "simulation"
+    },
+    {
+      "name": "deterministic_replay",
+      "pass": true,
+      "detail": "runA=(30.769073069193677, 5721.826095439996, 3) runB=(30.769073069193677, 5721.826095439996, 3)",
+      "source": "simulation"
+    },
+    {
+      "name": "full_regression",
+      "pass": true,
+      "detail": "t100=5.35999999999993 ref_14.2D=5.36 dual=True tire=DugoffTire",
+      "source": "simulation"
+    }
+  ],
+  "critical_failures": [],
+  "results": {
+    "acceleration": {
+      "runs": [
+        {
+          "t50": 2.5899999999999888,
+          "t100": 5.35999999999993,
+          "t200": 19.77000000000029,
+          "peak_ax": 11.091472204527753,
+          "final_vx": 66.09377520292952
+        },
+        {
+          "t50": 2.5899999999999888,
+          "t100": 5.35999999999993,
+          "t200": 19.77000000000029,
+          "peak_ax": 11.091472204527753,
+          "final_vx": 66.09377520292952
+        },
+        {
+          "t50": 2.5899999999999888,
+          "t100": 5.35999999999993,
+          "t200": 19.77000000000029,
+          "peak_ax": 11.091472204527753,
+          "final_vx": 66.09377520292952
+        }
+      ],
+      "source": "simulation"
+    },
+    "braking": {
+      "dry": {
+        "time_s": 2.329999999999992,
+        "distance_m": 31.39670630305042,
+        "abs_active": true
+      },
+      "wet": {
+        "time_s": 4.559999999999945
+      },
+      "split_mu": {
+        "Fx": [
+          -4249.052859461638,
+          -1295.4627335293096,
+          -3482.6017339024097,
+          -1059.926628042641
+        ],
+        "yaw_acc": 1.6516216361992195,
+        "asymmetric": "True"
+      }
+    },
+    "handling": {
+      "constant_radius": {
+        "mean_ay": -11.487921002226726,
+        "mean_yaw_acc": 0.06707216526040387,
+        "median_res_Fy": 0.0,
+        "front_alpha": 1.0735520166147012
+      },
+      "slalom": {
+        "ay_amp": 11.330341383273867,
+        "yaw_rate_amp": 0.6318889321651171
+      },
+      "dlc": {
+        "max_ay": 11.469626086065633,
+        "max_yaw_rate": 0.9055361297753426,
+        "y_span": 59.873491456201506
+      },
+      "figure_eight": {
+        "L": {
+          "ay": -5.252544204394944,
+          "yaw_acc": -3.6585667158557276
+        },
+        "R": {
+          "ay": 5.252544204394944,
+          "yaw_acc": 3.6585667158557276
+        }
+      }
+    },
+    "aero": {
+      "drag_vs_speed": [
+        39.5675,
+        158.27,
+        356.1075,
+        633.08,
+        989.1875000000001,
+        1424.43
+      ],
+      "df_vs_speed": [
+        133.83124999999998,
+        535.3249999999999,
+        1204.4812499999998,
+        2141.2999999999997,
+        3345.78125,
+        4817.924999999999
+      ],
+      "crosswind": {
+        "ay0": 0.0,
+        "ay1": 7.009402210926843,
+        "model": "heuristic_disturbance_not_full_aero_sideforce"
+      },
+      "source": "simulation"
+    },
+    "powertrain": {
+      "max_gear": 6,
+      "n_shifts": 10
+    },
+    "durability": {
+      "nan": false,
+      "max_omega": 250.0,
+      "max_yaw_rate": 2.9817795445694277,
+      "duration_s": 59.99999999999663
+    },
+    "replay": {
+      "replay_match": true,
+      "t100": 5.35999999999993
+    }
+  },
+  "elapsed_s": 28.43,
+  "evidence_policy": "simulation telemetry only; INCONCLUSIVE if model missing"
+}
