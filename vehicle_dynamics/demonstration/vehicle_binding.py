@@ -49,6 +49,16 @@ def historical_demonstrator_config() -> SimulationConfig:
         drive_split_front=0.35,
         aero_enabled=True,
         seed=0,
+        tire_cx=100000.0,
+        tire_cy=90000.0,
+        h_cg=0.45,
+        brake_torque_max=2800.0,
+        track_rear=1.55 * 0.98,
+        a_fraction=0.45,
+        aero_cd=0.34,
+        aero_cl_front=-0.45,
+        aero_cl_rear=-0.70,
+        aero_frontal_area=1.90,
     )
 
 
@@ -93,9 +103,15 @@ class BoundVehicle:
         checks = [
             (abs(c.mass - 1100.0) < 1.0, f"mass={c.mass} want 1100"),
             (abs(c.peak_power_kw - 750.0) < 1.0, f"power={c.peak_power_kw} want 750"),
-            (c.drive_split_front > 0.0, f"drive_split={c.drive_split_front} want AWD>0"),
+            (abs(c.drive_split_front - 0.35) < 1e-6, f"drive_split={c.drive_split_front} want 0.35"),
             (c.aero_enabled is True, f"aero_enabled={c.aero_enabled}"),
             (c.use_dual_track is True, f"dual_track={c.use_dual_track}"),
+            (abs(c.mu_tire - 1.15) < 1e-6, f"mu={c.mu_tire} want 1.15"),
+            (abs(c.wheel_radius - 0.33) < 1e-6, f"r={c.wheel_radius} want 0.33"),
+            (abs(c.final_drive - 3.9) < 1e-6, f"fd={c.final_drive} want 3.9"),
+            (c.abs_enabled is True, f"abs={c.abs_enabled}"),
+            (abs(getattr(c, "tire_cx", 0) - 100000.0) < 1.0, f"Cx={getattr(c,'tire_cx',None)}"),
+            (abs(getattr(c, "tire_cy", 0) - 90000.0) < 1.0, f"Cy={getattr(c,'tire_cy',None)}"),
         ]
         fails = [msg for ok, msg in checks if not ok]
         return (len(fails) == 0, "; ".join(fails) if fails else "ok")
@@ -197,7 +213,7 @@ def bind_authoritative_hypercar(
         mass=float(definition.mass.total_mass_kg),
         Iz=float(definition.mass.Iz_kgm2),
         wheelbase=float(geo.wheelbase_m),
-        track=float(0.5 * (geo.track_front_m + geo.track_rear_m)),
+        track=float(geo.track_front_m),
         wheel_radius=float(tire.radius_m),
         CdA=float(definition.subsystems.aero.Cd * definition.subsystems.aero.frontal_area_m2),
         controls_enabled=True,
@@ -215,7 +231,17 @@ def bind_authoritative_hypercar(
         mu_tire=float(tire.mu),
         use_dual_track=True,
         abs_enabled=bool(brakes.abs_enabled),
-        drive_split_front=0.35,  # AWD — explicit; no silent RWD
+        drive_split_front=0.35,  # AWD authoritative policy
+        tire_cx=float(tire.Cx),
+        tire_cy=float(tire.Cy),
+        h_cg=float(geo.h_cg_m),
+        brake_torque_max=float(brakes.max_torque_Nm),
+        track_rear=float(geo.track_rear_m),
+        a_fraction=float(geo.a_m / geo.wheelbase_m) if geo.wheelbase_m > 0 else 0.45,
+        aero_cd=float(definition.subsystems.aero.Cd),
+        aero_cl_front=float(definition.subsystems.aero.Cl_front),
+        aero_cl_rear=float(definition.subsystems.aero.Cl_rear),
+        aero_frontal_area=float(definition.subsystems.aero.frontal_area_m2),
     )
 
     provenance = {
@@ -232,6 +258,11 @@ def bind_authoritative_hypercar(
         "aero_enabled": "AeroConfigBlock.enabled → SimulationConfig.aero_enabled",
         "drive_split_front": "AWD policy 0.35 → SimulationConfig.drive_split_front",
         "use_dual_track": "authoritative plant policy → True",
+        "tire_cx": "TireConfig.Cx → SimulationConfig.tire_cx → DualTrackConfig.tire_cx → DugoffTire",
+        "tire_cy": "TireConfig.Cy → SimulationConfig.tire_cy → DualTrackConfig.tire_cy → DugoffTire",
+        "h_cg": "GeometryConfig.h_cg_m → SimulationConfig.h_cg → DualTrackConfig.h_cg",
+        "brake_torque_max": "BrakeConfig.max_torque_Nm → SimulationConfig → DualTrackConfig",
+        "aero_cd": "AeroConfigBlock.Cd → SimulationConfig.aero_cd → AeroConfig.coeffs",
     }
 
     fp_payload = {

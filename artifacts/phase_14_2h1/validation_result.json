@@ -1,0 +1,228 @@
+{
+  "phase": "14.2H.1",
+  "status": "PASS",
+  "gates_passed": 13,
+  "gates_total": 13,
+  "gates": [
+    {
+      "name": "runtime_provenance_complete",
+      "pass": true,
+      "detail": "matched=18/18"
+    },
+    {
+      "name": "runtime_awd_authority",
+      "pass": true,
+      "detail": "cfg=0.35 plant=0.35 T_f=700 T_r=1300 split_rt=0.350"
+    },
+    {
+      "name": "runtime_tire_parameter_authority",
+      "pass": true,
+      "detail": "Cx=[100000.0, 100000.0, 100000.0, 100000.0] Cy=[90000.0, 90000.0, 90000.0, 90000.0] mu=[1.15, 1.15, 1.15, 1.15]"
+    },
+    {
+      "name": "runtime_brake_parameter_authority",
+      "pass": true,
+      "detail": "Tmax=2800.0 abs=True"
+    },
+    {
+      "name": "abs_runtime_pressure_authority",
+      "pass": true,
+      "detail": "std=0.318 min=0.150"
+    },
+    {
+      "name": "runtime_powertrain_parameter_authority",
+      "pass": true,
+      "detail": "peak_tq=1591.5 expect\u22481591.5 fd=3.9 P=750.0"
+    },
+    {
+      "name": "runtime_aero_parameter_authority",
+      "pass": true,
+      "detail": "Cd=0.34 Clf=-0.55 Clr=-0.85"
+    },
+    {
+      "name": "aero_dynamics_authority",
+      "pass": true,
+      "detail": "ax_on=-7.531 ax_off=-6.505"
+    },
+    {
+      "name": "runtime_geometry_parameter_authority",
+      "pass": true,
+      "detail": "h_cg=0.4 L=2.700 tf=1.65 tr=1.62"
+    },
+    {
+      "name": "no_authority_fallback",
+      "pass": true,
+      "detail": "Definition\u2192Config\u2192Plant chain closed for mass/\u03bc/Cx/Cy/r/split/brake"
+    },
+    {
+      "name": "historical_regression",
+      "pass": true,
+      "detail": "t100=5.35999999999993 t200=19.77000000000029"
+    },
+    {
+      "name": "authoritative_hypercar_replay",
+      "pass": true,
+      "detail": "t100=3.1299999999999772 t200=8.309999999999867 mass=1100.0 P=750.0"
+    },
+    {
+      "name": "identity_not_historical",
+      "pass": true,
+      "detail": "plant_mass=1100.0"
+    }
+  ],
+  "provenance_table": [
+    {
+      "parameter": "mass",
+      "definition": 1100.0,
+      "simulation_config": 1100.0,
+      "runtime_plant": 1100.0,
+      "match": true
+    },
+    {
+      "parameter": "mu",
+      "definition": 1.15,
+      "simulation_config": 1.15,
+      "runtime_plant": 1.15,
+      "match": true
+    },
+    {
+      "parameter": "tire_cx",
+      "definition": 100000.0,
+      "simulation_config": 100000.0,
+      "runtime_plant": 100000.0,
+      "match": true
+    },
+    {
+      "parameter": "tire_cy",
+      "definition": 90000.0,
+      "simulation_config": 90000.0,
+      "runtime_plant": 90000.0,
+      "match": true
+    },
+    {
+      "parameter": "wheel_radius",
+      "definition": 0.33,
+      "simulation_config": 0.33,
+      "runtime_plant": 0.33,
+      "match": true
+    },
+    {
+      "parameter": "drive_split_front",
+      "definition": 0.35,
+      "simulation_config": 0.35,
+      "runtime_plant": 0.35,
+      "match": true
+    },
+    {
+      "parameter": "brake_torque_max",
+      "definition": 2800.0,
+      "simulation_config": 2800.0,
+      "runtime_plant": 2800.0,
+      "match": true
+    },
+    {
+      "parameter": "h_cg",
+      "definition": 0.4,
+      "simulation_config": 0.4,
+      "runtime_plant": 0.4,
+      "match": true
+    },
+    {
+      "parameter": "wheelbase",
+      "definition": 2.7,
+      "simulation_config": 2.7,
+      "runtime_plant": 2.7,
+      "match": true
+    },
+    {
+      "parameter": "track_front",
+      "definition": 1.65,
+      "simulation_config": 1.65,
+      "runtime_plant": 1.65,
+      "match": true
+    },
+    {
+      "parameter": "track_rear",
+      "definition": 1.62,
+      "simulation_config": 1.62,
+      "runtime_plant": 1.62,
+      "match": true
+    },
+    {
+      "parameter": "abs_enabled",
+      "definition": 1.0,
+      "simulation_config": 1.0,
+      "runtime_plant": 1.0,
+      "match": true
+    },
+    {
+      "parameter": "DugoffTire.Cx[FL..RR]",
+      "definition": 100000.0,
+      "simulation_config": 100000.0,
+      "runtime_plant": [
+        100000.0,
+        100000.0,
+        100000.0,
+        100000.0
+      ],
+      "match": true
+    },
+    {
+      "parameter": "DugoffTire.Cy[FL..RR]",
+      "definition": 90000.0,
+      "simulation_config": 90000.0,
+      "runtime_plant": [
+        90000.0,
+        90000.0,
+        90000.0,
+        90000.0
+      ],
+      "match": true
+    },
+    {
+      "parameter": "engine.peak_torque",
+      "definition": 1591.5,
+      "simulation_config": 1591.5494309189532,
+      "runtime_plant": 1591.5494309189532,
+      "match": true
+    },
+    {
+      "parameter": "final_drive",
+      "definition": 3.9,
+      "simulation_config": 3.9,
+      "runtime_plant": 3.9,
+      "match": true
+    },
+    {
+      "parameter": "gear_ratios",
+      "definition": "[0,3.5,2.2,1.6,1.2,1.0,0.85]",
+      "simulation_config": "default_ratios(final_drive)",
+      "runtime_plant": [
+        0.0,
+        3.5,
+        2.2,
+        1.6,
+        1.2,
+        1.0,
+        0.85
+      ],
+      "match": true
+    },
+    {
+      "parameter": "aero_coeffs",
+      "definition": "Cd=0.34 Clf=-0.55 Clr=-0.85",
+      "simulation_config": "Cd=0.34 Clf=-0.55 Clr=-0.85",
+      "runtime_plant": "Cd=0.34 Clf=-0.55 Clr=-0.85",
+      "match": true
+    }
+  ],
+  "historical": {
+    "t100": 5.35999999999993,
+    "t200": 19.77000000000029
+  },
+  "hypercar": {
+    "t100": 3.1299999999999772,
+    "t200": 8.309999999999867,
+    "fingerprint": "d840596e4dbd5600"
+  }
+}

@@ -61,6 +61,17 @@ class SimulationConfig:
     use_dual_track: bool = True  # Phase 14.2C authoritative plant
     abs_enabled: bool = True
     drive_split_front: float = 0.35
+    # Phase 14.2H.1 — explicit plant binding (no silent DualTrack defaults)
+    tire_cx: float = 100000.0
+    tire_cy: float = 90000.0
+    h_cg: float = 0.45
+    brake_torque_max: float = 2800.0
+    track_rear: float = 0.0  # 0 → derive as track * 0.98
+    a_fraction: float = 0.45  # CG to front / wheelbase
+    aero_cd: float = 0.34
+    aero_cl_front: float = -0.45
+    aero_cl_rear: float = -0.70
+    aero_frontal_area: float = 1.90
 
 
 @dataclass
@@ -125,19 +136,39 @@ class Simulation:
             )
         )
         self.aero_cfg = AeroConfig(enabled=self.cfg.aero_enabled)
+        # Phase 14.2H.1: bind aero coefficients from SimulationConfig when present
+        if hasattr(self.cfg, "aero_cd"):
+            from vehicle_dynamics.aerodynamics.coefficients import AeroCoefficients
+            self.aero_cfg.coeffs = AeroCoefficients(
+                Cd=float(self.cfg.aero_cd),
+                Cl_front=float(getattr(self.cfg, "aero_cl_front", -0.45)),
+                Cl_rear=float(getattr(self.cfg, "aero_cl_rear", -0.70)),
+            )
+            self.aero_cfg.frontal_area = float(getattr(self.cfg, "aero_frontal_area", 1.90))
+            self.aero_cfg.cg_height = float(getattr(self.cfg, "h_cg", 0.45))
+            self.aero_cfg.wheelbase = float(self.cfg.wheelbase)
+            self.aero_cfg.track = float(self.cfg.track)
         self._last_strategy = None
         self.dual_track = None
         if self.cfg.use_dual_track:
             L = float(self.cfg.wheelbase)
+            a_frac = float(getattr(self.cfg, "a_fraction", 0.45) or 0.45)
+            track_r = float(getattr(self.cfg, "track_rear", 0.0) or 0.0)
+            if track_r <= 0.0:
+                track_r = float(self.cfg.track) * 0.98
             self.dual_track = DualTrackPlant(DualTrackConfig(
                 mass=self.cfg.mass,
                 Iz=self.cfg.Iz,
-                a=0.45 * L,
-                b=0.55 * L,
+                a=a_frac * L,
+                b=(1.0 - a_frac) * L,
                 track_f=self.cfg.track,
-                track_r=self.cfg.track * 0.98,
+                track_r=track_r,
+                h_cg=float(getattr(self.cfg, "h_cg", 0.45)),
                 wheel_radius=self.cfg.wheel_radius,
                 mu=self.cfg.mu_tire,
+                tire_cx=float(getattr(self.cfg, "tire_cx", 100000.0)),
+                tire_cy=float(getattr(self.cfg, "tire_cy", 90000.0)),
+                brake_torque_max=float(getattr(self.cfg, "brake_torque_max", 2800.0)),
                 abs_enabled=self.cfg.abs_enabled,
                 drive_split_front=self.cfg.drive_split_front,
             ))
