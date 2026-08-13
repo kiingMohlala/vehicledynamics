@@ -46,15 +46,18 @@ class Clutch:
         locked = False
         if e < 0.02 or T_max < 1e-9:
             T = 0.0
-        elif e > 0.98 and abs(w_slip) < 2.0:
+        elif e > 0.85 and abs(w_slip) < 18.0:
+            # Expanded static-friction region: transmit engine torque when nearly matched.
+            # Prevents numerical slip-sign chatter from reversing driveline torque under load.
             T = float(np.clip(engine_torque, -T_max, T_max))
-            locked = abs(engine_torque) <= T_max + 1e-6
+            locked = abs(engine_torque) <= T_max + 1e-6 and e > 0.95 and abs(w_slip) < 5.0
             if locked:
                 w_slip = 0.0
         else:
-            # Kinetic friction: capacity limited, direction opposes slip
-            # When slip is positive (engine faster), torque on gearbox is positive
-            T = float(T_max * np.sign(w_slip if abs(w_slip) > 1e-9 else engine_torque))
+            # Kinetic friction: capacity limited, direction opposes relative slip.
+            # Bias residual to engine torque sign when slip is tiny (avoids zero-cross chatter).
+            sgn = np.sign(w_slip) if abs(w_slip) > 0.5 else np.sign(engine_torque if abs(engine_torque) > 1e-9 else 1.0)
+            T = float(T_max * sgn)
 
         heat = clutch_heat_power(T, w_slip)
         energy = self.state.energy_J + heat * dt

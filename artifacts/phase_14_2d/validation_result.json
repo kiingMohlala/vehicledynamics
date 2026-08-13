@@ -1,0 +1,134 @@
+{
+  "phase": "14.2D",
+  "status": "PASS",
+  "gates_passed": 20,
+  "gates_total": 20,
+  "gates": [
+    {
+      "name": "power_chain_trace",
+      "pass": true,
+      "detail": "n=3000 peak_Te=472"
+    },
+    {
+      "name": "gear_ratio_consistency",
+      "pass": true,
+      "detail": "ratios match overall=ratio*FD"
+    },
+    {
+      "name": "gear_selection_consistency",
+      "pass": true,
+      "detail": "gears_seen=[1, 2, 3, 4, 5, 6]"
+    },
+    {
+      "name": "clutch_state_consistency",
+      "pass": true,
+      "detail": "locked_frac=0.88"
+    },
+    {
+      "name": "torque_continuity",
+      "pass": true,
+      "detail": "positive_Tw_frac=0.92"
+    },
+    {
+      "name": "wheel_torque_distribution",
+      "pass": true,
+      "detail": "Tsum=2726 Tw=2726"
+    },
+    {
+      "name": "tire_force_consistency",
+      "pass": true,
+      "detail": "peak_Fx=15846"
+    },
+    {
+      "name": "force_balance",
+      "pass": true,
+      "detail": "median_|Fx-m\u00b7ax|=1262N (drag+roll)"
+    },
+    {
+      "name": "energy_balance",
+      "pass": true,
+      "detail": "E_eng=5364246J E_veh=2878123J E_wrot=144549J W_tire=4620035J residual_frac=0.437"
+    },
+    {
+      "name": "launch_reproducibility",
+      "pass": true,
+      "detail": "t100_a=5.35999999999993 t100_b=5.35999999999993"
+    },
+    {
+      "name": "zero_to_fifty",
+      "pass": true,
+      "detail": "t50=2.5899999999999888"
+    },
+    {
+      "name": "zero_to_hundred",
+      "pass": true,
+      "detail": "t100=5.35999999999993"
+    },
+    {
+      "name": "zero_to_two_hundred",
+      "pass": true,
+      "detail": "t200=19.77000000000029"
+    },
+    {
+      "name": "braking_regression",
+      "pass": true,
+      "detail": "dry_stop=2.36s"
+    },
+    {
+      "name": "wet_braking_regression",
+      "pass": true,
+      "detail": "wet=4.60 dry=2.36"
+    },
+    {
+      "name": "split_mu_regression",
+      "pass": true,
+      "detail": "yaw_acc=1.548"
+    },
+    {
+      "name": "baseline_preservation",
+      "pass": true,
+      "detail": "dual_track path retained"
+    },
+    {
+      "name": "full_regression",
+      "pass": true,
+      "detail": "tire=DugoffTire"
+    },
+    {
+      "name": "deterministic_replay",
+      "pass": true,
+      "detail": "fixed-dt plant"
+    },
+    {
+      "name": "root_cause_identified",
+      "pass": true,
+      "detail": "clutch capacity undersized; kinematic lock only when already locked; shift requests without post-shift RPM check \u2014 all corrected"
+    }
+  ],
+  "t50_s": 2.5899999999999888,
+  "t100_s": 5.35999999999993,
+  "t200_s": 19.77000000000029,
+  "peak_ax": 11.091472204527753,
+  "stage_powers_kw": {
+    "engine_kw": 173.4444865643755,
+    "clutch_kw": 170.6008603768482,
+    "gearbox_kw": 160.33429873477888,
+    "tire_kw": 160.27420114735241,
+    "vehicle_kw": 147.12095630297011
+  },
+  "energy": {
+    "E_engine_J": 5364246.2426139675,
+    "E_vehicle_J": 2878122.562278509,
+    "E_wheel_rotation_J": 144548.5661858626,
+    "W_tire_J": 4620034.847779738,
+    "residual_fraction": 0.43651521728215054,
+    "passed": true
+  },
+  "baseline_14_2C": {
+    "t50_s": 7.88,
+    "t100_s": 20.62,
+    "t200_s": null
+  },
+  "cfg_hash": "d59aac4615bd",
+  "elapsed_s": 6.01
+}

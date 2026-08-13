@@ -220,19 +220,32 @@ class DualTrackPlant:
 
             alpha = float(np.arctan2(vy_t, max(abs(vx_t), cfg.v_eps)))
 
-            T_cmd = w.drive_torque - w.brake_torque
+            # Drive torque from open split is non-negative under throttle; brake is separate.
+            # Clamping prevents reverse-drive spikes when upstream clutch slip sign flips.
+            T_drive = max(float(w.drive_torque), 0.0) if drive_torque_total >= 0.0 else float(w.drive_torque)
+            T_cmd = T_drive - w.brake_torque
             Fx_tgt = T_cmd / max(r, 1e-3)
-            Fx_tgt = float(np.clip(Fx_tgt, -mu_i * w.Fz * 0.99, mu_i * w.Fz * 0.99))
+            Fx_cap = mu_i * w.Fz * 0.98
+            Fx_tgt = float(np.clip(Fx_tgt, -Fx_cap, Fx_cap))
 
-            k_eq = self._kappa_for_fx(self.tires[i], alpha, w.Fz, Fx_tgt) if abs(T_cmd) > 0.5 else 0.0
+            # Quasi-static equilibrium kappa for commanded torque (Dugoff is the force source).
+            if abs(T_cmd) > 1.0:
+                k_eq = self._kappa_for_fx(self.tires[i], alpha, w.Fz, Fx_tgt)
+            else:
+                k_eq = 0.0
 
             omega_r = w.omega * r
-            denom = max(abs(vx_t), cfg.v_eps)
-            k_meas = float(np.clip((omega_r - vx_t) / denom, -1.5, 1.5))
+            denom = max(abs(vx_t), abs(omega_r), cfg.v_eps)
+            k_meas = float(np.clip((omega_r - vx_t) / denom, -1.2, 1.2))
 
-            blend = float(np.clip(abs(T_cmd) / (mu_i * w.Fz * r + 80.0), 0.15, 0.92))
-            kappa = (1.0 - blend) * k_meas + blend * k_eq
-            kappa = float(np.clip(kappa, -1.5, 1.5))
+            # Prefer equilibrium under significant drive/brake; light blend of measured slip
+            # only when near free-rolling (avoids explicit-Euler blow-up of stiff Cx).
+            if abs(T_cmd) > 0.15 * mu_i * w.Fz * r:
+                kappa = k_eq
+            else:
+                blend = 0.35
+                kappa = (1.0 - blend) * k_meas + blend * k_eq
+            kappa = float(np.clip(kappa, -1.2, 1.2))
 
             ts: TireState = self.tires[i].longitudinal_lateral_force(kappa, alpha, w.Fz)
             Fx_t, Fy_t = float(ts.Fx), float(ts.Fy)
@@ -245,12 +258,10 @@ class DualTrackPlant:
             w.Fy = Fy_v
             w.utilization = float(ts.utilization)
 
+            # Wheel speed tracks kinematic target with first-order lag (stable, energy-aware)
             omega_tgt = (vx_t * (1.0 + kappa)) / max(r, 1e-3)
-            T_react = Fx_t * r
-            T_err = T_cmd - T_react
-            Iw = max(w.inertia, 0.8)
-            tau_w = 0.05
-            w.omega = w.omega + (dt / tau_w) * (omega_tgt - w.omega) + (dt / Iw) * T_err * 0.2
+            tau_w = 0.04
+            w.omega = w.omega + (dt / tau_w) * (omega_tgt - w.omega)
             if vx >= -0.5:
                 w.omega = max(w.omega, 0.0)
             w.omega = float(np.clip(w.omega, -250.0, 250.0))

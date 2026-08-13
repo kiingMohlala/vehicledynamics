@@ -11,7 +11,9 @@ class ClutchFrictionParams:
     mu: float = 0.35              # friction coefficient
     mean_radius: float = 0.12     # m
     n_surfaces: int = 2
-    max_clamp_force: float = 5000.0  # N
+    # Capacity must cover engine peak (~590–650 N·m for 280 kW class).
+    # T_max = μ F r n → F=8500 → T_max≈714 N·m (was 420 N·m — undersized vs engine).
+    max_clamp_force: float = 8500.0  # N
     fade_temp_C: float = 250.0
     fade_factor_min: float = 0.55
 

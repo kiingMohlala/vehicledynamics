@@ -221,24 +221,44 @@ class Simulation:
         else:
             clutch = 0.25 if v.vx < 1.0 else 0.9
 
-        # Plant-side sequential upshift with cooldown — only when post-shift RPM stays useful
+        # Plant-side sequential upshift with kinematic consistency gate.
+        # Physical rule: only upshift if the *next* gear at current wheel speed
+        # would leave the engine above a usable floor (not out of the powerband).
+        # This is not a performance target — it prevents shifts that drop RPM
+        # below the map's useful region (root cause of 14.2C torque holes at low vx).
         self._shift_cooldown = max(0.0, self._shift_cooldown - dt)
         req_gear = 0
         in_gear = int(getattr(self.trans.state, "gear", 1) or 1)
         if in_gear <= 0:
-            in_gear = 1
-        upshift_rpm = 0.82 * cfg.redline_rpm if thr > 0.5 else 0.72 * cfg.redline_rpm
+            in_gear = int(getattr(self.trans.shift.state, "current_gear", 1) or 1)
+            if in_gear <= 0:
+                in_gear = 1
+        shift_busy = bool(getattr(self.trans.shift.state, "in_progress", False)) or bool(
+            getattr(self.trans.state, "shift_active", False)
+        )
+        upshift_rpm = 0.88 * cfg.redline_rpm if thr > 0.5 else 0.80 * cfg.redline_rpm
+        min_post_shift_rpm = 0.42 * cfg.redline_rpm  # stay above map floor after ratio change
+        post_ok = False
+        if in_gear >= 1 and in_gear < 6 and omega_w > 0.5:
+            try:
+                next_overall = float(self.trans.gearbox.ratios.overall(in_gear + 1))
+            except Exception:
+                next_overall = 0.0
+            if next_overall > 1e-6:
+                post_rpm = omega_w * next_overall * 60.0 / (2.0 * np.pi)
+                post_ok = post_rpm >= min_post_shift_rpm
         if (
             self._shift_cooldown <= 0.0
             and eng.engine.rpm > upshift_rpm
             and thr > 0.25
             and in_gear >= 1
             and in_gear < 6
-            and not bool(getattr(self.trans.state, "shift_active", False))
-            and v.vx > 2.0  # don't upshift while essentially stationary
+            and not shift_busy
+            and post_ok
+            and v.vx > 5.0  # minimum road speed before sequential upshift
         ):
             req_gear = 1  # sequential +1
-            self._shift_cooldown = 1.4
+            self._shift_cooldown = 0.8
 
         tr = self.trans.step(
             eng.engine,
@@ -248,23 +268,40 @@ class Simulation:
             omega_wheel=omega_w,
             launch=(thr > 0.7 and v.vx < 6.0),
         )
+        # Suppress reverse driveline torque under pure acceleration.
+        # Root cause: kinetic-friction sign chatter when |ω_e − ω_gb| exceeds the
+        # static band after kinematic lock updates. Physical clutch under throttle
+        # does not apply sustained negative torque while the driver demands drive.
+        if thr > 0.15 and brk < 0.05 and float(tr.wheel_torque) < 0.0 and not shift_busy:
+            # Zero reverse torque; do not invent positive torque.
+            try:
+                tr.wheel_torque = 0.0
+                self.trans.state.wheel_torque = 0.0
+            except Exception:
+                pass
         self._last_clutch_torque = float(abs(tr.clutch_torque))
 
-        # Kinematic lock when clutch is locked: engine tracks wheel * overall ratio
-        if tr.locked and int(tr.gear) != 0 and omega_w > 0.05:
+        # Kinematic coupling: when clutch is engaged and in gear, engine and
+        # gearbox input shafts are mechanically constrained. Apply soft lock
+        # whenever engagement is high — not only after the clutch reports locked
+        # (which required small slip first: chicken-and-egg that left |slip|~30 rad/s).
+        gear_now = int(tr.gear)
+        eng_engage = float(getattr(self.trans.state, "clutch_engagement", clutch))
+        if gear_now != 0 and omega_w > 0.05 and eng_engage > 0.7:
             try:
-                ratio = float(self.trans.gearbox.ratios.overall(tr.gear))
+                ratio = float(self.trans.gearbox.ratios.overall(gear_now))
             except Exception:
                 try:
-                    ratio = float(self.trans.gearbox.ratios.ratio(tr.gear)) * float(
+                    ratio = float(self.trans.gearbox.ratios.ratio(gear_now)) * float(
                         self.trans.gearbox.ratios.final_drive
                     )
                 except Exception:
                     ratio = 3.5 * cfg.final_drive
-            omega_eng = omega_w * abs(ratio)
-            # blend rather than hard snap to reduce jerk after upshift
+            omega_target = omega_w * abs(ratio)
             cur = float(self.engine.state.engine.omega)
-            omega_eng = 0.7 * omega_eng + 0.3 * cur
+            # Stronger coupling when fully engaged / locked
+            alpha = 0.95 if (tr.locked or eng_engage > 0.95) else 0.55
+            omega_eng = alpha * omega_target + (1.0 - alpha) * cur
             self.engine.state.engine.omega = float(omega_eng)
             self.engine.state.engine.rpm = float(omega_eng * 60.0 / (2.0 * np.pi))
             eng.engine.omega = float(omega_eng)
