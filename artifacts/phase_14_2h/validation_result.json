@@ -1,0 +1,224 @@
+{
+  "phase": "14.2H",
+  "status": "PASS",
+  "gates_passed": 30,
+  "gates_total": 30,
+  "gates": [
+    {
+      "name": "authoritative_vehicle_identity",
+      "pass": true,
+      "detail": "mass=1100.0 P=750.0 dt=awd aero=high_downforce",
+      "source": "analytical"
+    },
+    {
+      "name": "runtime_config_identity",
+      "pass": true,
+      "detail": "ok",
+      "source": "simulation"
+    },
+    {
+      "name": "configuration_provenance",
+      "pass": true,
+      "detail": "n_paths=13",
+      "source": "analytical"
+    },
+    {
+      "name": "configuration_fingerprint",
+      "pass": true,
+      "detail": "fp=d840596e4dbd5600 twin=9532fd415a2f6989",
+      "source": "analytical"
+    },
+    {
+      "name": "historical_cfg_isolated",
+      "pass": true,
+      "detail": "frozen_cfg still historical mass=1400.0 P=280.0",
+      "source": "regression"
+    },
+    {
+      "name": "historical_14_2d_replay",
+      "pass": true,
+      "detail": "t100=5.35999999999993 expected\u22485.36",
+      "source": "regression"
+    },
+    {
+      "name": "historical_14_2e_replay",
+      "pass": true,
+      "detail": "t200=19.77000000000029 expected\u224819.77",
+      "source": "regression"
+    },
+    {
+      "name": "hypercar_runtime_binding",
+      "pass": true,
+      "detail": "runtime mass=1100.0 P=750.0",
+      "source": "simulation"
+    },
+    {
+      "name": "real_simulation_binding",
+      "pass": true,
+      "detail": "dual_track=True",
+      "source": "simulation"
+    },
+    {
+      "name": "real_telemetry",
+      "pass": true,
+      "detail": "n_samples=2500",
+      "source": "simulation"
+    },
+    {
+      "name": "longitudinal_validation",
+      "pass": true,
+      "detail": "t50=1.7700000000000014 t100=[3.1299999999999772, 3.1299999999999772, 3.1299999999999772] t200=[8.299999999999867, 8.299999999999867, 8.299999999999867]",
+      "source": "simulation"
+    },
+    {
+      "name": "deterministic_replay",
+      "pass": true,
+      "detail": "t100 span=0.0",
+      "source": "simulation"
+    },
+    {
+      "name": "identity_separation",
+      "pass": true,
+      "detail": "hyper t100=3.1299999999999772 hist t100=5.35999999999993",
+      "source": "simulation"
+    },
+    {
+      "name": "braking_validation",
+      "pass": true,
+      "detail": "dry=2.26s abs=True",
+      "source": "simulation"
+    },
+    {
+      "name": "wet_braking",
+      "pass": true,
+      "detail": "wet=4.45 dry=2.26",
+      "source": "simulation"
+    },
+    {
+      "name": "split_mu",
+      "pass": true,
+      "detail": "Fx=[-3266.0, -994.0, -2815.0, -857.0] yaw_acc=1.573",
+      "source": "simulation"
+    },
+    {
+      "name": "abs_authority",
+      "pass": true,
+      "detail": "std_P=0.302 min_P=0.150",
+      "source": "simulation"
+    },
+    {
+      "name": "handling_chain",
+      "pass": true,
+      "detail": "ay=-5.07 \u03b1=[-0.1 -0.1  0.   0. ] yaw_acc=-3.22",
+      "source": "simulation"
+    },
+    {
+      "name": "constant_radius",
+      "pass": true,
+      "detail": "ay=-5.07",
+      "source": "simulation"
+    },
+    {
+      "name": "tire_cy_authority",
+      "pass": true,
+      "detail": "Cy90k ay=-5.07 Cy45k ay=-4.55",
+      "source": "simulation"
+    },
+    {
+      "name": "slalom",
+      "pass": true,
+      "detail": "ay_amp=11.45",
+      "source": "simulation"
+    },
+    {
+      "name": "double_lane_change",
+      "pass": true,
+      "detail": "y_span=84.52",
+      "source": "simulation"
+    },
+    {
+      "name": "figure_eight",
+      "pass": true,
+      "detail": "ay_L=-5.18 ay_R=5.18",
+      "source": "simulation"
+    },
+    {
+      "name": "aero_authority",
+      "pass": true,
+      "detail": "ax_on=-7.534 ax_off=-6.273",
+      "source": "simulation"
+    },
+    {
+      "name": "powertrain_authority",
+      "pass": true,
+      "detail": "P=750.0 peak_ax=11.65",
+      "source": "simulation"
+    },
+    {
+      "name": "energy_audit",
+      "pass": true,
+      "detail": "E_eng=5008075J E_veh=2999491J E_wrot=191729J W_tire=4089129J residual_frac=0.363",
+      "source": "simulation"
+    },
+    {
+      "name": "evidence_provenance",
+      "pass": true,
+      "detail": "id=authoritative_hypercar_1100_750 fp=d840596e4dbd5600",
+      "source": "analytical"
+    },
+    {
+      "name": "historical_regression",
+      "pass": true,
+      "detail": "hist mass=1400.0 P=280.0",
+      "source": "regression"
+    },
+    {
+      "name": "full_regression",
+      "pass": true,
+      "detail": "hist_t100=5.35999999999993 hyper_t100=3.1299999999999772",
+      "source": "simulation"
+    },
+    {
+      "name": "end_to_end",
+      "pass": true,
+      "detail": "Reference\u2192SimConfig\u2192dual-track\u2192telemetry closed",
+      "source": "simulation"
+    }
+  ],
+  "historical": {
+    "mass": 1400.0,
+    "power": 280.0,
+    "t100": 5.35999999999993,
+    "t200": 19.77000000000029,
+    "fingerprint": "acbf150663644d22"
+  },
+  "authoritative_hypercar": {
+    "mass": 1100.0,
+    "power": 750.0,
+    "drivetrain": "awd",
+    "aero": "high_downforce",
+    "fingerprint": "d840596e4dbd5600",
+    "t50": 1.7700000000000014,
+    "t100": 3.1299999999999772,
+    "t200": 8.299999999999867,
+    "dry_brake_s": 2.2599999999999927,
+    "wet_brake_s": 4.449999999999946,
+    "peak_ax": 11.645872173566048,
+    "provenance": {
+      "mass": "VehicleDefinition.mass.total_mass_kg \u2192 SimulationConfig.mass",
+      "peak_power_kw": "PowertrainConfigBlock.peak_power_kw \u2192 SimulationConfig.peak_power_kw",
+      "peak_torque_nm": "derived P/\u03c9@4500rpm \u2192 SimulationConfig.peak_torque_nm",
+      "mu_tire": "TireConfig.mu \u2192 SimulationConfig.mu_tire",
+      "wheel_radius": "TireConfig.radius_m \u2192 SimulationConfig.wheel_radius",
+      "final_drive": "PowertrainConfigBlock.final_drive \u2192 SimulationConfig.final_drive",
+      "wheelbase": "GeometryConfig.wheelbase_m \u2192 SimulationConfig.wheelbase",
+      "track": "mean(track_f,track_r) \u2192 SimulationConfig.track",
+      "Iz": "MassProperties.Iz_kgm2 \u2192 SimulationConfig.Iz",
+      "abs_enabled": "BrakeConfig.abs_enabled \u2192 SimulationConfig.abs_enabled",
+      "aero_enabled": "AeroConfigBlock.enabled \u2192 SimulationConfig.aero_enabled",
+      "drive_split_front": "AWD policy 0.35 \u2192 SimulationConfig.drive_split_front",
+      "use_dual_track": "authoritative plant policy \u2192 True"
+    }
+  },
+  "elapsed_s": 12.84
+}
