@@ -33,6 +33,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 import numpy as np
+from vehicle_dynamics.suspension.anti_roll_bar import MechanicalAntiRollBar, DualAxleARB
 
 
 @dataclass
@@ -54,6 +55,11 @@ class SprungBodyConfig:
     # Additional anti-roll (N·m/rad) distributed as vertical force couple
     roll_stiffness_front: float = 20000.0
     roll_stiffness_rear: float = 18000.0
+    k_arb_front: float = 25000.0
+    k_arb_rear: float = 22000.0
+    c_arb_front: float = 400.0
+    c_arb_rear: float = 400.0
+    use_arb: bool = True
     Fz_min: float = 50.0
     enabled: bool = True
 
@@ -83,6 +89,21 @@ class SprungBodyModel:
         self.state = SprungBodyState()
         self._E_damp = 0.0
         self._static_Fz = self._compute_static_Fz()
+        cfg = self.cfg
+        self.arb = DualAxleARB(
+            front=MechanicalAntiRollBar(
+                k_arb=float(getattr(cfg, "k_arb_front", 25000.0)),
+                c_arb=float(getattr(cfg, "c_arb_front", 400.0)),
+                track=float(cfg.track_f),
+                enabled=bool(getattr(cfg, "use_arb", True)),
+            ),
+            rear=MechanicalAntiRollBar(
+                k_arb=float(getattr(cfg, "k_arb_rear", 22000.0)),
+                c_arb=float(getattr(cfg, "c_arb_rear", 400.0)),
+                track=float(cfg.track_r),
+                enabled=bool(getattr(cfg, "use_arb", True)),
+            ),
+        )
 
     def _compute_static_Fz(self) -> np.ndarray:
         m, a, b = self.cfg.mass, self.cfg.a, self.cfg.b
@@ -179,14 +200,23 @@ class SprungBodyModel:
 
         # Anti-roll: additional couple from roll angle
         # F_AR_front on left = +Kr_f * phi / tf , on right = -Kr_f * phi / tf
-        if tf > 1e-6:
-            Far_f = cfg.roll_stiffness_front * ph / tf
-            F_sd[0] += Far_f
-            F_sd[1] -= Far_f
-        if tr > 1e-6:
-            Far_r = cfg.roll_stiffness_rear * ph / tr
-            F_sd[2] += Far_r
-            F_sd[3] -= Far_r
+        # Phase 14.9.5 explicit ARB from corner height difference
+        if getattr(cfg, "use_arb", True) and hasattr(self, "arb"):
+            fl, fr, rl, rr = self.arb.axle_forces(z_s, z_s_dot)
+            F_sd[0] += fl
+            F_sd[1] += fr
+            F_sd[2] += rl
+            F_sd[3] += rr
+        else:
+            # legacy phi-based roll stiffness proxy
+            if tf > 1e-6:
+                Far_f = cfg.roll_stiffness_front * ph / tf
+                F_sd[0] += Far_f
+                F_sd[1] -= Far_f
+            if tr > 1e-6:
+                Far_r = cfg.roll_stiffness_rear * ph / tr
+                F_sd[2] += Far_r
+                F_sd[3] -= Far_r
 
         # Wheel normal loads: from tire contact (14.7) or suspension (14.5)
         if Fz_contact is not None:

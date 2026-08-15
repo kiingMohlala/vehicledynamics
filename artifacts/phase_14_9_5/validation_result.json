@@ -1,0 +1,160 @@
+{
+  "phase": "14.9.5",
+  "status": "PASS",
+  "gates_passed": 26,
+  "gates_total": 26,
+  "gates": [
+    {
+      "name": "architecture",
+      "pass": true,
+      "detail": "DualAxleARB between suspension and sprung body"
+    },
+    {
+      "name": "config_authority",
+      "pass": true,
+      "detail": "k_f=25000.0 k_r=22000.0"
+    },
+    {
+      "name": "front_arb_authority",
+      "pass": true,
+      "detail": "k_f=90000.0 k_r=0.0"
+    },
+    {
+      "name": "rear_arb_authority",
+      "pass": true,
+      "detail": "k_r=90000.0"
+    },
+    {
+      "name": "zero_arb",
+      "pass": true,
+      "detail": "\u03c6_k0=0.0362"
+    },
+    {
+      "name": "positive_stiffness",
+      "pass": true,
+      "detail": "\u03c60=0.0362 \u03c625k=0.0158 \u03c6100k=0.0058"
+    },
+    {
+      "name": "poisoned_default",
+      "pass": true,
+      "detail": "k=25000.0"
+    },
+    {
+      "name": "roll_sign",
+      "pass": true,
+      "detail": "\u03c6 under +ay=0.0158"
+    },
+    {
+      "name": "left_right_symmetry",
+      "pass": true,
+      "detail": "\u03c6+=0.01578 \u03c6-=-0.01578"
+    },
+    {
+      "name": "front_force_pair",
+      "pass": true,
+      "detail": "FL=-1200.0 FR=1200.0"
+    },
+    {
+      "name": "rear_force_pair",
+      "pass": true,
+      "detail": "RL=800.0 RR=-800.0"
+    },
+    {
+      "name": "roll_moment_direction",
+      "pass": true,
+      "detail": "M=1980.0"
+    },
+    {
+      "name": "fz_redistribution",
+      "pass": true,
+      "detail": "\u0394(right-left) k0=4308 k80=841"
+    },
+    {
+      "name": "total_axle_load",
+      "pass": true,
+      "detail": "sum=0.0"
+    },
+    {
+      "name": "total_vehicle_fz",
+      "pass": true,
+      "detail": "\u03a3Fz=10791 mg=10791"
+    },
+    {
+      "name": "front_rear_split",
+      "pass": true,
+      "detail": "\u03c6_front_only=0.0095 \u03c6_rear_only=0.0098 \u03c60=0.0362"
+    },
+    {
+      "name": "stiffness_x2",
+      "pass": true,
+      "detail": "\u03c625k=0.0158 \u03c6100k=0.0058"
+    },
+    {
+      "name": "stiffness_to_zero",
+      "pass": true,
+      "detail": "\u03c60=0.0362 \u03c625k=0.0158"
+    },
+    {
+      "name": "damping_authority",
+      "pass": true,
+      "detail": "peak \u03c6\u0307 c50=0.2918 c2000=0.1832"
+    },
+    {
+      "name": "steering_step_roll",
+      "pass": true,
+      "detail": "\u03c6=0.0225"
+    },
+    {
+      "name": "steering_reversal_roll",
+      "pass": true,
+      "detail": "\u03c6+=0.0225 \u03c6-=-0.0223"
+    },
+    {
+      "name": "combined_brake_corner",
+      "pass": true,
+      "detail": "min_Fz=1560.8"
+    },
+    {
+      "name": "dugoff_coupling",
+      "pass": true,
+      "detail": "\u03a3Fy=2860"
+    },
+    {
+      "name": "regression",
+      "pass": true,
+      "detail": "t100=3.1299999999999772 t200=8.339999999999867"
+    },
+    {
+      "name": "historical_isolation",
+      "pass": true,
+      "detail": "t100=5.36999999999993"
+    },
+    {
+      "name": "deterministic_replay",
+      "pass": true,
+      "detail": "run0=0.01183145"
+    }
+  ],
+  "roll_response": {
+    "phi_k0": 0.03616386768795145,
+    "phi_k25": 0.015775272510549596,
+    "phi_k100": 0.005810683422672721
+  },
+  "regression": {
+    "hyper": {
+      "t100": 3.1299999999999772,
+      "t200": 8.339999999999867,
+      "ref": [
+        3.13,
+        8.34
+      ]
+    },
+    "hist": {
+      "t100": 5.36999999999993,
+      "ref": [
+        5.37,
+        19.81
+      ]
+    }
+  }
+}

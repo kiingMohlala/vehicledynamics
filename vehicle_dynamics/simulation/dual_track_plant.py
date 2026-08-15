@@ -89,6 +89,11 @@ class DualTrackConfig:
     steering_ratio: float = 15.0
     steering_rate: float = 1.2
     ackermann_enabled: bool = True
+    k_arb_front: float = 25000.0
+    k_arb_rear: float = 22000.0
+    c_arb_front: float = 400.0
+    c_arb_rear: float = 400.0
+    use_arb: bool = True
 
 
 @dataclass
@@ -162,6 +167,11 @@ class DualTrackPlant:
             c_rear=float(getattr(self.cfg, "c_rear", 2800.0)),
             roll_stiffness_front=float(getattr(self.cfg, "roll_stiffness_front", 20000.0)),
             roll_stiffness_rear=float(getattr(self.cfg, "roll_stiffness_rear", 18000.0)),
+            k_arb_front=float(getattr(self.cfg, "k_arb_front", 25000.0)),
+            k_arb_rear=float(getattr(self.cfg, "k_arb_rear", 22000.0)),
+            c_arb_front=float(getattr(self.cfg, "c_arb_front", 400.0)),
+            c_arb_rear=float(getattr(self.cfg, "c_arb_rear", 400.0)),
+            use_arb=bool(getattr(self.cfg, "use_arb", True)),
             Fz_min=float(getattr(self.cfg, "Fz_min", 50.0)),
             enabled=bool(getattr(self.cfg, "use_sprung_body", True)),
         ))
