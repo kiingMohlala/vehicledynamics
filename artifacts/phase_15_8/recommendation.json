@@ -1,0 +1,59 @@
+{
+  "selected_candidate": 10000.0,
+  "validated_range": [
+    10000.0,
+    12000.0
+  ],
+  "eligible": [
+    10000.0,
+    11000.0,
+    12000.0
+  ],
+  "best_raw_mean": 12000.0,
+  "gain_frozen": false,
+  "reason": "Lowest eligible gain among candidates within 10% of best mean residual (0.1019) and 15% of best worst-case (0.1166). Best raw mean is K=12000; selected K=10000 prioritizes lower actuator demand when recovery is operationally equivalent.",
+  "metrics": {
+    "10000.0": {
+      "mean_e_final": 0.10769493175146033,
+      "worst_e_final": 0.12684750102215936,
+      "mean_e_peak": 0.21381567427076026,
+      "mean_max_Mz": 1066.5625233314877,
+      "mean_brake_energy": 0.45353737180124515,
+      "mean_sat": 0.0,
+      "mean_util": 0.9637988729743181,
+      "max_flips": 0,
+      "split_worst_ef": 0.10647873336913485,
+      "pos_worst_ef": 1.997720500307181,
+      "n_neg": 15
+    },
+    "11000.0": {
+      "mean_e_final": 0.1037255638419803,
+      "worst_e_final": 0.11892612342133468,
+      "mean_e_peak": 0.21254612220123467,
+      "mean_max_Mz": 1153.4537108681059,
+      "mean_brake_energy": 0.4677028360514803,
+      "mean_sat": 0.0,
+      "mean_util": 0.9637988729743181,
+      "max_flips": 0,
+      "split_worst_ef": 0.09343470284576423,
+      "pos_worst_ef": 1.997720500307181,
+      "n_neg": 15
+    },
+    "12000.0": {
+      "mean_e_final": 0.10188961172842274,
+      "worst_e_final": 0.11661876141572422,
+      "mean_e_peak": 0.21101056138990543,
+      "mean_max_Mz": 1245.516284386292,
+      "mean_brake_energy": 0.4752369378442403,
+      "mean_sat": 0.0,
+      "mean_util": 0.9643021664562069,
+      "max_flips": 0,
+      "split_worst_ef": 0.11355523372986998,
+      "pos_worst_ef": 1.997720500307181,
+      "n_neg": 15
+    }
+  },
+  "plant": "FROZEN",
+  "safety_envelope": "PRESERVED",
+  "K_us": "FROZEN 0.0065"
+}
