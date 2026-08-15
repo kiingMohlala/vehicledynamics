@@ -264,6 +264,7 @@ class DualTrackPlant:
         mu_per_wheel: Optional[np.ndarray] = None,
         downforce_front: Optional[float] = None,
         downforce_rear: Optional[float] = None,
+        brake_add: Optional[np.ndarray] = None,
     ) -> DualTrackState:
         kwargs_downforce_front = downforce_front
         kwargs_downforce_rear = downforce_rear
@@ -340,6 +341,10 @@ class DualTrackPlant:
         pressures, abs_active, _ = self.abs.step(
             sensors, float(np.clip(brake_cmd, 0, 1)), dt
         )
+        # Phase 15.2: optional differential-brake overlay (ESC command path)
+        if brake_add is not None:
+            add = np.asarray(brake_add, dtype=float).reshape(4)
+            pressures = np.clip(np.asarray(pressures, dtype=float) + add, 0.0, 1.0)
 
         Fx_sum = 0.0
         Fy_sum = 0.0

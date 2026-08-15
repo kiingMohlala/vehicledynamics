@@ -1,0 +1,135 @@
+{
+  "phase": "15.2",
+  "status": "PASS",
+  "gates_passed": 18,
+  "gates_total": 18,
+  "gates": [
+    {
+      "name": "allocator_independent_of_error",
+      "pass": true,
+      "detail": "allocate() has no e_r/\u03b2/r dependency"
+    },
+    {
+      "name": "accepts_signed_Mz",
+      "pass": true,
+      "detail": "M+=2000 M-=-2000"
+    },
+    {
+      "name": "zero_request",
+      "pass": true,
+      "detail": "cmd=[0.0, 0.0, 0.0, 0.0]"
+    },
+    {
+      "name": "positive_Mz_direction",
+      "pass": true,
+      "detail": "FL=0.476 RL=0.397 FR=0.000"
+    },
+    {
+      "name": "negative_Mz_direction",
+      "pass": true,
+      "detail": "FR=0.476 RR=0.397"
+    },
+    {
+      "name": "lr_symmetry",
+      "pass": true,
+      "detail": "FL=0.4762 FR_neg=0.4762"
+    },
+    {
+      "name": "command_magnitude_bounded",
+      "pass": true,
+      "detail": "M_req=8000 max_cmd=1.000"
+    },
+    {
+      "name": "wheel_cmds_bounded",
+      "pass": true,
+      "detail": "pos=[0.4761904761904762, 0.0, 0.39682539682539675, 0.0]"
+    },
+    {
+      "name": "brake_nonnegative",
+      "pass": true,
+      "detail": "all cmds \u2265 0"
+    },
+    {
+      "name": "no_drive_torque",
+      "pass": true,
+      "detail": "allocator has no drive path"
+    },
+    {
+      "name": "moment_conservation",
+      "pass": true,
+      "detail": "req=1500 ach=1500 rel_err=0.000"
+    },
+    {
+      "name": "straight_brake_symmetric",
+      "pass": true,
+      "detail": "p=[0.5, 0.5, 0.075, 0.075]"
+    },
+    {
+      "name": "abs_path_intact",
+      "pass": true,
+      "detail": "abs_enabled=True"
+    },
+    {
+      "name": "zero_command_baseline",
+      "pass": true,
+      "detail": "\u0394\u03a3Fy=0.0000"
+    },
+    {
+      "name": "plant_yaw_response",
+      "pass": true,
+      "detail": "r+=2.0070 r-=-2.0070 r0=0.0000 T_brk+=3667"
+    },
+    {
+      "name": "observer_read_only",
+      "pass": true,
+      "detail": "e_r=1.1321 (obs does not command)"
+    },
+    {
+      "name": "regression",
+      "pass": true,
+      "detail": "t100=3.1299999999999772 t200=8.339999999999867"
+    },
+    {
+      "name": "historical_isolation",
+      "pass": true,
+      "detail": "t100=5.36999999999993"
+    }
+  ],
+  "allocation_examples": {
+    "pos_2000": {
+      "cmd": [
+        0.4761904761904762,
+        0.0,
+        0.39682539682539675,
+        0.0
+      ],
+      "Mz_ach": 2000.0
+    },
+    "neg_2000": {
+      "cmd": [
+        0.0,
+        0.4761904761904762,
+        0.0,
+        0.39682539682539675
+      ],
+      "Mz_ach": -2000.0
+    }
+  },
+  "regression": {
+    "hyper": {
+      "t100": 3.1299999999999772,
+      "t200": 8.339999999999867,
+      "ref": [
+        3.13,
+        8.34
+      ]
+    },
+    "hist": {
+      "t100": 5.36999999999993,
+      "ref": [
+        5.37,
+        19.81
+      ]
+    }
+  }
+}

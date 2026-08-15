@@ -196,7 +196,8 @@ class Simulation:
             track_r = float(getattr(self.cfg, "track_rear", 0.0) or 0.0)
             if track_r <= 0.0:
                 track_r = float(self.cfg.track) * 0.98
-            self.dual_track = DualTrackPlant(DualTrackConfig(
+            self.esc_brake_add = None  # Phase 15.2: optional [4] overlay
+        self.dual_track = DualTrackPlant(DualTrackConfig(
                 mass=self.cfg.mass,
                 Iz=self.cfg.Iz,
                 a=a_frac * L,
@@ -471,6 +472,7 @@ class Simulation:
                 mu_scale=float(st.mu_scale),
                 downforce_front=df_front,
                 downforce_rear=df_rear,
+                brake_add=getattr(self, "esc_brake_add", None),
             )
             # Tire forces + aero drag / rolling
             rolling = 0.015 * cfg.mass * 9.81 * np.sign(v.vx + 1e-9)
