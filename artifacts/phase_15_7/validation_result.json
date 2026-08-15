@@ -1,0 +1,123 @@
+{
+  "phase": "15.7",
+  "status": "PASS",
+  "gates_passed": 10,
+  "gates_total": 10,
+  "gates": [
+    {
+      "name": "no_nan_instability",
+      "pass": true,
+      "detail": "n_rows=131"
+    },
+    {
+      "name": "no_sustained_oscillation",
+      "pass": true,
+      "detail": "max_flips=0"
+    },
+    {
+      "name": "brake_cmd_bounded",
+      "pass": true,
+      "detail": "max_cmd=0.379"
+    },
+    {
+      "name": "recovery_not_worse_than_free",
+      "pass": true,
+      "detail": "worse_cells=[]"
+    },
+    {
+      "name": "split_mu_bounded",
+      "pass": true,
+      "detail": "max_ef=0.143"
+    },
+    {
+      "name": "inhibits_intact",
+      "pass": true,
+      "detail": "util=util_limit beta=beta_limit lo=low_speed"
+    },
+    {
+      "name": "deterministic_replay",
+      "pass": true,
+      "detail": "run0=0.11766"
+    },
+    {
+      "name": "robust_candidate_identified",
+      "pass": true,
+      "detail": "lowest_robust=10000.0 best_mean=12000.0"
+    },
+    {
+      "name": "regression",
+      "pass": true,
+      "detail": "t100=3.1299999999999772 t200=8.339999999999867"
+    },
+    {
+      "name": "historical_isolation",
+      "pass": true,
+      "detail": "t100=5.36999999999993"
+    }
+  ],
+  "nomination": {
+    "best_mean_e_final_K": 12000.0,
+    "lowest_robust_K": 10000.0,
+    "recommended_range": [
+      10000.0,
+      12000.0
+    ],
+    "scores": {
+      "4000.0": {
+        "mean_e_final": 0.14681268414867035,
+        "max_e_final": 0.1804862958909988,
+        "mean_sat": 0.0,
+        "max_flips": 0,
+        "n": 12
+      },
+      "6000.0": {
+        "mean_e_final": 0.13469901167658577,
+        "max_e_final": 0.15282927853379197,
+        "mean_sat": 0.0,
+        "max_flips": 0,
+        "n": 12
+      },
+      "8000.0": {
+        "mean_e_final": 0.11937225804980184,
+        "max_e_final": 0.13176489628467808,
+        "mean_sat": 0.0,
+        "max_flips": 0,
+        "n": 12
+      },
+      "10000.0": {
+        "mean_e_final": 0.10785835035624275,
+        "max_e_final": 0.11705086216805244,
+        "mean_sat": 0.0,
+        "max_flips": 0,
+        "n": 12
+      },
+      "12000.0": {
+        "mean_e_final": 0.10373589971431647,
+        "max_e_final": 0.11661876141572422,
+        "mean_sat": 0.0,
+        "max_flips": 0,
+        "n": 12
+      }
+    },
+    "K_Mz_frozen": false,
+    "rationale": "Prefer lowest gain within 15% of best mean residual on nominal \u2212dist matrix; do not freeze without broader campaign."
+  },
+  "n_matrix_rows": 131,
+  "regression": {
+    "hyper": {
+      "t100": 3.1299999999999772,
+      "t200": 8.339999999999867,
+      "ref": [
+        3.13,
+        8.34
+      ]
+    },
+    "hist": {
+      "t100": 5.36999999999993,
+      "ref": [
+        5.37,
+        19.81
+      ]
+    }
+  }
+}
