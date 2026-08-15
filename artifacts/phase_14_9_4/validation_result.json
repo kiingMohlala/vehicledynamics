@@ -1,0 +1,168 @@
+{
+  "phase": "14.9.4",
+  "status": "PASS",
+  "gates_passed": 27,
+  "gates_total": 27,
+  "gates": [
+    {
+      "name": "steering_step",
+      "pass": true,
+      "detail": "peak_ay=11.47 peak_r=0.529"
+    },
+    {
+      "name": "steering_rate_limit",
+      "pass": true,
+      "detail": "\u03b4@0=0.0120 \u03b4@0.3=0.0800"
+    },
+    {
+      "name": "steering_angle_limit",
+      "pass": true,
+      "detail": "max_\u03b4=0.5200 limit=0.52"
+    },
+    {
+      "name": "lateral_accel_buildup",
+      "pass": true,
+      "detail": "ay_early=5.36 ay_mid=9.06"
+    },
+    {
+      "name": "yaw_rate_buildup",
+      "pass": true,
+      "detail": "r_final=0.466 r_max=0.529"
+    },
+    {
+      "name": "yaw_acceleration",
+      "pass": true,
+      "detail": "yaw_acc_early=2.833"
+    },
+    {
+      "name": "slip_angle_buildup",
+      "pass": true,
+      "detail": "\u03b1FL early=0.0324 mid=0.0663"
+    },
+    {
+      "name": "front_rear_alpha",
+      "pass": true,
+      "detail": "\u03b1FL=0.0941 \u03b1RL=0.0721"
+    },
+    {
+      "name": "dynamic_fz",
+      "pass": true,
+      "detail": "right_gain=8918 Fz_late=[50.0, 7241.0, 50.0, 7437.0]"
+    },
+    {
+      "name": "dugoff_coupling",
+      "pass": true,
+      "detail": "\u03a3Fy_mid=9948"
+    },
+    {
+      "name": "combined_kappa_alpha",
+      "pass": true,
+      "detail": "util=[0.998, 0.888, 0.995, 0.861]"
+    },
+    {
+      "name": "steering_reversal",
+      "pass": true,
+      "detail": "ay+=11.11 ay-=-11.00 r+=0.453 r-=-0.449"
+    },
+    {
+      "name": "left_right_symmetry",
+      "pass": true,
+      "detail": "ay+=10.824 ay-=-10.824"
+    },
+    {
+      "name": "zero_steer",
+      "pass": true,
+      "detail": "ay=0.000 r=0.0000"
+    },
+    {
+      "name": "step_magnitude_authority",
+      "pass": true,
+      "detail": "|ay|_0.04=7.39 |ay|_0.12=12.62"
+    },
+    {
+      "name": "rate_authority",
+      "pass": true,
+      "detail": "t80_fast=0.02 t80_slow=0.19"
+    },
+    {
+      "name": "speed_authority",
+      "pass": true,
+      "detail": "|ay|_18=7.47 |ay|_30=12.24"
+    },
+    {
+      "name": "damping",
+      "pass": true,
+      "detail": "final=10.83 peak=11.47"
+    },
+    {
+      "name": "steady_state_convergence",
+      "pass": true,
+      "detail": "ay=10.81 r=0.465"
+    },
+    {
+      "name": "yaw_equilibrium",
+      "pass": true,
+      "detail": "yaw_acc_ss=0.0046"
+    },
+    {
+      "name": "force_balance",
+      "pass": true,
+      "detail": "\u03a3Fy=11874 m\u00b7ay=11895 err=0.002"
+    },
+    {
+      "name": "kinematic_consistency",
+      "pass": true,
+      "detail": "r=0.4653 ay/vx=0.4637 err=0.003"
+    },
+    {
+      "name": "crosswind_transient",
+      "pass": true,
+      "detail": "Fy_aero=598 peak_ay=0.55"
+    },
+    {
+      "name": "deterministic_replay",
+      "pass": true,
+      "detail": "run0=(11.33298, 0.45833, 0.08)"
+    },
+    {
+      "name": "sine_lane_change",
+      "pass": true,
+      "detail": "ay_max=8.54 ay_min=-8.58"
+    },
+    {
+      "name": "regression",
+      "pass": true,
+      "detail": "t100=3.1299999999999772 t200=8.339999999999867"
+    },
+    {
+      "name": "historical_isolation",
+      "pass": true,
+      "detail": "t100=5.36999999999993"
+    }
+  ],
+  "step_ss": {
+    "ay": 10.813542988100442,
+    "r": 0.4653288275492529,
+    "SigmaFy": 11873.84625404375,
+    "yaw_acc": 0.004599957888125669,
+    "force_balance_err": 0.0017697532277056432,
+    "r_err": 0.0034837656424016763
+  },
+  "regression": {
+    "hyper": {
+      "t100": 3.1299999999999772,
+      "t200": 8.339999999999867,
+      "ref": [
+        3.13,
+        8.34
+      ]
+    },
+    "hist": {
+      "t100": 5.36999999999993,
+      "ref": [
+        5.37,
+        19.81
+      ]
+    }
+  }
+}
