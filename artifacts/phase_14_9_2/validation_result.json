@@ -1,0 +1,120 @@
+{
+  "phase": "14.9.2",
+  "status": "PASS",
+  "gates_passed": 19,
+  "gates_total": 19,
+  "gates": [
+    {
+      "name": "architecture",
+      "pass": true,
+      "detail": "slip_angles module between kinematics and Dugoff"
+    },
+    {
+      "name": "four_wheel_authority",
+      "pass": true,
+      "detail": "\u03b1=[0.1, 0.08, -0.0, -0.0]"
+    },
+    {
+      "name": "ackermann_coupling",
+      "pass": true,
+      "detail": "\u03b1FL=0.1374 \u03b1FR=0.1192 \u03b4=0.1904/0.1707"
+    },
+    {
+      "name": "ackermann_off_equal",
+      "pass": true,
+      "detail": "\u03b4FL=0.12000 \u03b4FR=0.12000"
+    },
+    {
+      "name": "zero_steer",
+      "pass": true,
+      "detail": "\u03b4=0.0 ay=0.000"
+    },
+    {
+      "name": "left_right_symmetry",
+      "pass": true,
+      "detail": "ayL=4.527 ayR=-4.527"
+    },
+    {
+      "name": "steering_authority",
+      "pass": true,
+      "detail": "|\u03b1|_0.05=0.0100 |\u03b1|_0.20=0.1373"
+    },
+    {
+      "name": "yaw_rate_authority",
+      "pass": true,
+      "detail": "r 0.05=0.412 0.20=1.270"
+    },
+    {
+      "name": "fz_coupling",
+      "pass": true,
+      "detail": "Fy0=2284 Fy1=1276 Fz=1283"
+    },
+    {
+      "name": "mu_coupling",
+      "pass": true,
+      "detail": "\u03a3|Fy| \u03bc1.15=6273 \u03bc0.5=2987"
+    },
+    {
+      "name": "cx_cy_authority",
+      "pass": true,
+      "detail": "Fy Cy120k=2599 Cy40k=2368"
+    },
+    {
+      "name": "low_speed_stability",
+      "pass": true,
+      "detail": "nan_free=True"
+    },
+    {
+      "name": "sign_correctness",
+      "pass": true,
+      "detail": "ay=6.66 \u03b1FL=0.0944"
+    },
+    {
+      "name": "combined_slip",
+      "pass": true,
+      "detail": "util=[0.989, 0.839, 0.98, 0.777]"
+    },
+    {
+      "name": "road_isolation",
+      "pass": true,
+      "detail": "\u0394peak_FL=8760 \u0394peak_RR=2197"
+    },
+    {
+      "name": "poisoned_defaults",
+      "pass": true,
+      "detail": "Cy=90000.0 \u03bc=1.15"
+    },
+    {
+      "name": "historical_isolation",
+      "pass": true,
+      "detail": "t100=5.36999999999993"
+    },
+    {
+      "name": "zero_wind_regression",
+      "pass": true,
+      "detail": "t100=3.1299999999999772 t200=8.339999999999867 ref=(3.13, 8.34)"
+    },
+    {
+      "name": "deterministic_replay",
+      "pass": true,
+      "detail": "run0=(0.02464964, 1594.548, 1.918035)"
+    }
+  ],
+  "regression": {
+    "hyper": {
+      "t100": 3.1299999999999772,
+      "t200": 8.339999999999867,
+      "ref": [
+        3.13,
+        8.34
+      ]
+    },
+    "hist": {
+      "t100": 5.36999999999993,
+      "ref": [
+        5.37,
+        19.81
+      ]
+    }
+  }
+}

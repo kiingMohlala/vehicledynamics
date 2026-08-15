@@ -20,6 +20,7 @@ from vehicle_dynamics.simulation.sprung_body import SprungBodyModel, SprungBodyC
 from vehicle_dynamics.simulation.unsprung_model import UnsprungModel, UnsprungConfig
 from vehicle_dynamics.steering.steering_model import SteeringModel
 from vehicle_dynamics.steering.steering_config import SteeringConfig
+from vehicle_dynamics.lateral.slip_angles import compute_wheel_slip_angles
 from vehicle_dynamics.lateral.load_transfer import (
     LoadTransferParameters,
     compute_load_transfer,
@@ -324,6 +325,10 @@ class DualTrackPlant:
         Fy_sum = 0.0
         Mz_sum = 0.0
 
+        slip_states = compute_wheel_slip_angles(
+            vx=vx, vy=vy, yaw_rate=yaw_rate, deltas=deltas, xs=xs, ys=ys,
+            v_eps=float(getattr(cfg, "v_eps", 0.5)),
+        )
         for i, w in enumerate(self.wheels):
             mu_i = float(mu_per_wheel[i]) if mu_per_wheel is not None else cfg.mu * mu_scale
             self.tires[i].p.mu = mu_i
@@ -333,13 +338,9 @@ class DualTrackPlant:
             w.drive_torque = float(drive[i])
             w.brake_torque = float(pressures[i] * cfg.brake_torque_max)
 
-            vx_c = vx - yaw_rate * ys[i]
-            vy_c = vy + yaw_rate * xs[i]
+            ss = slip_states[i]
+            vx_t, vy_t, alpha = ss.vx_t, ss.vy_t, ss.alpha
             c, s = np.cos(deltas[i]), np.sin(deltas[i])
-            vx_t = c * vx_c + s * vy_c
-            vy_t = -s * vx_c + c * vy_c
-
-            alpha = float(np.arctan2(vy_t, max(abs(vx_t), cfg.v_eps)))
 
             # Drive torque from open split is non-negative under throttle; brake is separate.
             # Clamping prevents reverse-drive spikes when upstream clutch slip sign flips.
@@ -446,6 +447,14 @@ class DualTrackPlant:
             "delta_fl": float(self.steering.state.delta_fl) if hasattr(self, "steering") else 0.0,
             "delta_fr": float(self.steering.state.delta_fr) if hasattr(self, "steering") else 0.0,
             "steer_actual": float(self.steering.state.actual) if hasattr(self, "steering") else 0.0,
+            "alpha_FL": float(self.wheels[0].alpha),
+            "alpha_FR": float(self.wheels[1].alpha),
+            "alpha_RL": float(self.wheels[2].alpha),
+            "alpha_RR": float(self.wheels[3].alpha),
+            "Fy_FL": float(self.wheels[0].Fy),
+            "Fy_FR": float(self.wheels[1].Fy),
+            "Fy_RL": float(self.wheels[2].Fy),
+            "Fy_RR": float(self.wheels[3].Fy),
             "ax": self.state.ax,
             "ay": self.state.ay,
             "yaw_acc": self.state.yaw_acc,
