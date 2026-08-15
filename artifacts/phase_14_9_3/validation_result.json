@@ -1,0 +1,156 @@
+{
+  "phase": "14.9.3",
+  "status": "PASS",
+  "gates_passed": 22,
+  "gates_total": 22,
+  "gates": [
+    {
+      "name": "architecture",
+      "pass": true,
+      "detail": "\u03b4FL=0.082 \u03b1FL=0.0990 \u03a3Fy=11880 ay=10.82"
+    },
+    {
+      "name": "steady_state_detection",
+      "pass": true,
+      "detail": "yaw_acc=0.0099 r=0.463"
+    },
+    {
+      "name": "steering_authority",
+      "pass": true,
+      "detail": "|ay|_0.04=7.42 |ay|_0.12=12.61"
+    },
+    {
+      "name": "speed_authority",
+      "pass": true,
+      "detail": "|ay|_20=8.57 |ay|_30=12.24"
+    },
+    {
+      "name": "left_right_symmetry",
+      "pass": true,
+      "detail": "ayL=11.856 ayR=-11.856 rL=0.514 rR=-0.514"
+    },
+    {
+      "name": "four_wheel_force_authority",
+      "pass": true,
+      "detail": "Fy=[16.0, 6272.0, 11.0, 5581.0]"
+    },
+    {
+      "name": "front_rear_force_split",
+      "pass": true,
+      "detail": "Fy_f=6288 Fy_r=5592"
+    },
+    {
+      "name": "ackermann_effect",
+      "pass": true,
+      "detail": "\u03b4FL=0.08200 \u03b4FR=0.07809"
+    },
+    {
+      "name": "ackermann_off",
+      "pass": true,
+      "detail": "\u03b4FL=0.10000 \u03b4FR=0.10000"
+    },
+    {
+      "name": "fz_coupling",
+      "pass": true,
+      "detail": "Fz=[50.0, 7209.0, 50.0, 7408.0] right=14617 left=100"
+    },
+    {
+      "name": "mu_authority",
+      "pass": true,
+      "detail": "|ay| \u03bc1.15=12.61 \u03bc0.55=5.60"
+    },
+    {
+      "name": "cy_authority",
+      "pass": true,
+      "detail": "\u03a3Fy Cy120k=12358 Cy40k=12040"
+    },
+    {
+      "name": "combined_slip_authority",
+      "pass": true,
+      "detail": "\u03a3Fy_light=12487 \u03a3Fy_drive=26027"
+    },
+    {
+      "name": "yaw_moment_authority",
+      "pass": true,
+      "detail": "yaw_acc=0.0099 (\u03a3Mz balanced at SS)"
+    },
+    {
+      "name": "force_balance",
+      "pass": true,
+      "detail": "\u03a3Fy=11880 m\u00b7ay=11901 rel_err=0.002"
+    },
+    {
+      "name": "yaw_rate_kinematics",
+      "pass": true,
+      "detail": "r=0.4630 ay/vx=0.4631 err=0.000"
+    },
+    {
+      "name": "zero_steer",
+      "pass": true,
+      "detail": "ay=0.000 r=0.0000"
+    },
+    {
+      "name": "no_wind_baseline",
+      "pass": true,
+      "detail": "\u03a3Fy_zero_steer=0.0"
+    },
+    {
+      "name": "crosswind_coupling",
+      "pass": true,
+      "detail": "Fy_aero=692 ay=0.46 vy=0.02"
+    },
+    {
+      "name": "historical_isolation",
+      "pass": true,
+      "detail": "t100=5.36999999999993"
+    },
+    {
+      "name": "regression",
+      "pass": true,
+      "detail": "t100=3.1299999999999772 t200=8.339999999999867 ref=(3.13, 8.34)"
+    },
+    {
+      "name": "deterministic_replay",
+      "pass": true,
+      "detail": "run0=(11.13647, 0.45681, 12226.5)"
+    }
+  ],
+  "steady_sample": {
+    "vx": 23.36077793606226,
+    "ay": 10.819435077234639,
+    "r": 0.46303656206864796,
+    "SigmaFy": 11880.281368066126,
+    "Fy_front": 6287.878326469889,
+    "Fy_rear": 5592.403041596237,
+    "alpha": [
+      0.09897695114304896,
+      0.09452592011790398,
+      0.07121911567103802,
+      0.06897656200538807
+    ],
+    "Fz": [
+      50.0,
+      7209.029934369124,
+      50.0,
+      7407.818588057683
+    ],
+    "yaw_acc": 0.009886788631767817
+  },
+  "regression": {
+    "hyper": {
+      "t100": 3.1299999999999772,
+      "t200": 8.339999999999867,
+      "ref": [
+        3.13,
+        8.34
+      ]
+    },
+    "hist": {
+      "t100": 5.36999999999993,
+      "ref": [
+        5.37,
+        19.81
+      ]
+    }
+  }
+}

@@ -463,10 +463,15 @@ class Simulation:
             ay += Fy_aero / cfg.mass
             r_dot += Mz_aero / cfg.Iz
 
-            vx_new = v.vx + ax * dt
+            # Body-frame vehicle equations (ISO):
+            #   vx_dot =  Fy_long/m + vy * r
+            #   vy_dot =  Fy_lat/m  - vx * r
+            vx_dot = ax + v.vy * v.yaw_rate
+            vy_dot = ay - v.vx * v.yaw_rate
+            vx_new = v.vx + vx_dot * dt
             if v.vx >= 0:
                 vx_new = max(vx_new, 0.0)
-            vy_new = v.vy + ay * dt
+            vy_new = v.vy + vy_dot * dt
             r_new = v.yaw_rate + r_dot * dt
             psi_new = v.psi + r_new * dt
             x_new = v.x + (vx_new * np.cos(psi_new) - vy_new * np.sin(psi_new)) * dt
