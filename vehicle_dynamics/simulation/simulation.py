@@ -77,6 +77,16 @@ class SimulationConfig:
     aero_cy_beta: float = -0.8   # Phase 14.3 side-force / rad β
     aero_cn_beta: float = -0.15  # Phase 14.3 yaw-moment / rad β
     chi_f: float = 0.55  # Phase 14.4 front share of lateral load transfer
+    # Phase 14.5 suspension / sprung body
+    use_sprung_body: bool = True
+    k_front: float = 28000.0
+    k_rear: float = 32000.0
+    c_front: float = 2500.0
+    c_rear: float = 2800.0
+    roll_stiffness_front: float = 20000.0
+    roll_stiffness_rear: float = 18000.0
+    I_theta: float = 1200.0
+    I_phi: float = 400.0
 
 
 @dataclass
@@ -182,6 +192,15 @@ class Simulation:
                 drive_split_front=self.cfg.drive_split_front,
                 chi_f=float(getattr(self.cfg, "chi_f", 0.55)),
                 Fz_min=50.0,
+                use_sprung_body=bool(getattr(self.cfg, "use_sprung_body", True)),
+                k_front=float(getattr(self.cfg, "k_front", 28000.0)),
+                k_rear=float(getattr(self.cfg, "k_rear", 32000.0)),
+                c_front=float(getattr(self.cfg, "c_front", 2500.0)),
+                c_rear=float(getattr(self.cfg, "c_rear", 2800.0)),
+                roll_stiffness_front=float(getattr(self.cfg, "roll_stiffness_front", 20000.0)),
+                roll_stiffness_rear=float(getattr(self.cfg, "roll_stiffness_rear", 18000.0)),
+                I_theta=float(getattr(self.cfg, "I_theta", 1200.0)),
+                I_phi=float(getattr(self.cfg, "I_phi", 400.0)),
             ))
 
         self._last_clutch_torque = 0.0  # reaction load on crank from previous step

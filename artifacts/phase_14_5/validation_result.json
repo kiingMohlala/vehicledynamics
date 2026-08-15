@@ -1,0 +1,104 @@
+{
+  "phase": "14.5",
+  "status": "PASS",
+  "gates_passed": 18,
+  "gates_total": 18,
+  "gates": [
+    {
+      "name": "transient_dynamics_architecture",
+      "pass": true,
+      "detail": "sprung=True enabled=True"
+    },
+    {
+      "name": "suspension_parameter_authority",
+      "pass": true,
+      "detail": "k_f=80000.0 k_r=95000.0 h=0.4"
+    },
+    {
+      "name": "heave_dynamics",
+      "pass": true,
+      "detail": "z0=0.00000 z1=-0.02862"
+    },
+    {
+      "name": "pitch_dynamics",
+      "pass": true,
+      "detail": "brake \u03b8 min=-0.0114 final=-0.0111"
+    },
+    {
+      "name": "pitch_symmetry",
+      "pass": true,
+      "detail": "\u03b8_acc=0.0069 \u03b8_brk=-0.0111"
+    },
+    {
+      "name": "roll_dynamics",
+      "pass": true,
+      "detail": "\u03c6 final=-0.0839"
+    },
+    {
+      "name": "roll_symmetry",
+      "pass": true,
+      "detail": "\u03c6+=-0.0839 \u03c6-=0.0839"
+    },
+    {
+      "name": "dynamic_wheel_load_coupling",
+      "pass": true,
+      "detail": "Fz=[2048. 3556. 1423. 3778.] \u03c6=-0.0495"
+    },
+    {
+      "name": "wheel_load_conservation",
+      "pass": true,
+      "detail": "\u03a3Fz=10759 mg=10791"
+    },
+    {
+      "name": "tire_fz_coupling",
+      "pass": true,
+      "detail": "\u03b8_soft=-0.0198 \u03b8_stiff=-0.0090"
+    },
+    {
+      "name": "transient_braking",
+      "pass": true,
+      "detail": "\u03b8min=-0.0149 FzF=3731 FzR=1655"
+    },
+    {
+      "name": "transient_cornering",
+      "pass": true,
+      "detail": "\u03c6=-0.0885 dFz_front=2148"
+    },
+    {
+      "name": "combined_braking_cornering",
+      "pass": true,
+      "detail": "minFz=1199 ay=-4.23"
+    },
+    {
+      "name": "suspension_dissipation",
+      "pass": true,
+      "detail": "E_damp=71.9"
+    },
+    {
+      "name": "suspension_mutation_authority",
+      "pass": true,
+      "detail": "k_f runtime=160000.0"
+    },
+    {
+      "name": "negative_default_fallback",
+      "pass": true,
+      "detail": "runtime k_front=80000.0"
+    },
+    {
+      "name": "frozen_vehicle_regression",
+      "pass": true,
+      "detail": "hist 5.36999999999993/18.86000000000015; hyper 3.239999999999975/8.469999999999864"
+    },
+    {
+      "name": "deterministic_replay",
+      "pass": true,
+      "detail": "run0=(-0.00921156, -0.03435205, 2931.3537)"
+    }
+  ],
+  "regression": {
+    "hist_t100": 5.36999999999993,
+    "hist_t200": 18.86000000000015,
+    "hyper_t100": 3.239999999999975,
+    "hyper_t200": 8.469999999999864
+  }
+}

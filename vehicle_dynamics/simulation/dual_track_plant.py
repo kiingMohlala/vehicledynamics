@@ -16,6 +16,7 @@ import numpy as np
 from vehicle_dynamics.tire.dugoff import DugoffTire, DugoffParams, TireState
 from vehicle_dynamics.controls.abs_controller import ABSController
 from vehicle_dynamics.controls.sensor_model import SensorReading
+from vehicle_dynamics.simulation.sprung_body import SprungBodyModel, SprungBodyConfig
 from vehicle_dynamics.lateral.load_transfer import (
     LoadTransferParameters,
     compute_load_transfer,
@@ -61,6 +62,16 @@ class DualTrackConfig:
     # Phase 14.4 load-transfer authority
     chi_f: float = 0.55
     Fz_min: float = 50.0
+    # Phase 14.5 sprung-body suspension
+    use_sprung_body: bool = True
+    k_front: float = 28000.0
+    k_rear: float = 32000.0
+    c_front: float = 2500.0
+    c_rear: float = 2800.0
+    roll_stiffness_front: float = 20000.0
+    roll_stiffness_rear: float = 18000.0
+    I_theta: float = 1200.0
+    I_phi: float = 400.0
 
 
 @dataclass
@@ -119,6 +130,24 @@ class DualTrackPlant:
             for _ in range(4)
         ]
         self.state = DualTrackState(wheels=self.wheels)
+        self.sprung = SprungBodyModel(SprungBodyConfig(
+            mass=self.cfg.mass,
+            a=self.cfg.a,
+            b=self.cfg.b,
+            track_f=self.cfg.track_f,
+            track_r=self.cfg.track_r,
+            h_cg=self.cfg.h_cg,
+            I_theta=float(getattr(self.cfg, "I_theta", 1200.0)),
+            I_phi=float(getattr(self.cfg, "I_phi", 400.0)),
+            k_front=float(getattr(self.cfg, "k_front", 28000.0)),
+            k_rear=float(getattr(self.cfg, "k_rear", 32000.0)),
+            c_front=float(getattr(self.cfg, "c_front", 2500.0)),
+            c_rear=float(getattr(self.cfg, "c_rear", 2800.0)),
+            roll_stiffness_front=float(getattr(self.cfg, "roll_stiffness_front", 20000.0)),
+            roll_stiffness_rear=float(getattr(self.cfg, "roll_stiffness_rear", 18000.0)),
+            Fz_min=float(getattr(self.cfg, "Fz_min", 50.0)),
+            enabled=bool(getattr(self.cfg, "use_sprung_body", True)),
+        ))
 
     def reset(self, vx: float = 0.0) -> None:
         r = self.cfg.wheel_radius
@@ -138,6 +167,8 @@ class DualTrackPlant:
             w.Fz = (Fz_f / 2.0) if i < 2 else (Fz_r / 2.0)
         self.abs = ABSController(enabled=self.cfg.abs_enabled)
         self.state = DualTrackState(wheels=self.wheels)
+        if hasattr(self, "sprung"):
+            self.sprung.reset()
 
     def _kappa_for_fx(self, tire: DugoffTire, alpha: float, Fz: float, Fx_tgt: float) -> float:
         lo, hi = -1.2, 1.2
@@ -181,19 +212,27 @@ class DualTrackPlant:
 
         ax_prev = self.state.ax
         ay_prev = self.state.ay
-        # Phase 14.4: explicit wheel loads from geometry + accel + aero split
         df_f = float(kwargs_downforce_front) if kwargs_downforce_front is not None else 0.5 * downforce
         df_r = float(kwargs_downforce_rear) if kwargs_downforce_rear is not None else 0.5 * downforce
-        lt = compute_wheel_loads(
-            mass=m, a=a, b=b, h_cg=cfg.h_cg,
-            track_f=tf, track_r=tr,
-            ax=ax_prev, ay=ay_prev,
-            downforce_front=df_f, downforce_rear=df_r,
-            chi_f=float(getattr(cfg, "chi_f", 0.55)),
-            Fz_min=float(getattr(cfg, "Fz_min", 50.0)),
-        )
-        self._last_lt = lt
-        Fz_list = [lt.Fz_fl, lt.Fz_fr, lt.Fz_rl, lt.Fz_rr]
+        # Phase 14.5: transient sprung-body loads (fallback 14.4 quasi-static if disabled)
+        if getattr(cfg, "use_sprung_body", True) and hasattr(self, "sprung"):
+            sb = self.sprung.step(
+                ax=ax_prev, ay=ay_prev, dt=dt,
+                downforce_front=df_f, downforce_rear=df_r,
+            )
+            self._last_lt = sb
+            Fz_list = [float(sb.Fz[0]), float(sb.Fz[1]), float(sb.Fz[2]), float(sb.Fz[3])]
+        else:
+            lt = compute_wheel_loads(
+                mass=m, a=a, b=b, h_cg=cfg.h_cg,
+                track_f=tf, track_r=tr,
+                ax=ax_prev, ay=ay_prev,
+                downforce_front=df_f, downforce_rear=df_r,
+                chi_f=float(getattr(cfg, "chi_f", 0.55)),
+                Fz_min=float(getattr(cfg, "Fz_min", 50.0)),
+            )
+            self._last_lt = lt
+            Fz_list = [lt.Fz_fl, lt.Fz_fr, lt.Fz_rl, lt.Fz_rr]
 
         T_f = drive_torque_total * cfg.drive_split_front
         T_r = drive_torque_total * (1.0 - cfg.drive_split_front)
@@ -299,7 +338,7 @@ class DualTrackPlant:
             residual_Fx=0.0,
             residual_Fy=0.0,
             residual_Mz=0.0,
-            residual_Fz=float(getattr(lt, "residual_Fz", Fz_sum - weight)),
+            residual_Fz=float(getattr(self._last_lt, "residual_Fz", Fz_sum - weight)),
         )
         return self.state
 
@@ -326,6 +365,10 @@ class DualTrackPlant:
             "min_Fz": float(min(w.Fz for w in self.wheels)),
             "max_Fz": float(max(w.Fz for w in self.wheels)),
             "lt": getattr(self, "_last_lt", None),
+            "z": float(getattr(getattr(self, "sprung", None), "state", type("X",(object,),{"z":0})()).z) if hasattr(self, "sprung") else 0.0,
+            "theta": float(self.sprung.state.theta) if hasattr(self, "sprung") else 0.0,
+            "phi": float(self.sprung.state.phi) if hasattr(self, "sprung") else 0.0,
+            "E_damp": float(self.sprung.state.E_damp_dissipated) if hasattr(self, "sprung") else 0.0,
             "ax": self.state.ax,
             "ay": self.state.ay,
             "yaw_acc": self.state.yaw_acc,
