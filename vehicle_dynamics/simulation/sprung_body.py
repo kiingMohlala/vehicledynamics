@@ -9,11 +9,13 @@ States (body frame, small-angle):
   theta, theta_dot  pitch (rad), positive nose-up
   phi, phi_dot      roll (rad), positive right-side down
 
-Corner deflection from static equilibrium:
-  δ_FL = z - a·θ + (tf/2)·φ
-  δ_FR = z - a·θ - (tf/2)·φ
-  δ_RL = z + b·θ + (tr/2)·φ
-  δ_RR = z + b·θ - (tr/2)·φ
+Corner deflection from static equilibrium (+θ nose-up raises front):
+  δ_FL = z + a·θ + (tf/2)·φ
+  δ_FR = z + a·θ - (tf/2)·φ
+  δ_RL = z - b·θ + (tr/2)·φ
+  δ_RR = z - b·θ - (tr/2)·φ
+
+With unsprung (14.7): δ = z_s_corner − z_u_corner
 
 Suspension force on body (upward positive):
   F_i = -k_i·δ_i - c_i·δ̇_i
@@ -96,6 +98,28 @@ class SprungBodyModel:
         self._static_Fz = self._compute_static_Fz()
         self.state.Fz = self._static_Fz.copy()
 
+    def corner_positions(self) -> tuple[np.ndarray, np.ndarray]:
+        """Sprung corner height and velocity from static ( +up )."""
+        cfg = self.cfg
+        a, b = cfg.a, cfg.b
+        tf, tr = cfg.track_f, cfg.track_r
+        z, zd = self.state.z, self.state.z_dot
+        th, thd = self.state.theta, self.state.theta_dot
+        ph, phd = self.state.phi, self.state.phi_dot
+        z_s = np.array([
+            z + a * th + (tf / 2) * ph,
+            z + a * th - (tf / 2) * ph,
+            z - b * th + (tr / 2) * ph,
+            z - b * th - (tr / 2) * ph,
+        ])
+        z_s_dot = np.array([
+            zd + a * thd + (tf / 2) * phd,
+            zd + a * thd - (tf / 2) * phd,
+            zd - b * thd + (tr / 2) * phd,
+            zd - b * thd - (tr / 2) * phd,
+        ])
+        return z_s, z_s_dot
+
     def step(
         self,
         *,
@@ -106,6 +130,9 @@ class SprungBodyModel:
         downforce_rear: float = 0.0,
         M_aero_pitch: float = 0.0,
         M_aero_roll: float = 0.0,
+        z_u: np.ndarray | None = None,
+        z_u_dot: np.ndarray | None = None,
+        Fz_contact: np.ndarray | None = None,
     ) -> SprungBodyState:
         cfg = self.cfg
         if not cfg.enabled:
@@ -119,20 +146,28 @@ class SprungBodyModel:
         th, thd = self.state.theta, self.state.theta_dot
         ph, phd = self.state.phi, self.state.phi_dot
 
-        # Corner deflections and rates from static.
-        # +theta nose-up raises front (δ = z + a·θ …); +phi right-down loads right.
-        delta = np.array([
+        # Corner sprung positions
+        z_s = np.array([
             z + a * th + (tf / 2) * ph,
             z + a * th - (tf / 2) * ph,
             z - b * th + (tr / 2) * ph,
             z - b * th - (tr / 2) * ph,
         ])
-        delta_dot = np.array([
+        z_s_dot = np.array([
             zd + a * thd + (tf / 2) * phd,
             zd + a * thd - (tf / 2) * phd,
             zd - b * thd + (tr / 2) * phd,
             zd - b * thd - (tr / 2) * phd,
         ])
+        # Relative to unsprung (14.7) or ground-fixed (14.5: z_u=0)
+        if z_u is None:
+            z_u = np.zeros(4)
+            z_u_dot = np.zeros(4)
+        else:
+            z_u = np.asarray(z_u, dtype=float)
+            z_u_dot = np.zeros(4) if z_u_dot is None else np.asarray(z_u_dot, dtype=float)
+        delta = z_s - z_u
+        delta_dot = z_s_dot - z_u_dot
 
         k = np.array([cfg.k_front, cfg.k_front, cfg.k_rear, cfg.k_rear]) / 1.0  # per corner
         # axle rates given as axle total → half per corner
@@ -153,11 +188,12 @@ class SprungBodyModel:
             F_sd[2] += Far_r
             F_sd[3] -= Far_r
 
-        # Wheel normal loads (positive into tire).
-        # F_sd on body up; compression → F_sd>0 → increased tire load.
-        # Aero enters via body heave eq only; spring compression carries it to Fz.
-        Fz = self._static_Fz + F_sd
-        Fz = np.maximum(Fz, cfg.Fz_min)
+        # Wheel normal loads: from tire contact (14.7) or suspension (14.5)
+        if Fz_contact is not None:
+            Fz = np.maximum(np.asarray(Fz_contact, dtype=float), cfg.Fz_min)
+        else:
+            Fz = self._static_Fz + F_sd
+            Fz = np.maximum(Fz, cfg.Fz_min)
 
         # Body accelerations
         Fz_aero_net = downforce_front + downforce_rear  # upward reaction on body = -downforce

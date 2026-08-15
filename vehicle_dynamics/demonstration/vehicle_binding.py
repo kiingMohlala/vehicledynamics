@@ -260,6 +260,13 @@ def bind_authoritative_hypercar(
         roll_stiffness_rear=30000.0,
         I_theta=900.0,
         I_phi=350.0,
+        use_unsprung=True,
+        m_u_front=40.0,
+        m_u_rear=45.0,
+        k_tire_front=220000.0,
+        k_tire_rear=220000.0,
+        c_tire_front=200.0,
+        c_tire_rear=200.0,
         gear_ratios=list(pt.gear_ratios) if pt.gear_ratios else None,
         transmission_efficiency=float(getattr(pt, "transmission_efficiency", 0.95)),
     )

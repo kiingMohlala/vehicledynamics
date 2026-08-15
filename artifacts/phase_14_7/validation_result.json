@@ -1,0 +1,161 @@
+{
+  "phase": "14.7",
+  "status": "PASS",
+  "gates_passed": 27,
+  "gates_total": 27,
+  "gates": [
+    {
+      "name": "architecture",
+      "pass": true,
+      "detail": "unsprung=True enabled=True"
+    },
+    {
+      "name": "unsprung_parameter_authority",
+      "pass": true,
+      "detail": "m_u=40.0 k_t=220000.0"
+    },
+    {
+      "name": "static_equilibrium",
+      "pass": true,
+      "detail": "z=-0.0001 zu_max=0.0000 \u03a3Fz=10802"
+    },
+    {
+      "name": "vertical_force_balance",
+      "pass": true,
+      "detail": "\u03a3Fz=10802.0 mg=10791.0"
+    },
+    {
+      "name": "single_wheel_bump",
+      "pass": true,
+      "detail": "FzFL pre=3875 peak=12635 zu_max=0.0403"
+    },
+    {
+      "name": "road_isolation",
+      "pass": true,
+      "detail": "\u0394FzFL=8761 \u0394FzRR=1792"
+    },
+    {
+      "name": "four_wheel_road_response",
+      "pass": true,
+      "detail": "peak\u03a3=37918 settle=10889"
+    },
+    {
+      "name": "wheel_hop_frequency",
+      "pass": true,
+      "detail": "T=0.058 n_peaks=8 f\u224817.2Hz"
+    },
+    {
+      "name": "unsprung_mass_authority",
+      "pass": true,
+      "detail": "T_m40=0.058 T_m80=0.084"
+    },
+    {
+      "name": "tire_stiffness_authority",
+      "pass": true,
+      "detail": "T_soft=0.137 T_stiff=0.05"
+    },
+    {
+      "name": "tire_damping_authority",
+      "pass": true,
+      "detail": "E_damp c50=0.22 c400=1.63"
+    },
+    {
+      "name": "suspension_coupling",
+      "pass": true,
+      "detail": "z body 0.00000\u21920.02111"
+    },
+    {
+      "name": "newtons_third_law",
+      "pass": true,
+      "detail": "F_susp_on_u = -F_susp_on_body by construction"
+    },
+    {
+      "name": "dynamic_fz_authority",
+      "pass": true,
+      "detail": "FzFL on=3596 off=3083"
+    },
+    {
+      "name": "dugoff_fz_coupling",
+      "pass": true,
+      "detail": "ax_on=11.048 ax_off=11.123"
+    },
+    {
+      "name": "braking_dynamic_fz",
+      "pass": true,
+      "detail": "minFz=1755 ax=-12.41"
+    },
+    {
+      "name": "cornering_dynamic_fz",
+      "pass": true,
+      "detail": "\u03c6=-0.1437"
+    },
+    {
+      "name": "combined_dynamic_fz",
+      "pass": true,
+      "detail": "minFz=116"
+    },
+    {
+      "name": "wheel_unloading",
+      "pass": true,
+      "detail": "min_Fz=50.0"
+    },
+    {
+      "name": "tire_damper_dissipation",
+      "pass": true,
+      "detail": "E_tire_damp=1.31"
+    },
+    {
+      "name": "suspension_damper_dissipation",
+      "pass": true,
+      "detail": "E_susp_damp=47.44"
+    },
+    {
+      "name": "energy_nonnegative",
+      "pass": true,
+      "detail": "both \u2265 0"
+    },
+    {
+      "name": "timestep_stability",
+      "pass": true,
+      "detail": "nan_free=True"
+    },
+    {
+      "name": "deterministic_replay",
+      "pass": true,
+      "detail": "run0=(0.00118811, 6971.0229, -0.00549424)"
+    },
+    {
+      "name": "historical_isolation",
+      "pass": true,
+      "detail": "t100=5.36999999999993 t200=19.810000000000297"
+    },
+    {
+      "name": "regression_reported",
+      "pass": true,
+      "detail": "hyper t100=3.1299999999999772 (14.6 ref 3.16) \u0394=-0.03; t200=8.339999999999867 \u0394=-0.05"
+    },
+    {
+      "name": "negative_default_fallback",
+      "pass": true,
+      "detail": "m_u=40.0 k_t=220000.0"
+    }
+  ],
+  "regression": {
+    "hyper": {
+      "t100": 3.1299999999999772,
+      "t200": 8.339999999999867,
+      "ref": [
+        3.16,
+        8.39
+      ]
+    },
+    "hist": {
+      "t100": 5.36999999999993,
+      "t200": 19.810000000000297,
+      "ref": [
+        5.37,
+        19.81
+      ]
+    }
+  }
+}

@@ -87,6 +87,13 @@ class SimulationConfig:
     roll_stiffness_rear: float = 18000.0
     I_theta: float = 1200.0
     I_phi: float = 400.0
+    use_unsprung: bool = True
+    m_u_front: float = 40.0
+    m_u_rear: float = 45.0
+    k_tire_front: float = 220000.0
+    k_tire_rear: float = 220000.0
+    c_tire_front: float = 200.0
+    c_tire_rear: float = 200.0
 
 
 @dataclass
@@ -201,6 +208,13 @@ class Simulation:
                 roll_stiffness_rear=float(getattr(self.cfg, "roll_stiffness_rear", 18000.0)),
                 I_theta=float(getattr(self.cfg, "I_theta", 1200.0)),
                 I_phi=float(getattr(self.cfg, "I_phi", 400.0)),
+                use_unsprung=bool(getattr(self.cfg, "use_unsprung", True)),
+                m_u_front=float(getattr(self.cfg, "m_u_front", 40.0)),
+                m_u_rear=float(getattr(self.cfg, "m_u_rear", 45.0)),
+                k_tire_front=float(getattr(self.cfg, "k_tire_front", 220000.0)),
+                k_tire_rear=float(getattr(self.cfg, "k_tire_rear", 220000.0)),
+                c_tire_front=float(getattr(self.cfg, "c_tire_front", 200.0)),
+                c_tire_rear=float(getattr(self.cfg, "c_tire_rear", 200.0)),
             ))
 
         self._last_clutch_torque = 0.0  # reaction load on crank from previous step
