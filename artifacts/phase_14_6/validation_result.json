@@ -1,0 +1,155 @@
+{
+  "phase": "14.6",
+  "status": "PASS",
+  "gates_passed": 24,
+  "gates_total": 24,
+  "gates": [
+    {
+      "name": "numerical_stability",
+      "pass": true,
+      "detail": "drift=7.70e-08 nan_ok=True"
+    },
+    {
+      "name": "static_equilibrium",
+      "pass": true,
+      "detail": "z=-4.92e-06 \u03b8=2.01e-04 \u03c6=0.00e+00"
+    },
+    {
+      "name": "long_duration_no_drift",
+      "pass": true,
+      "detail": "50s drift=7.70e-08"
+    },
+    {
+      "name": "heave_response",
+      "pass": true,
+      "detail": "z0=0.00000 z_aero=-0.03519"
+    },
+    {
+      "name": "pitch_accel_response",
+      "pass": true,
+      "detail": "\u03b8_acc=0.0069"
+    },
+    {
+      "name": "pitch_braking_response",
+      "pass": true,
+      "detail": "\u03b8_brk=-0.0111"
+    },
+    {
+      "name": "roll_response",
+      "pass": true,
+      "detail": "\u03c6=0.0425"
+    },
+    {
+      "name": "roll_symmetry",
+      "pass": true,
+      "detail": "\u03c6+=0.0425 \u03c6-=-0.0425"
+    },
+    {
+      "name": "damping_decay",
+      "pass": true,
+      "detail": "|\u03c6|_peak=0.0482 |\u03c6|_end=0.0000"
+    },
+    {
+      "name": "suspension_parameter_authority",
+      "pass": true,
+      "detail": "k=160000.0 c=12000.0"
+    },
+    {
+      "name": "hcg_authority",
+      "pass": true,
+      "detail": "\u03b8_h0.4=0.0069 \u03b8_h0.8=0.0139"
+    },
+    {
+      "name": "k_mutation_pitch",
+      "pass": true,
+      "detail": "\u03b8_soft=-0.0299 \u03b8_stiff=-0.0111"
+    },
+    {
+      "name": "wheel_load_conservation",
+      "pass": true,
+      "detail": "static:10791/10791; accel:10791/10791; brake:10791/10791; corner:10791/10791; aero:15791/15791; combined:13291/13291"
+    },
+    {
+      "name": "combined_load_transfer",
+      "pass": true,
+      "detail": "Fz=[4471. 3304. 2833. 1040.]"
+    },
+    {
+      "name": "aero_load_balance",
+      "pass": true,
+      "detail": "\u03a3Fz=15791 expected=15791"
+    },
+    {
+      "name": "quasi_static_convergence",
+      "pass": true,
+      "detail": "max|Fz_dyn-Fz_qs|=0.00 N"
+    },
+    {
+      "name": "qs_fallback_matches",
+      "pass": true,
+      "detail": "fallback err=0.00"
+    },
+    {
+      "name": "timestep_convergence",
+      "pass": true,
+      "detail": "\u03b8_dt0.01=-0.01112 \u03b8_dt0.005=-0.01112"
+    },
+    {
+      "name": "energy_spring",
+      "pass": true,
+      "detail": "E_spring=463.75"
+    },
+    {
+      "name": "energy_damper",
+      "pass": true,
+      "detail": "E_damp_\u0394=143.33"
+    },
+    {
+      "name": "energy_body",
+      "pass": true,
+      "detail": "E_heave=0.001 E_pitch=0.013 E_roll=0.059"
+    },
+    {
+      "name": "deterministic_replay",
+      "pass": true,
+      "detail": "run0=(-0.006429067, -0.010807937, -0.057641263, 4443.90492)"
+    },
+    {
+      "name": "historical_isolation",
+      "pass": true,
+      "detail": "t100=5.36999999999993 t200=19.810000000000297"
+    },
+    {
+      "name": "frozen_regression",
+      "pass": true,
+      "detail": "t100=3.1599999999999766 t200=8.389999999999866"
+    }
+  ],
+  "energy": {
+    "E_spring": 463.7477957217832,
+    "E_damper_dissipated": 143.32939425793563,
+    "E_heave": 0.0011538795406084625,
+    "E_pitch": 0.013280317488468788,
+    "E_roll": 0.05917179441957659,
+    "status": "PARTIAL"
+  },
+  "qs_convergence_err_N": 1.8400778571958654e-06,
+  "regression": {
+    "hist": {
+      "t100": 5.36999999999993,
+      "t200": 19.810000000000297
+    },
+    "hyper": {
+      "t100": 3.1599999999999766,
+      "t200": 8.389999999999866
+    },
+    "ref_hyper": {
+      "t100": 3.24,
+      "t200": 8.47
+    },
+    "ref_hist": {
+      "t100": 5.37,
+      "t200": 18.86
+    }
+  }
+}

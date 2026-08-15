@@ -19,8 +19,8 @@ Suspension force on body (upward positive):
   F_i = -k_i·δ_i - c_i·δ̇_i
 
 Wheel normal load (tire, positive down into contact):
-  Fz_i = Fz_static_i - F_i + aero_share_i
-  (static spring preload carries weight; -F_i adds dynamic load)
+  Fz_i = Fz_static_i + F_i + aero_share_i
+  (F_i = force on body up; compression → F_i>0 → more tire load)
 
 Body equations:
   m·z̈     = Σ F_i + Fz_aero_net
@@ -119,18 +119,19 @@ class SprungBodyModel:
         th, thd = self.state.theta, self.state.theta_dot
         ph, phd = self.state.phi, self.state.phi_dot
 
-        # Corner deflections and rates (from static)
+        # Corner deflections and rates from static.
+        # +theta nose-up raises front (δ = z + a·θ …); +phi right-down loads right.
         delta = np.array([
-            z - a * th + (tf / 2) * ph,
-            z - a * th - (tf / 2) * ph,
-            z + b * th + (tr / 2) * ph,
-            z + b * th - (tr / 2) * ph,
+            z + a * th + (tf / 2) * ph,
+            z + a * th - (tf / 2) * ph,
+            z - b * th + (tr / 2) * ph,
+            z - b * th - (tr / 2) * ph,
         ])
         delta_dot = np.array([
-            zd - a * thd + (tf / 2) * phd,
-            zd - a * thd - (tf / 2) * phd,
-            zd + b * thd + (tr / 2) * phd,
-            zd + b * thd - (tr / 2) * phd,
+            zd + a * thd + (tf / 2) * phd,
+            zd + a * thd - (tf / 2) * phd,
+            zd - b * thd + (tr / 2) * phd,
+            zd - b * thd - (tr / 2) * phd,
         ])
 
         k = np.array([cfg.k_front, cfg.k_front, cfg.k_rear, cfg.k_rear]) / 1.0  # per corner
@@ -152,14 +153,10 @@ class SprungBodyModel:
             F_sd[2] += Far_r
             F_sd[3] -= Far_r
 
-        # Aero normal: add to wheel loads (downforce increases Fz)
-        aero = np.array([
-            downforce_front / 2, downforce_front / 2,
-            downforce_rear / 2, downforce_rear / 2,
-        ])
-
-        # Wheel normal loads (positive into tire)
-        Fz = self._static_Fz - F_sd + aero
+        # Wheel normal loads (positive into tire).
+        # F_sd on body up; compression → F_sd>0 → increased tire load.
+        # Aero enters via body heave eq only; spring compression carries it to Fz.
+        Fz = self._static_Fz + F_sd
         Fz = np.maximum(Fz, cfg.Fz_min)
 
         # Body accelerations
@@ -169,7 +166,7 @@ class SprungBodyModel:
         # supported by preload (not in dynamic eq). Dynamic:
         z_ddot = float(np.sum(F_sd) - Fz_aero_net) / cfg.mass
         # Pitch: suspension moments + inertial load-transfer moment
-        M_susp_th = -a * (F_sd[0] + F_sd[1]) + b * (F_sd[2] + F_sd[3])
+        M_susp_th = +a * (F_sd[0] + F_sd[1]) - b * (F_sd[2] + F_sd[3])
         theta_ddot = (M_susp_th + cfg.mass * ax * cfg.h_cg + M_aero_pitch) / cfg.I_theta
         # Roll
         M_susp_ph = (tf / 2) * (F_sd[0] - F_sd[1]) + (tr / 2) * (F_sd[2] - F_sd[3])
@@ -189,7 +186,7 @@ class SprungBodyModel:
         self._E_damp += max(dE_damp, 0.0)
 
         expected = float(np.sum(self._static_Fz) + downforce_front + downforce_rear)
-        residual = float(np.sum(Fz) - expected)
+        residual = float(np.sum(Fz) - expected)  # →0 after heave settles under aero
 
         self.state = SprungBodyState(
             z=float(z_n),
