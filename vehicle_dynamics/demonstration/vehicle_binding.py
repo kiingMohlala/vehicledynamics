@@ -186,6 +186,8 @@ def bind_authoritative_hypercar(
                 final_drive=3.9,
                 gearbox="dct",
                 differential="open",
+                gear_ratios=[0.0, 3.50, 2.20, 1.60, 1.20, 1.00, 0.85],
+                transmission_efficiency=0.95,
             ),
         ),
         metadata={
@@ -242,6 +244,8 @@ def bind_authoritative_hypercar(
         aero_cl_front=float(definition.subsystems.aero.Cl_front),
         aero_cl_rear=float(definition.subsystems.aero.Cl_rear),
         aero_frontal_area=float(definition.subsystems.aero.frontal_area_m2),
+        gear_ratios=list(pt.gear_ratios) if pt.gear_ratios else None,
+        transmission_efficiency=float(getattr(pt, "transmission_efficiency", 0.95)),
     )
 
     provenance = {
@@ -263,6 +267,7 @@ def bind_authoritative_hypercar(
         "h_cg": "GeometryConfig.h_cg_m → SimulationConfig.h_cg → DualTrackConfig.h_cg",
         "brake_torque_max": "BrakeConfig.max_torque_Nm → SimulationConfig → DualTrackConfig",
         "aero_cd": "AeroConfigBlock.Cd → SimulationConfig.aero_cd → AeroConfig.coeffs",
+        "gear_ratios": "PowertrainConfigBlock.gear_ratios → SimulationConfig → TransmissionConfig → Gearbox.ratios.gears",
     }
 
     fp_payload = {

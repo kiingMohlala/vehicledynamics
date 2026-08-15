@@ -57,6 +57,14 @@ class PowertrainConfigBlock:
     hybrid_battery_kwh: float = 0.0
     motor_peak_kw: float = 0.0
     differential: str = "open"
+    # Phase 14.2H.2 — explicit gear vector; index 0 unused, 1..n forward
+    # Empty list → transmission may use library default (historical path only)
+    gear_ratios: list = None  # type: ignore
+    transmission_efficiency: float = 0.95
+
+    def __post_init__(self):
+        if self.gear_ratios is None:
+            self.gear_ratios = []
 
 
 @dataclass

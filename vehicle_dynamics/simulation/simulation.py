@@ -57,6 +57,8 @@ class SimulationConfig:
     redline_rpm: float = 7500.0
     idle_rpm: float = 900.0
     final_drive: float = 3.9
+    gear_ratios: list | None = None  # Phase 14.2H.2 authoritative vector
+    transmission_efficiency: float = 0.95
     mu_tire: float = 1.1  # longitudinal friction limit for Fx clamp
     use_dual_track: bool = True  # Phase 14.2C authoritative plant
     abs_enabled: bool = True
@@ -123,6 +125,8 @@ class Simulation:
                 enabled=self.cfg.powertrain_enabled,
                 initial_gear=1,
                 final_drive=self.cfg.final_drive,
+                efficiency=float(getattr(self.cfg, "transmission_efficiency", 0.95)),
+                gear_ratios=getattr(self.cfg, "gear_ratios", None),
             )
         )
         self.diff = DifferentialSolver(

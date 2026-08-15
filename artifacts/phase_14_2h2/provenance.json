@@ -1,0 +1,162 @@
+[
+  {
+    "parameter": "gear_ratios",
+    "definition": [
+      0.0,
+      3.5,
+      2.2,
+      1.6,
+      1.2,
+      1.0,
+      0.85
+    ],
+    "simulation_config": [
+      0.0,
+      3.5,
+      2.2,
+      1.6,
+      1.2,
+      1.0,
+      0.85
+    ],
+    "runtime": [
+      0.0,
+      3.5,
+      2.2,
+      1.6,
+      1.2,
+      1.0,
+      0.85
+    ],
+    "match": true
+  },
+  {
+    "parameter": "mass",
+    "definition": 1100.0,
+    "simulation_config": 1100.0,
+    "runtime": 1100.0,
+    "match": true
+  },
+  {
+    "parameter": "mu",
+    "definition": 1.15,
+    "simulation_config": 1.15,
+    "runtime": 1.15,
+    "match": true
+  },
+  {
+    "parameter": "tire_cx",
+    "definition": 100000.0,
+    "simulation_config": 100000.0,
+    "runtime": 100000.0,
+    "match": true
+  },
+  {
+    "parameter": "tire_cy",
+    "definition": 90000.0,
+    "simulation_config": 90000.0,
+    "runtime": 90000.0,
+    "match": true
+  },
+  {
+    "parameter": "wheel_radius",
+    "definition": 0.33,
+    "simulation_config": 0.33,
+    "runtime": 0.33,
+    "match": true
+  },
+  {
+    "parameter": "drive_split",
+    "definition": 0.35,
+    "simulation_config": 0.35,
+    "runtime": 0.35,
+    "match": true
+  },
+  {
+    "parameter": "brake_tmax",
+    "definition": 2800.0,
+    "simulation_config": 2800.0,
+    "runtime": 2800.0,
+    "match": true
+  },
+  {
+    "parameter": "h_cg",
+    "definition": 0.4,
+    "simulation_config": 0.4,
+    "runtime": 0.4,
+    "match": true
+  },
+  {
+    "parameter": "final_drive",
+    "definition": 3.9,
+    "simulation_config": 3.9,
+    "runtime": 3.9,
+    "match": true
+  },
+  {
+    "parameter": "peak_power",
+    "definition": 750.0,
+    "simulation_config": 750.0,
+    "runtime": 750.0,
+    "match": true
+  },
+  {
+    "parameter": "aero_cd",
+    "definition": 0.34,
+    "simulation_config": 0.34,
+    "runtime": 0.34,
+    "match": true
+  },
+  {
+    "parameter": "aero_cl_front",
+    "definition": -0.55,
+    "simulation_config": -0.55,
+    "runtime": -0.55,
+    "match": true
+  },
+  {
+    "parameter": "aero_cl_rear",
+    "definition": -0.85,
+    "simulation_config": -0.85,
+    "runtime": -0.85,
+    "match": true
+  },
+  {
+    "parameter": "abs",
+    "definition": 1.0,
+    "simulation_config": 1.0,
+    "runtime": 1.0,
+    "match": true
+  },
+  {
+    "parameter": "trans_eff",
+    "definition": 0.95,
+    "simulation_config": 0.95,
+    "runtime": 0.95,
+    "match": true
+  },
+  {
+    "parameter": "Dugoff Cx/Cy x4",
+    "definition": "100k/90k",
+    "simulation_config": "100000.0/90000.0",
+    "runtime": [
+      [
+        100000.0,
+        90000.0
+      ],
+      [
+        100000.0,
+        90000.0
+      ],
+      [
+        100000.0,
+        90000.0
+      ],
+      [
+        100000.0,
+        90000.0
+      ]
+    ],
+    "match": true
+  }
+]

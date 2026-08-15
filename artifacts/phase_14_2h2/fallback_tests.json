@@ -1,0 +1,27 @@
+[
+  {
+    "poison": "DualTrackConfig Cx/Cy defaults + default_ratios gears",
+    "hypercar_Cx": [
+      100000.0,
+      100000.0,
+      100000.0,
+      100000.0
+    ],
+    "hypercar_Cy": [
+      90000.0,
+      90000.0,
+      90000.0,
+      90000.0
+    ],
+    "hypercar_gears": [
+      0.0,
+      3.5,
+      2.2,
+      1.6,
+      1.2,
+      1.0,
+      0.85
+    ],
+    "resisted": true
+  }
+]

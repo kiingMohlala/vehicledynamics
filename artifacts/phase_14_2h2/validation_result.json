@@ -1,0 +1,380 @@
+{
+  "phase": "14.2H.2",
+  "status": "PASS",
+  "gates_passed": 19,
+  "gates_total": 19,
+  "gates": [
+    {
+      "name": "gear_ratio_authority",
+      "pass": true,
+      "detail": "defn=[0.0, 3.5, 2.2, 1.6, 1.2, 1.0, 0.85] cfg=[0.0, 3.5, 2.2, 1.6, 1.2, 1.0, 0.85] runtime=[0.0, 3.5, 2.2, 1.6, 1.2, 1.0, 0.85] fd=3.9"
+    },
+    {
+      "name": "parameter_authority_complete",
+      "pass": true,
+      "detail": "rows=17/17"
+    },
+    {
+      "name": "mutation_cy",
+      "pass": true,
+      "detail": "ay_base=10.764 ay_half=8.718"
+    },
+    {
+      "name": "mutation_brake",
+      "pass": true,
+      "detail": "plant_tmax=1400.0"
+    },
+    {
+      "name": "mutation_gear1",
+      "pass": true,
+      "detail": "runtime_g1=3.8500000000000005 expect=3.8500000000000005"
+    },
+    {
+      "name": "mutation_final_drive",
+      "pass": true,
+      "detail": "fd=4.29"
+    },
+    {
+      "name": "mutation_mass",
+      "pass": true,
+      "detail": "plant_mass=1200.0"
+    },
+    {
+      "name": "mutation_aero_cd",
+      "pass": true,
+      "detail": "Cd=0.40800000000000003"
+    },
+    {
+      "name": "mutation_mu",
+      "pass": true,
+      "detail": "mu=0.9199999999999999"
+    },
+    {
+      "name": "physics_mutation_tests",
+      "pass": true,
+      "detail": "passed=7/7"
+    },
+    {
+      "name": "no_default_fallback",
+      "pass": true,
+      "detail": "Cx_ok=True Cy_ok=True gears_ok=True"
+    },
+    {
+      "name": "historical_isolation",
+      "pass": true,
+      "detail": "hist t100=5.35999999999993 t200=19.77000000000029; hyper t100=3.1299999999999772 t200=8.309999999999867"
+    },
+    {
+      "name": "energy_instrumentation",
+      "pass": true,
+      "detail": "residual_frac=0.005 status=PARTIAL"
+    },
+    {
+      "name": "deterministic_replay",
+      "pass": true,
+      "detail": "t100=3.1299999999999772 t200=8.309999999999867 stop=2.239999999999993 n=5"
+    },
+    {
+      "name": "handling_coupling",
+      "pass": true,
+      "detail": "ay=-10.69 \u03b1=[-0.253 -0.26  -0.079 -0.083]"
+    },
+    {
+      "name": "powertrain_coupling",
+      "pass": true,
+      "detail": "P=750.0 t100=3.1299999999999772"
+    },
+    {
+      "name": "abs_authority",
+      "pass": true,
+      "detail": "covered in H.1; plant abs_enabled bound"
+    },
+    {
+      "name": "aero_authority",
+      "pass": true,
+      "detail": "Cd=0.34"
+    },
+    {
+      "name": "full_regression",
+      "pass": true,
+      "detail": "historical + hypercar + gears + replay"
+    }
+  ],
+  "provenance": [
+    {
+      "parameter": "gear_ratios",
+      "definition": [
+        0.0,
+        3.5,
+        2.2,
+        1.6,
+        1.2,
+        1.0,
+        0.85
+      ],
+      "simulation_config": [
+        0.0,
+        3.5,
+        2.2,
+        1.6,
+        1.2,
+        1.0,
+        0.85
+      ],
+      "runtime": [
+        0.0,
+        3.5,
+        2.2,
+        1.6,
+        1.2,
+        1.0,
+        0.85
+      ],
+      "match": true
+    },
+    {
+      "parameter": "mass",
+      "definition": 1100.0,
+      "simulation_config": 1100.0,
+      "runtime": 1100.0,
+      "match": true
+    },
+    {
+      "parameter": "mu",
+      "definition": 1.15,
+      "simulation_config": 1.15,
+      "runtime": 1.15,
+      "match": true
+    },
+    {
+      "parameter": "tire_cx",
+      "definition": 100000.0,
+      "simulation_config": 100000.0,
+      "runtime": 100000.0,
+      "match": true
+    },
+    {
+      "parameter": "tire_cy",
+      "definition": 90000.0,
+      "simulation_config": 90000.0,
+      "runtime": 90000.0,
+      "match": true
+    },
+    {
+      "parameter": "wheel_radius",
+      "definition": 0.33,
+      "simulation_config": 0.33,
+      "runtime": 0.33,
+      "match": true
+    },
+    {
+      "parameter": "drive_split",
+      "definition": 0.35,
+      "simulation_config": 0.35,
+      "runtime": 0.35,
+      "match": true
+    },
+    {
+      "parameter": "brake_tmax",
+      "definition": 2800.0,
+      "simulation_config": 2800.0,
+      "runtime": 2800.0,
+      "match": true
+    },
+    {
+      "parameter": "h_cg",
+      "definition": 0.4,
+      "simulation_config": 0.4,
+      "runtime": 0.4,
+      "match": true
+    },
+    {
+      "parameter": "final_drive",
+      "definition": 3.9,
+      "simulation_config": 3.9,
+      "runtime": 3.9,
+      "match": true
+    },
+    {
+      "parameter": "peak_power",
+      "definition": 750.0,
+      "simulation_config": 750.0,
+      "runtime": 750.0,
+      "match": true
+    },
+    {
+      "parameter": "aero_cd",
+      "definition": 0.34,
+      "simulation_config": 0.34,
+      "runtime": 0.34,
+      "match": true
+    },
+    {
+      "parameter": "aero_cl_front",
+      "definition": -0.55,
+      "simulation_config": -0.55,
+      "runtime": -0.55,
+      "match": true
+    },
+    {
+      "parameter": "aero_cl_rear",
+      "definition": -0.85,
+      "simulation_config": -0.85,
+      "runtime": -0.85,
+      "match": true
+    },
+    {
+      "parameter": "abs",
+      "definition": 1.0,
+      "simulation_config": 1.0,
+      "runtime": 1.0,
+      "match": true
+    },
+    {
+      "parameter": "trans_eff",
+      "definition": 0.95,
+      "simulation_config": 0.95,
+      "runtime": 0.95,
+      "match": true
+    },
+    {
+      "parameter": "Dugoff Cx/Cy x4",
+      "definition": "100k/90k",
+      "simulation_config": "100000.0/90000.0",
+      "runtime": [
+        [
+          100000.0,
+          90000.0
+        ],
+        [
+          100000.0,
+          90000.0
+        ],
+        [
+          100000.0,
+          90000.0
+        ],
+        [
+          100000.0,
+          90000.0
+        ]
+      ],
+      "match": true
+    }
+  ],
+  "mutations": [
+    {
+      "param": "Cy*0.5",
+      "base": 10.764108332670935,
+      "mutated": 8.718480880280756,
+      "physics_changed": true
+    },
+    {
+      "param": "brake_Tmax*0.5",
+      "runtime_tmax": 1400.0,
+      "physics_changed": true
+    },
+    {
+      "param": "gear1*1.1",
+      "runtime_g1": 3.8500000000000005,
+      "physics_changed": true
+    },
+    {
+      "param": "FD*1.1",
+      "runtime_fd": 4.29,
+      "physics_changed": true
+    },
+    {
+      "param": "mass+100",
+      "runtime_mass": 1200.0,
+      "physics_changed": true
+    },
+    {
+      "param": "Cd+20%",
+      "runtime_cd": 0.40800000000000003,
+      "physics_changed": true
+    },
+    {
+      "param": "mu*0.8",
+      "runtime_mu": 0.9199999999999999,
+      "physics_changed": true
+    }
+  ],
+  "fallbacks": [
+    {
+      "poison": "DualTrackConfig Cx/Cy defaults + default_ratios gears",
+      "hypercar_Cx": [
+        100000.0,
+        100000.0,
+        100000.0,
+        100000.0
+      ],
+      "hypercar_Cy": [
+        90000.0,
+        90000.0,
+        90000.0,
+        90000.0
+      ],
+      "hypercar_gears": [
+        0.0,
+        3.5,
+        2.2,
+        1.6,
+        1.2,
+        1.0,
+        0.85
+      ],
+      "resisted": true
+    }
+  ],
+  "energy": {
+    "E_engine_J": 5002713.254768978,
+    "E_clutch_heat_J": 207935.86596243086,
+    "E_trans_loss_proxy_J": 526699.7357511306,
+    "E_gb_out_J": 4268077.653055416,
+    "W_tire_J": 4067326.535802073,
+    "W_aero_J": 968325.2209313721,
+    "W_roll_J": 114486.46617896522,
+    "E_vehicle_J": 2981474.2795587145,
+    "E_wheel_rot_J": 179202.06037918644,
+    "residual_J": 24589.626007177867,
+    "residual_frac": 0.004915257932030606,
+    "status": "PARTIAL"
+  },
+  "historical": {
+    "t100": 5.35999999999993,
+    "t200": 19.77000000000029,
+    "mass": 1400,
+    "power": 280
+  },
+  "hypercar": {
+    "t100": 3.1299999999999772,
+    "t200": 8.309999999999867,
+    "mass": 1100,
+    "power": 750,
+    "fingerprint": "d840596e4dbd5600"
+  },
+  "deterministic": {
+    "t100": [
+      3.1299999999999772,
+      3.1299999999999772,
+      3.1299999999999772,
+      3.1299999999999772,
+      3.1299999999999772
+    ],
+    "t200": [
+      8.309999999999867,
+      8.309999999999867,
+      8.309999999999867,
+      8.309999999999867,
+      8.309999999999867
+    ],
+    "stops": [
+      2.239999999999993,
+      2.239999999999993,
+      2.239999999999993,
+      2.239999999999993,
+      2.239999999999993
+    ]
+  }
+}

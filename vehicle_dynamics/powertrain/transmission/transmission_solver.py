@@ -25,6 +25,8 @@ class TransmissionConfig:
     final_drive: float = 3.90
     efficiency: float = 0.95
     initial_gear: int = 0
+    # Phase 14.2H.2: explicit ratios; if provided, replace default_ratios() gears
+    gear_ratios: list | None = None
 
 
 @dataclass
@@ -48,6 +50,9 @@ class TransmissionSolver:
         self.cfg = config or TransmissionConfig()
         ratios = default_ratios(self.cfg.final_drive)
         ratios.efficiency = self.cfg.efficiency
+        # Authoritative path: explicit gear vector overrides library defaults
+        if self.cfg.gear_ratios is not None and len(self.cfg.gear_ratios) > 1:
+            ratios.gears = list(self.cfg.gear_ratios)
         gtype = (
             GearboxType.SEQUENTIAL
             if self.cfg.gearbox.lower().startswith("seq")
