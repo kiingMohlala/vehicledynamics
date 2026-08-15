@@ -1,0 +1,151 @@
+{
+  "phase": "14.9.9",
+  "status": "PASS",
+  "gates_passed": 20,
+  "gates_total": 20,
+  "gates": [
+    {
+      "name": "architecture",
+      "pass": true,
+      "detail": "\u03ba=['-0.052', '-0.150', '-1.000', '-1.000'] \u03b1=['0.174', '0.164', '0.159', '0.151']"
+    },
+    {
+      "name": "friction_ellipse",
+      "pass": true,
+      "detail": "\u03b2=[0.941, 0.938, 0.991, 0.986] util=[0.941, 0.938, 0.991, 0.986]"
+    },
+    {
+      "name": "pure_braking_baseline",
+      "pass": true,
+      "detail": "ax=-9.50 ay=0.00"
+    },
+    {
+      "name": "pure_cornering_baseline",
+      "pass": true,
+      "detail": "ay=11.27 r=0.505"
+    },
+    {
+      "name": "light_brake_corner",
+      "pass": true,
+      "detail": "\u03a3Fx=-4944 \u03a3Fy=11746"
+    },
+    {
+      "name": "heavy_brake_reduces_lateral",
+      "pass": true,
+      "detail": "Fy light=11380 heavy=8907 Fx h=-8984"
+    },
+    {
+      "name": "friction_budget_coupling",
+      "pass": true,
+      "detail": "budget=[{'brk': 0.0, 'Fy': 13064, '\u03b2': 0.969}, {'brk': 0.2, 'Fy': 11509, '\u03b2': 0.99}, {'brk': 0.4, 'Fy': 10223, '\u03b2': 0.991}, {'brk': 0.6, 'Fy': 9990, '\u03b2': 0.991}]"
+    },
+    {
+      "name": "brake_authority",
+      "pass": true,
+      "detail": "|Fx| 0.2=5189 0.5=7010"
+    },
+    {
+      "name": "steering_authority",
+      "pass": true,
+      "detail": "|Fy| \u03b40.04=10629 \u03b40.12=11084"
+    },
+    {
+      "name": "mu_authority",
+      "pass": true,
+      "detail": "Fy/Fx \u03bc1.15=10024/7876 \u03bc0.55=1378/6202"
+    },
+    {
+      "name": "fz_coupling",
+      "pass": true,
+      "detail": "dFz_f=996 dFz_r=1126"
+    },
+    {
+      "name": "front_rear_split",
+      "pass": true,
+      "detail": "Fy_f=6793 Fy_r=2810"
+    },
+    {
+      "name": "yaw_moment",
+      "pass": true,
+      "detail": "r=1.196 yaw_acc=1.448"
+    },
+    {
+      "name": "lr_symmetry",
+      "pass": true,
+      "detail": "ayL=9.23 ayR=-9.23"
+    },
+    {
+      "name": "brake_then_steer",
+      "pass": true,
+      "detail": "ax_brake=-9.40 ay_after=6.01"
+    },
+    {
+      "name": "steer_then_brake",
+      "pass": true,
+      "detail": "ay_steer=12.02 ax_after=-8.93"
+    },
+    {
+      "name": "recovery",
+      "pass": true,
+      "detail": "\u03b4=0.0000 r 0.825\u21920.001"
+    },
+    {
+      "name": "deterministic_replay",
+      "pass": true,
+      "detail": "run0=(-8.371, 8.2058, np.float64(-8880.1))"
+    },
+    {
+      "name": "regression",
+      "pass": true,
+      "detail": "t100=3.1299999999999772 t200=8.339999999999867"
+    },
+    {
+      "name": "historical_isolation",
+      "pass": true,
+      "detail": "t100=5.36999999999993"
+    }
+  ],
+  "friction_budget": [
+    {
+      "brake": 0.0,
+      "Fy": 13064.189427057774,
+      "Fx": 621.3264868077345,
+      "beta_max": 0.9693427563517278
+    },
+    {
+      "brake": 0.2,
+      "Fy": 11509.076754324393,
+      "Fx": -5796.8396016783245,
+      "beta_max": 0.9897459134128875
+    },
+    {
+      "brake": 0.4,
+      "Fy": 10223.305047088365,
+      "Fx": -7541.5404714061,
+      "beta_max": 0.9910461351740657
+    },
+    {
+      "brake": 0.6,
+      "Fy": 9989.93803390675,
+      "Fx": -7425.747435229034,
+      "beta_max": 0.9912701008252055
+    }
+  ],
+  "regression": {
+    "hyper": {
+      "t100": 3.1299999999999772,
+      "t200": 8.339999999999867,
+      "ref": [
+        3.13,
+        8.34
+      ]
+    },
+    "hist": {
+      "t100": 5.36999999999993,
+      "ref": [
+        5.37,
+        19.81
+      ]
+    }
+  }
+}
