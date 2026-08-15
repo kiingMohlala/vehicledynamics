@@ -1,0 +1,101 @@
+{
+  "phase": "15.1",
+  "status": "PASS",
+  "gates_passed": 14,
+  "gates_total": 14,
+  "gates": [
+    {
+      "name": "state_observability",
+      "pass": true,
+      "detail": "\u03b2=-0.0501 r=0.4847 r_ref=0.1508 e_r=0.3339"
+    },
+    {
+      "name": "sideslip_calculation",
+      "pass": true,
+      "detail": "\u03b2+=-0.0431 \u03b2-=0.0431"
+    },
+    {
+      "name": "zero_steer_reference",
+      "pass": true,
+      "detail": "r_ref=0.000000 \u03b4=0.0000"
+    },
+    {
+      "name": "steering_sign",
+      "pass": true,
+      "detail": "r_ref+=0.1507 r_ref-=-0.1507"
+    },
+    {
+      "name": "speed_dependence",
+      "pass": true,
+      "detail": "r_ref@15=0.1826 @30=0.1352"
+    },
+    {
+      "name": "understeer_consistency",
+      "pass": true,
+      "detail": "r_kin=0.7098 r_ref=0.1507 ratio=0.212"
+    },
+    {
+      "name": "understeer_vs_neutral",
+      "pass": true,
+      "detail": "r_neutral=0.7423 r_us=0.1466"
+    },
+    {
+      "name": "low_speed_protection",
+      "pass": true,
+      "detail": "r_ref@0.1m/s=0.0"
+    },
+    {
+      "name": "yaw_tracking_error",
+      "pass": true,
+      "detail": "e_r=0.3422 e_vs_kin=-0.2169"
+    },
+    {
+      "name": "transient_observability",
+      "pass": true,
+      "detail": "max|r|=0.551 max|ay|=11.36"
+    },
+    {
+      "name": "reversal_symmetry",
+      "pass": true,
+      "detail": "r_ref\u00b1=0.1507/-0.1507"
+    },
+    {
+      "name": "no_actuator_authority",
+      "pass": true,
+      "detail": "has_cmd=False \u0394\u03a3Fy=0.000"
+    },
+    {
+      "name": "regression",
+      "pass": true,
+      "detail": "t100=3.1299999999999772 t200=8.339999999999867"
+    },
+    {
+      "name": "historical_isolation",
+      "pass": true,
+      "detail": "t100=5.36999999999993"
+    }
+  ],
+  "reference_model": {
+    "K_us": 0.0065,
+    "source": "14.9.8 steering gradient d\u03b4/d(ay)",
+    "r_kin_example": 0.7097791507365449,
+    "r_ref_example": 0.15070723616118392
+  },
+  "regression": {
+    "hyper": {
+      "t100": 3.1299999999999772,
+      "t200": 8.339999999999867,
+      "ref": [
+        3.13,
+        8.34
+      ]
+    },
+    "hist": {
+      "t100": 5.36999999999993,
+      "ref": [
+        5.37,
+        19.81
+      ]
+    }
+  }
+}
