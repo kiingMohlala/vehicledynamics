@@ -1,0 +1,131 @@
+{
+  "phase": "15.3",
+  "status": "PASS",
+  "gates_passed": 20,
+  "gates_total": 20,
+  "gates": [
+    {
+      "name": "zero_error_zero_request",
+      "pass": true,
+      "detail": "M=0.0 reason=enter_deadband"
+    },
+    {
+      "name": "positive_error_negative_request",
+      "pass": true,
+      "detail": "e_r=0.25 M=-1000"
+    },
+    {
+      "name": "negative_error_positive_request",
+      "pass": true,
+      "detail": "e_r=-0.25 M=1000"
+    },
+    {
+      "name": "symmetry",
+      "pass": true,
+      "detail": "M+=-1200 M-=1200"
+    },
+    {
+      "name": "deadband",
+      "pass": true,
+      "detail": "reason=enter_deadband"
+    },
+    {
+      "name": "hysteresis",
+      "pass": true,
+      "detail": "enter=True hold=True exit=False"
+    },
+    {
+      "name": "low_speed_inhibit",
+      "pass": true,
+      "detail": "reason=low_speed"
+    },
+    {
+      "name": "low_steer_inhibit",
+      "pass": true,
+      "detail": "reason=low_steer"
+    },
+    {
+      "name": "finite_outputs",
+      "pass": true,
+      "detail": "M=-6000"
+    },
+    {
+      "name": "bounded_request",
+      "pass": true,
+      "detail": "M=-6000"
+    },
+    {
+      "name": "utilization_inhibit",
+      "pass": true,
+      "detail": "reason=util_limit"
+    },
+    {
+      "name": "high_slip_inhibit",
+      "pass": true,
+      "detail": "reason=beta_limit"
+    },
+    {
+      "name": "sign_reversal",
+      "pass": true,
+      "detail": "M -1200 \u2192 1200"
+    },
+    {
+      "name": "transient_error_detection",
+      "pass": true,
+      "detail": "max|M_req|=554"
+    },
+    {
+      "name": "no_plant_modification",
+      "pass": true,
+      "detail": "\u0394\u03a3Fy=0.0000"
+    },
+    {
+      "name": "no_brake_command_output",
+      "pass": true,
+      "detail": "M_req=-1200 only"
+    },
+    {
+      "name": "deterministic_decision",
+      "pass": true,
+      "detail": "run0=-880.0"
+    },
+    {
+      "name": "allocator_untouched",
+      "pass": true,
+      "detail": "decision.step has no allocator call"
+    },
+    {
+      "name": "regression",
+      "pass": true,
+      "detail": "t100=3.1299999999999772 t200=8.339999999999867"
+    },
+    {
+      "name": "historical_isolation",
+      "pass": true,
+      "detail": "t100=5.36999999999993"
+    }
+  ],
+  "policy": {
+    "e_enter": 0.12,
+    "e_exit": 0.06,
+    "K_Mz": 4000.0,
+    "max_delta_Mz": 6000.0
+  },
+  "regression": {
+    "hyper": {
+      "t100": 3.1299999999999772,
+      "t200": 8.339999999999867,
+      "ref": [
+        3.13,
+        8.34
+      ]
+    },
+    "hist": {
+      "t100": 5.36999999999993,
+      "ref": [
+        5.37,
+        19.81
+      ]
+    }
+  }
+}
