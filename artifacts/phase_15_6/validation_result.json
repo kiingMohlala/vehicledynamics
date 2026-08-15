@@ -1,0 +1,220 @@
+{
+  "phase": "15.6",
+  "status": "PASS",
+  "gates_passed": 12,
+  "gates_total": 12,
+  "gates": [
+    {
+      "name": "kmz_sweep_complete",
+      "pass": true,
+      "detail": "n=5"
+    },
+    {
+      "name": "gain_authority",
+      "pass": true,
+      "detail": "e_final lowK=0.255 highK=0.090"
+    },
+    {
+      "name": "overshoot_bound",
+      "pass": true,
+      "detail": "max peak=0.253"
+    },
+    {
+      "name": "saturation_trend",
+      "pass": true,
+      "detail": "sat=[0.0, 0.0, 0.0, 0.0, 0.0]"
+    },
+    {
+      "name": "no_oscillatory_switching",
+      "pass": true,
+      "detail": "flips=[0, 0, 0, 0, 0]"
+    },
+    {
+      "name": "split_mu_degradation",
+      "pass": true,
+      "detail": "sym e_f=0.171 split e_f=0.143"
+    },
+    {
+      "name": "disturbance_magnitude_sweep",
+      "pass": true,
+      "detail": "results=[{'M': 1500.0, 'ef': 0.174}, {'M': 3000.0, 'ef': 0.169}, {'M': 5000.0, 'ef': 0.169}, {'M': 7000.0, 'ef': 0.169}]"
+    },
+    {
+      "name": "speed_envelope",
+      "pass": true,
+      "detail": "[{'vx': 15.0, 'e_final': 0.08375004036632855, 'settle': None}, {'vx': 25.0, 'e_final': 0.1690295777556345, 'settle': None}, {'vx': 35.0, 'e_final': 0.18073007496081234, 'settle': None}]"
+    },
+    {
+      "name": "lr_symmetry_characterization",
+      "pass": true,
+      "detail": "ef+dist=2.017 ef-dist=0.169 (bounded)"
+    },
+    {
+      "name": "safety_gate_all_candidates",
+      "pass": true,
+      "detail": "all K_Mz candidates within safety bounds"
+    },
+    {
+      "name": "regression",
+      "pass": true,
+      "detail": "t100=3.1299999999999772 t200=8.339999999999867"
+    },
+    {
+      "name": "historical_isolation",
+      "pass": true,
+      "detail": "t100=5.36999999999993"
+    }
+  ],
+  "kmz_sweep": [
+    {
+      "K_Mz": 1000.0,
+      "e0": 0.21000430533454856,
+      "e_final": 0.25511245446480174,
+      "e_peak": 0.2530890333864086,
+      "e_reduction": -0.04510814913025318,
+      "settle_s": null,
+      "max_Mz": 257.5380664105319,
+      "brake_energy": 0.15798177872444236,
+      "sat_fraction": 0.0,
+      "util_peak": 0.9800564079188426,
+      "mz_flips": 0,
+      "max_cmd": 0.06131858724060284
+    },
+    {
+      "K_Mz": 2000.0,
+      "e0": 0.21000430533454856,
+      "e_final": 0.21227770295070458,
+      "e_peak": 0.2524362080073154,
+      "e_reduction": -0.0022733976161560254,
+      "settle_s": null,
+      "max_Mz": 441.6290094985994,
+      "brake_energy": 0.2742659600519427,
+      "sat_fraction": 0.0,
+      "util_peak": 0.9800564079188426,
+      "mz_flips": 0,
+      "max_cmd": 0.10514976416633319
+    },
+    {
+      "K_Mz": 4000.0,
+      "e0": 0.21000430533454856,
+      "e_final": 0.1690295777556345,
+      "e_peak": 0.25115772060603886,
+      "e_reduction": 0.040974727578914044,
+      "settle_s": null,
+      "max_Mz": 725.7568751279548,
+      "brake_energy": 0.4529569953958551,
+      "sat_fraction": 0.0,
+      "util_peak": 0.9800564079188426,
+      "mz_flips": 0,
+      "max_cmd": 0.1727992559828464
+    },
+    {
+      "K_Mz": 8000.0,
+      "e0": 0.21000430533454856,
+      "e_final": 0.11766206538694057,
+      "e_peak": 0.24926090525886335,
+      "e_reduction": 0.09234223994760798,
+      "settle_s": null,
+      "max_Mz": 1047.602953010172,
+      "brake_energy": 0.6393781808687721,
+      "sat_fraction": 0.0,
+      "util_peak": 0.9800564079188426,
+      "mz_flips": 0,
+      "max_cmd": 0.2494292745262315
+    },
+    {
+      "K_Mz": 12000.0,
+      "e0": 0.21000430533454856,
+      "e_final": 0.08954060724950769,
+      "e_peak": 0.24740249988476043,
+      "e_reduction": 0.12046369808504087,
+      "settle_s": null,
+      "max_Mz": 1515.3149692583688,
+      "brake_energy": 0.7375514625903028,
+      "sat_fraction": 0.0,
+      "util_peak": 0.9800564079188426,
+      "mz_flips": 0,
+      "max_cmd": 0.36078927839484976
+    }
+  ],
+  "disturbance_sweep": [
+    {
+      "Mz_dist": 1500.0,
+      "e_final": 0.17356817535334712,
+      "e0": 0.0025241163223577584
+    },
+    {
+      "Mz_dist": 3000.0,
+      "e_final": 0.1690295777556345,
+      "e0": 0.21000430533454856
+    },
+    {
+      "Mz_dist": 5000.0,
+      "e_final": 0.1690295777556345,
+      "e0": 0.21000430533454856
+    },
+    {
+      "Mz_dist": 7000.0,
+      "e_final": 0.1690295777556345,
+      "e0": 0.21000430533454856
+    }
+  ],
+  "speed_envelope": [
+    {
+      "vx": 15.0,
+      "e_final": 0.08375004036632855,
+      "settle": null
+    },
+    {
+      "vx": 25.0,
+      "e_final": 0.1690295777556345,
+      "settle": null
+    },
+    {
+      "vx": 35.0,
+      "e_final": 0.18073007496081234,
+      "settle": null
+    }
+  ],
+  "recommendation": {
+    "recommended_K_Mz_candidate": 12000.0,
+    "reason": "lowest e_final among sat_fraction<0.5",
+    "status": "CANDIDATE \u2014 NOT FROZEN",
+    "metrics": {
+      "K_Mz": 12000.0,
+      "e0": 0.21000430533454856,
+      "e_final": 0.08954060724950769,
+      "e_peak": 0.24740249988476043,
+      "e_reduction": 0.12046369808504087,
+      "settle_s": null,
+      "max_Mz": 1515.3149692583688,
+      "brake_energy": 0.7375514625903028,
+      "sat_fraction": 0.0,
+      "util_peak": 0.9800564079188426,
+      "mz_flips": 0,
+      "max_cmd": 0.36078927839484976
+    }
+  },
+  "policy": {
+    "plant": "FROZEN",
+    "K_us": "FROZEN (0.0065)",
+    "K_Mz": "NOT FROZEN \u2014 candidate only"
+  },
+  "regression": {
+    "hyper": {
+      "t100": 3.1299999999999772,
+      "t200": 8.339999999999867,
+      "ref": [
+        3.13,
+        8.34
+      ]
+    },
+    "hist": {
+      "t100": 5.36999999999993,
+      "ref": [
+        5.37,
+        19.81
+      ]
+    }
+  }
+}

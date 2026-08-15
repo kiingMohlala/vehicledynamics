@@ -1,0 +1,19 @@
+{
+  "recommended_K_Mz_candidate": 12000.0,
+  "reason": "lowest e_final among sat_fraction<0.5",
+  "status": "CANDIDATE \u2014 NOT FROZEN",
+  "metrics": {
+    "K_Mz": 12000.0,
+    "e0": 0.21000430533454856,
+    "e_final": 0.08954060724950769,
+    "e_peak": 0.24740249988476043,
+    "e_reduction": 0.12046369808504087,
+    "settle_s": null,
+    "max_Mz": 1515.3149692583688,
+    "brake_energy": 0.7375514625903028,
+    "sat_fraction": 0.0,
+    "util_peak": 0.9800564079188426,
+    "mz_flips": 0,
+    "max_cmd": 0.36078927839484976
+  }
+}
