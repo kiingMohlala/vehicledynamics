@@ -267,6 +267,10 @@ def bind_authoritative_hypercar(
         k_tire_rear=220000.0,
         c_tire_front=200.0,
         c_tire_rear=200.0,
+        max_steer_angle=0.52,
+        steering_ratio=15.0,
+        steering_rate=1.2,
+        ackermann_enabled=True,
         gear_ratios=list(pt.gear_ratios) if pt.gear_ratios else None,
         transmission_efficiency=float(getattr(pt, "transmission_efficiency", 0.95)),
     )

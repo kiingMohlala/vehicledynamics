@@ -94,6 +94,10 @@ class SimulationConfig:
     k_tire_rear: float = 220000.0
     c_tire_front: float = 200.0
     c_tire_rear: float = 200.0
+    max_steer_angle: float = 0.52
+    steering_ratio: float = 15.0
+    steering_rate: float = 1.2
+    ackermann_enabled: bool = True
 
 
 @dataclass
@@ -215,6 +219,10 @@ class Simulation:
                 k_tire_rear=float(getattr(self.cfg, "k_tire_rear", 220000.0)),
                 c_tire_front=float(getattr(self.cfg, "c_tire_front", 200.0)),
                 c_tire_rear=float(getattr(self.cfg, "c_tire_rear", 200.0)),
+                max_steer_angle=float(getattr(self.cfg, "max_steer_angle", 0.52)),
+                steering_ratio=float(getattr(self.cfg, "steering_ratio", 15.0)),
+                steering_rate=float(getattr(self.cfg, "steering_rate", 1.2)),
+                ackermann_enabled=bool(getattr(self.cfg, "ackermann_enabled", True)),
             ))
 
         self._last_clutch_torque = 0.0  # reaction load on crank from previous step

@@ -18,6 +18,8 @@ from vehicle_dynamics.controls.abs_controller import ABSController
 from vehicle_dynamics.controls.sensor_model import SensorReading
 from vehicle_dynamics.simulation.sprung_body import SprungBodyModel, SprungBodyConfig
 from vehicle_dynamics.simulation.unsprung_model import UnsprungModel, UnsprungConfig
+from vehicle_dynamics.steering.steering_model import SteeringModel
+from vehicle_dynamics.steering.steering_config import SteeringConfig
 from vehicle_dynamics.lateral.load_transfer import (
     LoadTransferParameters,
     compute_load_transfer,
@@ -81,6 +83,11 @@ class DualTrackConfig:
     k_tire_rear: float = 220000.0
     c_tire_front: float = 200.0
     c_tire_rear: float = 200.0
+    # Phase 14.9 steering
+    max_steer_angle: float = 0.52
+    steering_ratio: float = 15.0
+    steering_rate: float = 1.2
+    ackermann_enabled: bool = True
 
 
 @dataclass
@@ -169,6 +176,16 @@ class DualTrackPlant:
         ))
         self.road_z = np.zeros(4)
         self.road_z_dot = np.zeros(4)
+        if hasattr(self, "steering"):
+            self.steering.reset()
+        self.steering = SteeringModel(SteeringConfig(
+            max_steer_angle=float(getattr(self.cfg, "max_steer_angle", 0.52)),
+            steering_ratio=float(getattr(self.cfg, "steering_ratio", 15.0)),
+            steering_rate=float(getattr(self.cfg, "steering_rate", 1.2)),
+            ackermann_enabled=bool(getattr(self.cfg, "ackermann_enabled", True)),
+            wheelbase=float(self.cfg.a + self.cfg.b),
+            track_front=float(self.cfg.track_f),
+        ))
 
     def reset(self, vx: float = 0.0) -> None:
         r = self.cfg.wheel_radius
@@ -238,7 +255,12 @@ class DualTrackPlant:
 
         xs = np.array([a, a, -b, -b])
         ys = np.array([tf / 2, -tf / 2, tr / 2, -tr / 2])
-        deltas = np.array([steer, steer, 0.0, 0.0])
+        # Phase 14.9.1: rate-limited Ackermann steering
+        if hasattr(self, "steering"):
+            st = self.steering.step(float(steer), float(dt))
+            deltas = np.array([st.delta_fl, st.delta_fr, st.delta_rl, st.delta_rr])
+        else:
+            deltas = np.array([steer, steer, 0.0, 0.0])
 
         ax_prev = self.state.ax
         ay_prev = self.state.ay
@@ -421,6 +443,9 @@ class DualTrackPlant:
             "z_u": list(self.unsprung.state.z_u) if hasattr(self, "unsprung") else [0,0,0,0],
             "E_tire_damp": float(self.unsprung.state.E_tire_damp) if hasattr(self, "unsprung") else 0.0,
             "road_z": list(self.road_z) if hasattr(self, "road_z") else [0,0,0,0],
+            "delta_fl": float(self.steering.state.delta_fl) if hasattr(self, "steering") else 0.0,
+            "delta_fr": float(self.steering.state.delta_fr) if hasattr(self, "steering") else 0.0,
+            "steer_actual": float(self.steering.state.actual) if hasattr(self, "steering") else 0.0,
             "ax": self.state.ax,
             "ay": self.state.ay,
             "yaw_acc": self.state.yaw_acc,

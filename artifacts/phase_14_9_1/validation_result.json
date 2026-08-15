@@ -1,0 +1,121 @@
+{
+  "phase": "14.9.1",
+  "status": "PASS",
+  "gates_passed": 19,
+  "gates_total": 19,
+  "gates": [
+    {
+      "name": "steering_config_authority",
+      "pass": true,
+      "detail": "max=0.52 rate=1.2 ack=True"
+    },
+    {
+      "name": "runtime_parameter_authority",
+      "pass": true,
+      "detail": "L=2.7 Tf=1.65"
+    },
+    {
+      "name": "max_angle_limit",
+      "pass": true,
+      "detail": "actual=0.3"
+    },
+    {
+      "name": "steering_rate_limit",
+      "pass": true,
+      "detail": "angles=[0.05, 0.1, 0.15000000000000002, 0.2]...0.500"
+    },
+    {
+      "name": "zero_command",
+      "pass": true,
+      "detail": "actual=0.0"
+    },
+    {
+      "name": "positive_command",
+      "pass": true,
+      "detail": "actual=0.1500"
+    },
+    {
+      "name": "negative_command",
+      "pass": true,
+      "detail": "actual=-0.1500"
+    },
+    {
+      "name": "left_right_symmetry",
+      "pass": true,
+      "detail": "L: FL=0.21282 FR=0.18862"
+    },
+    {
+      "name": "ackermann_enabled",
+      "pass": true,
+      "detail": "FL=0.27018 FR=0.23258"
+    },
+    {
+      "name": "ackermann_inner_outer_geometry",
+      "pass": true,
+      "detail": "|FL|=0.27018 |FR|=0.23258"
+    },
+    {
+      "name": "ackermann_disabled",
+      "pass": true,
+      "detail": "FL=0.25000 FR=0.25000"
+    },
+    {
+      "name": "wheel_angle_runtime_authority",
+      "pass": true,
+      "detail": "FL=0.2702 FR=0.2326"
+    },
+    {
+      "name": "poisoned_default_resistance",
+      "pass": true,
+      "detail": "max=0.52 rate=1.2"
+    },
+    {
+      "name": "mutation_max_angle",
+      "pass": true,
+      "detail": "actual=0.26"
+    },
+    {
+      "name": "mutation_steering_rate",
+      "pass": true,
+      "detail": "steps rate2=19 rate0.5=79"
+    },
+    {
+      "name": "deterministic_replay",
+      "pass": true,
+      "detail": "run0=(0.2, 0.212822322, 0.188617586)"
+    },
+    {
+      "name": "historical_isolation",
+      "pass": true,
+      "detail": "t100=5.36999999999993 t200=19.810000000000297"
+    },
+    {
+      "name": "zero_steer_14_8_regression",
+      "pass": true,
+      "detail": "t100=3.1299999999999772 t200=8.339999999999867 ref=(3.13, 8.34)"
+    },
+    {
+      "name": "no_vehicle_identity_mutation",
+      "pass": true,
+      "detail": "m=1100.0 P=750.0 \u03bc=1.15"
+    }
+  ],
+  "regression": {
+    "hyper": {
+      "t100": 3.1299999999999772,
+      "t200": 8.339999999999867,
+      "ref": [
+        3.13,
+        8.34
+      ]
+    },
+    "hist": {
+      "t100": 5.36999999999993,
+      "t200": 19.810000000000297,
+      "ref": [
+        5.37,
+        19.81
+      ]
+    }
+  }
+}
