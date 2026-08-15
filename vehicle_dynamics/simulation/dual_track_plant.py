@@ -19,6 +19,7 @@ from vehicle_dynamics.controls.sensor_model import SensorReading
 from vehicle_dynamics.lateral.load_transfer import (
     LoadTransferParameters,
     compute_load_transfer,
+    compute_wheel_loads,
 )
 
 
@@ -57,6 +58,9 @@ class DualTrackConfig:
     tire_cy: float = 90000.0
     abs_enabled: bool = True
     v_eps: float = 0.5
+    # Phase 14.4 load-transfer authority
+    chi_f: float = 0.55
+    Fz_min: float = 50.0
 
 
 @dataclass
@@ -107,8 +111,8 @@ class DualTrackPlant:
             h_cg=self.cfg.h_cg,
             track_f=self.cfg.track_f,
             track_r=self.cfg.track_r,
-            chi_f=0.55,
-            Fz_min=50.0,
+            chi_f=float(getattr(self.cfg, "chi_f", 0.55)),
+            Fz_min=float(getattr(self.cfg, "Fz_min", 50.0)),
         )
         self.wheels = [
             WheelState(radius=self.cfg.wheel_radius, inertia=self.cfg.wheel_inertia)
@@ -159,7 +163,11 @@ class DualTrackPlant:
         downforce: float = 0.0,
         mu_scale: float = 1.0,
         mu_per_wheel: Optional[np.ndarray] = None,
+        downforce_front: Optional[float] = None,
+        downforce_rear: Optional[float] = None,
     ) -> DualTrackState:
+        kwargs_downforce_front = downforce_front
+        kwargs_downforce_rear = downforce_rear
         cfg = self.cfg
         a, b = cfg.a, cfg.b
         tf, tr = cfg.track_f, cfg.track_r
@@ -173,15 +181,18 @@ class DualTrackPlant:
 
         ax_prev = self.state.ax
         ay_prev = self.state.ay
-        L = a + b
-        dFz_long_f = -m * ax_prev * cfg.h_cg / L
-        dFz_long_r = +m * ax_prev * cfg.h_cg / L
-        Fz_f_axle = m * g * b / L + dFz_long_f + 0.5 * downforce
-        Fz_r_axle = m * g * a / L + dFz_long_r + 0.5 * downforce
-        Fz_f_axle = max(Fz_f_axle, 2 * self.lt_params.Fz_min)
-        Fz_r_axle = max(Fz_r_axle, 2 * self.lt_params.Fz_min)
-
-        lt = compute_load_transfer(ay_prev, Fz_f_axle, Fz_r_axle, self.lt_params, mass=m)
+        # Phase 14.4: explicit wheel loads from geometry + accel + aero split
+        df_f = float(kwargs_downforce_front) if kwargs_downforce_front is not None else 0.5 * downforce
+        df_r = float(kwargs_downforce_rear) if kwargs_downforce_rear is not None else 0.5 * downforce
+        lt = compute_wheel_loads(
+            mass=m, a=a, b=b, h_cg=cfg.h_cg,
+            track_f=tf, track_r=tr,
+            ax=ax_prev, ay=ay_prev,
+            downforce_front=df_f, downforce_rear=df_r,
+            chi_f=float(getattr(cfg, "chi_f", 0.55)),
+            Fz_min=float(getattr(cfg, "Fz_min", 50.0)),
+        )
+        self._last_lt = lt
         Fz_list = [lt.Fz_fl, lt.Fz_fr, lt.Fz_rl, lt.Fz_rr]
 
         T_f = drive_torque_total * cfg.drive_split_front
@@ -288,7 +299,7 @@ class DualTrackPlant:
             residual_Fx=0.0,
             residual_Fy=0.0,
             residual_Mz=0.0,
-            residual_Fz=float(Fz_sum - weight),
+            residual_Fz=float(getattr(lt, "residual_Fz", Fz_sum - weight)),
         )
         return self.state
 
@@ -308,6 +319,13 @@ class DualTrackPlant:
             "utilization": arr["util"].tolist(),
             "Fz_sum": self.state.Fz_sum,
             "residual_Fz": self.state.residual_Fz,
+            "Fz_FL": float(self.wheels[0].Fz),
+            "Fz_FR": float(self.wheels[1].Fz),
+            "Fz_RL": float(self.wheels[2].Fz),
+            "Fz_RR": float(self.wheels[3].Fz),
+            "min_Fz": float(min(w.Fz for w in self.wheels)),
+            "max_Fz": float(max(w.Fz for w in self.wheels)),
+            "lt": getattr(self, "_last_lt", None),
             "ax": self.state.ax,
             "ay": self.state.ay,
             "yaw_acc": self.state.yaw_acc,

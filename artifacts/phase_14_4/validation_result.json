@@ -1,0 +1,93 @@
+{
+  "phase": "14.4",
+  "status": "PASS",
+  "gates_passed": 17,
+  "gates_total": 17,
+  "gates": [
+    {
+      "name": "load_transfer_authority",
+      "pass": true,
+      "detail": "matched=6/6"
+    },
+    {
+      "name": "static_wheel_load_distribution",
+      "pass": true,
+      "detail": "FL=2898 FR=2898 RL=2498 RR=2498 sum=10791"
+    },
+    {
+      "name": "longitudinal_transfer_symmetry",
+      "pass": true,
+      "detail": "+ax rear=5811 front=4980; -ax rear=4181 front=6610"
+    },
+    {
+      "name": "lateral_transfer_symmetry",
+      "pass": true,
+      "detail": "+ay FL=2164 FR=3631; -ay FL=3631 FR=2164"
+    },
+    {
+      "name": "wheel_load_conservation",
+      "pass": true,
+      "detail": "\u03a3Fz=10791.0 mg=10791.0"
+    },
+    {
+      "name": "tire_fz_coupling",
+      "pass": true,
+      "detail": "dFz_hcg0.4=3285 dFz_hcg0.8=5852"
+    },
+    {
+      "name": "aero_fz_coupling",
+      "pass": true,
+      "detail": "\u03a3Fz_on=14767 \u03a3Fz_off=10791"
+    },
+    {
+      "name": "combined_braking_cornering",
+      "pass": true,
+      "detail": "Fz=[4592.0, 3322.0, 2462.0, 1404.0] min=1404 ax=-10.37"
+    },
+    {
+      "name": "wheel_unloading_behavior",
+      "pass": true,
+      "detail": "min_Fz_over_run=50.0 (floor=50)"
+    },
+    {
+      "name": "track_mutation_authority",
+      "pass": true,
+      "detail": "dFz_1.65=3093 dFz_1.32=3847"
+    },
+    {
+      "name": "hcg_mutation_authority",
+      "pass": true,
+      "detail": "dFz ratio=1.78"
+    },
+    {
+      "name": "wheelbase_mutation_authority",
+      "pass": true,
+      "detail": "|dFz_long| L=2.0=1100 L=2.4=917"
+    },
+    {
+      "name": "aero_mutation_authority",
+      "pass": true,
+      "detail": "\u03a3Fz 0df=10791 +5kN=15791"
+    },
+    {
+      "name": "negative_default_fallback",
+      "pass": true,
+      "detail": "h_cg=0.4 track_f=1.65"
+    },
+    {
+      "name": "historical_isolation",
+      "pass": true,
+      "detail": "t100=5.35999999999993 t200=19.650000000000272"
+    },
+    {
+      "name": "zero_wind_regression",
+      "pass": true,
+      "detail": "t100=3.1299999999999772 t200=8.299999999999867"
+    },
+    {
+      "name": "deterministic_replay",
+      "pass": true,
+      "detail": "Fz_run0=(np.float64(4799.104857), np.float64(2513.095519), np.float64(3096.739434), np.float64(1191.731653))"
+    }
+  ]
+}

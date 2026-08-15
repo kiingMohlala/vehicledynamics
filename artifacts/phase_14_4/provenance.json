@@ -1,0 +1,44 @@
+[
+  {
+    "parameter": "mass",
+    "source": "VehicleDefinition",
+    "config": 1100.0,
+    "plant": 1100.0,
+    "match": true
+  },
+  {
+    "parameter": "h_cg",
+    "source": "GeometryConfig",
+    "config": 0.4,
+    "plant": 0.4,
+    "match": true
+  },
+  {
+    "parameter": "track_f",
+    "source": "GeometryConfig",
+    "config": 1.65,
+    "plant": 1.65,
+    "match": true
+  },
+  {
+    "parameter": "track_r",
+    "source": "GeometryConfig",
+    "config": 1.62,
+    "plant": 1.62,
+    "match": true
+  },
+  {
+    "parameter": "a+b",
+    "source": "GeometryConfig",
+    "config": 2.7,
+    "plant": 2.7,
+    "match": true
+  },
+  {
+    "parameter": "chi_f",
+    "source": "SimulationConfig",
+    "config": 0.55,
+    "plant": 0.55,
+    "match": true
+  }
+]

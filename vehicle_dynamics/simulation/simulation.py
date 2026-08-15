@@ -76,6 +76,7 @@ class SimulationConfig:
     aero_frontal_area: float = 1.90
     aero_cy_beta: float = -0.8   # Phase 14.3 side-force / rad β
     aero_cn_beta: float = -0.15  # Phase 14.3 yaw-moment / rad β
+    chi_f: float = 0.55  # Phase 14.4 front share of lateral load transfer
 
 
 @dataclass
@@ -179,6 +180,8 @@ class Simulation:
                 brake_torque_max=float(getattr(self.cfg, "brake_torque_max", 2800.0)),
                 abs_enabled=self.cfg.abs_enabled,
                 drive_split_front=self.cfg.drive_split_front,
+                chi_f=float(getattr(self.cfg, "chi_f", 0.55)),
+                Fz_min=50.0,
             ))
 
         self._last_clutch_torque = 0.0  # reaction load on crank from previous step
@@ -386,6 +389,12 @@ class Simulation:
             downforce = float(air.downforce_total)
             Fy_aero = float(air.Fy_aero)
             Mz_aero = float(air.Mz_aero)
+            # Phase 14.4: front/rear aero normal loads from Cl distribution
+            df_front = float(max(-air.Fz_front, 0.0))  # downforce magnitude
+            df_rear = float(max(-air.Fz_rear, 0.0))
+        else:
+            df_front = 0.5 * downforce
+            df_rear = 0.5 * downforce
 
         if self.dual_track is not None and cfg.use_dual_track:
             # ===== Phase 14.2C authoritative dual-track + Dugoff + ABS =====
@@ -399,6 +408,8 @@ class Simulation:
                 dt=dt,
                 downforce=downforce,
                 mu_scale=float(st.mu_scale),
+                downforce_front=df_front,
+                downforce_rear=df_rear,
             )
             # Tire forces + aero drag / rolling
             rolling = 0.015 * cfg.mass * 9.81 * np.sign(v.vx + 1e-9)
