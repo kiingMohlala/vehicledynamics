@@ -1,0 +1,141 @@
+{
+  "phase": "14.9.8",
+  "status": "PASS",
+  "gates_passed": 17,
+  "gates_total": 17,
+  "gates": [
+    {
+      "name": "neutral_low_speed_behavior",
+      "pass": true,
+      "detail": "n_pts=7 class=understeer"
+    },
+    {
+      "name": "steering_gradient",
+      "pass": true,
+      "detail": "d\u03b4/day=0.00648 class=understeer"
+    },
+    {
+      "name": "speed_authority",
+      "pass": true,
+      "detail": "yaw_gain=['5.11', '6.95', '6.45']"
+    },
+    {
+      "name": "front_saturation",
+      "pass": true,
+      "detail": "max util_f=0.968"
+    },
+    {
+      "name": "rear_saturation",
+      "pass": true,
+      "detail": "max util_r=0.960"
+    },
+    {
+      "name": "understeer_oversteer_classification",
+      "pass": true,
+      "detail": "class=understeer d\u03b4/day=0.00648"
+    },
+    {
+      "name": "yaw_gain",
+      "pass": true,
+      "detail": "yaw_gains=[8.22, 8.06, 6.92, 5.69]..."
+    },
+    {
+      "name": "yaw_stability",
+      "pass": true,
+      "detail": "max |r|=0.564"
+    },
+    {
+      "name": "mu_half_capacity",
+      "pass": true,
+      "detail": "max|ay| \u03bc1.15=11.58 \u03bc0.55=5.69"
+    },
+    {
+      "name": "arb_distribution_handling",
+      "pass": true,
+      "detail": "grad_F=0.01816 grad_R=0.01817 \u03a3Fz_ok=True"
+    },
+    {
+      "name": "mech_hyd_equivalence",
+      "pass": true,
+      "detail": "ay_hyd=11.34 ay_mech=11.34"
+    },
+    {
+      "name": "lr_symmetry",
+      "pass": true,
+      "detail": "ay+=10.972 ay-=-10.972"
+    },
+    {
+      "name": "crosswind",
+      "pass": true,
+      "detail": "Fy_aero=471"
+    },
+    {
+      "name": "recovery_after_steer_off",
+      "pass": true,
+      "detail": "\u03b4=0.0000 ay 11.64\u21920.10 r 0.653\u21920.003"
+    },
+    {
+      "name": "deterministic_replay",
+      "pass": true,
+      "detail": "run0=(10.8452, 0.4888)"
+    },
+    {
+      "name": "regression",
+      "pass": true,
+      "detail": "t100=3.1299999999999772 t200=8.339999999999867"
+    },
+    {
+      "name": "historical_isolation",
+      "pass": true,
+      "detail": "t100=5.36999999999993"
+    }
+  ],
+  "handling": {
+    "vx25_classification": "understeer",
+    "steering_gradient": 0.006480700597339313,
+    "vx15_classification": "understeer",
+    "yaw_gain_vs_speed": [
+      {
+        "vx": 15.0,
+        "ay": 4.377787393332371,
+        "r": 0.30686029537810516,
+        "yaw_gain": 5.114338256301751,
+        "util_front": 0.3825319049577313,
+        "util_rear": 0.38235004697973374
+      },
+      {
+        "vx": 25.0,
+        "ay": 10.032515939756536,
+        "r": 0.4170389440023388,
+        "yaw_gain": 6.950649066705646,
+        "util_front": 0.8387566575397174,
+        "util_rear": 0.8169889548497421
+      },
+      {
+        "vx": 32.0,
+        "ay": 11.658085847753986,
+        "r": 0.38690638873200006,
+        "yaw_gain": 6.4484398122,
+        "util_front": 0.9185891125825084,
+        "util_rear": 0.9082667484709042
+      }
+    ]
+  },
+  "regression": {
+    "hyper": {
+      "t100": 3.1299999999999772,
+      "t200": 8.339999999999867,
+      "ref": [
+        3.13,
+        8.34
+      ]
+    },
+    "hist": {
+      "t100": 5.36999999999993,
+      "ref": [
+        5.37,
+        19.81
+      ]
+    }
+  }
+}
