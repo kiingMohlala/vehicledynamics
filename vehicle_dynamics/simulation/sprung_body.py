@@ -33,7 +33,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 import numpy as np
-from vehicle_dynamics.suspension.anti_roll_bar import MechanicalAntiRollBar, DualAxleARB
+from vehicle_dynamics.suspension.anti_roll_bar import (
+    MechanicalAntiRollBar, HydraulicAntiRollBar, DualAxleARB,
+)
 
 
 @dataclass
@@ -60,6 +62,11 @@ class SprungBodyConfig:
     c_arb_front: float = 400.0
     c_arb_rear: float = 400.0
     use_arb: bool = True
+    use_hydraulic_arb: bool = False
+    k_hyd_front: float = 30000.0
+    k_hyd_rear: float = 28000.0
+    c_hyd_front: float = 800.0
+    c_hyd_rear: float = 800.0
     Fz_min: float = 50.0
     enabled: bool = True
 
@@ -90,20 +97,37 @@ class SprungBodyModel:
         self._E_damp = 0.0
         self._static_Fz = self._compute_static_Fz()
         cfg = self.cfg
-        self.arb = DualAxleARB(
-            front=MechanicalAntiRollBar(
-                k_arb=float(getattr(cfg, "k_arb_front", 25000.0)),
-                c_arb=float(getattr(cfg, "c_arb_front", 400.0)),
-                track=float(cfg.track_f),
-                enabled=bool(getattr(cfg, "use_arb", True)),
-            ),
-            rear=MechanicalAntiRollBar(
-                k_arb=float(getattr(cfg, "k_arb_rear", 22000.0)),
-                c_arb=float(getattr(cfg, "c_arb_rear", 400.0)),
-                track=float(cfg.track_r),
-                enabled=bool(getattr(cfg, "use_arb", True)),
-            ),
-        )
+        use_hyd = bool(getattr(cfg, "use_hydraulic_arb", False))
+        if use_hyd:
+            self.arb = DualAxleARB(
+                front=HydraulicAntiRollBar(
+                    k_hyd=float(getattr(cfg, "k_hyd_front", 30000.0)),
+                    c_hyd=float(getattr(cfg, "c_hyd_front", 800.0)),
+                    track=float(cfg.track_f),
+                    enabled=bool(getattr(cfg, "use_arb", True)),
+                ),
+                rear=HydraulicAntiRollBar(
+                    k_hyd=float(getattr(cfg, "k_hyd_rear", 28000.0)),
+                    c_hyd=float(getattr(cfg, "c_hyd_rear", 800.0)),
+                    track=float(cfg.track_r),
+                    enabled=bool(getattr(cfg, "use_arb", True)),
+                ),
+            )
+        else:
+            self.arb = DualAxleARB(
+                front=MechanicalAntiRollBar(
+                    k_arb=float(getattr(cfg, "k_arb_front", 25000.0)),
+                    c_arb=float(getattr(cfg, "c_arb_front", 400.0)),
+                    track=float(cfg.track_f),
+                    enabled=bool(getattr(cfg, "use_arb", True)),
+                ),
+                rear=MechanicalAntiRollBar(
+                    k_arb=float(getattr(cfg, "k_arb_rear", 22000.0)),
+                    c_arb=float(getattr(cfg, "c_arb_rear", 400.0)),
+                    track=float(cfg.track_r),
+                    enabled=bool(getattr(cfg, "use_arb", True)),
+                ),
+            )
 
     def _compute_static_Fz(self) -> np.ndarray:
         m, a, b = self.cfg.mass, self.cfg.a, self.cfg.b
@@ -207,6 +231,13 @@ class SprungBodyModel:
             F_sd[1] += fr
             F_sd[2] += rl
             F_sd[3] += rr
+            # Hydraulic orifice dissipation (passive)
+            for bar, zl, zr, zdl, zdr in (
+                (self.arb.front, z_s[0], z_s[1], z_s_dot[0], z_s_dot[1]),
+                (self.arb.rear, z_s[2], z_s[3], z_s_dot[2], z_s_dot[3]),
+            ):
+                if hasattr(bar, "dissipate"):
+                    bar.dissipate(zdl, zdr, dt)
         else:
             # legacy phi-based roll stiffness proxy
             if tf > 1e-6:

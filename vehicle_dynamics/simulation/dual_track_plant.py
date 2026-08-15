@@ -94,6 +94,11 @@ class DualTrackConfig:
     c_arb_front: float = 400.0
     c_arb_rear: float = 400.0
     use_arb: bool = True
+    use_hydraulic_arb: bool = False
+    k_hyd_front: float = 30000.0
+    k_hyd_rear: float = 28000.0
+    c_hyd_front: float = 800.0
+    c_hyd_rear: float = 800.0
 
 
 @dataclass
@@ -172,6 +177,11 @@ class DualTrackPlant:
             c_arb_front=float(getattr(self.cfg, "c_arb_front", 400.0)),
             c_arb_rear=float(getattr(self.cfg, "c_arb_rear", 400.0)),
             use_arb=bool(getattr(self.cfg, "use_arb", True)),
+            use_hydraulic_arb=bool(getattr(self.cfg, "use_hydraulic_arb", False)),
+            k_hyd_front=float(getattr(self.cfg, "k_hyd_front", 30000.0)),
+            k_hyd_rear=float(getattr(self.cfg, "k_hyd_rear", 28000.0)),
+            c_hyd_front=float(getattr(self.cfg, "c_hyd_front", 800.0)),
+            c_hyd_rear=float(getattr(self.cfg, "c_hyd_rear", 800.0)),
             Fz_min=float(getattr(self.cfg, "Fz_min", 50.0)),
             enabled=bool(getattr(self.cfg, "use_sprung_body", True)),
         ))

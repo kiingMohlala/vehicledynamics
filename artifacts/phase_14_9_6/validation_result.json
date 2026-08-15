@@ -1,0 +1,115 @@
+{
+  "phase": "14.9.6",
+  "status": "PASS",
+  "gates_passed": 17,
+  "gates_total": 17,
+  "gates": [
+    {
+      "name": "zero_hydraulic_baseline",
+      "pass": true,
+      "detail": "\u03c6=0.0362 type=HydraulicAntiRollBar"
+    },
+    {
+      "name": "stiffness_reduces_roll",
+      "pass": true,
+      "detail": "\u03c60=0.0362 \u03c630k=0.0139 \u03c6100k=0.0058"
+    },
+    {
+      "name": "force_pair_sum_zero",
+      "pass": true,
+      "detail": "FL=-1600.0 FR=1600.0"
+    },
+    {
+      "name": "hydraulic_damping_dissipative",
+      "pass": true,
+      "detail": "E=320.0000"
+    },
+    {
+      "name": "runtime_dissipation",
+      "pass": true,
+      "detail": "E_front=7.0201"
+    },
+    {
+      "name": "front_rear_independent",
+      "pass": true,
+      "detail": "\u03c6_f=0.0083 \u03c6_r=0.0085"
+    },
+    {
+      "name": "lr_reversal_symmetry",
+      "pass": true,
+      "detail": "\u03c6+=0.01181 \u03c6-=-0.01181"
+    },
+    {
+      "name": "fz_conserved",
+      "pass": true,
+      "detail": "\u03a3Fz=10791"
+    },
+    {
+      "name": "runtime_parameter_authority",
+      "pass": true,
+      "detail": "k_f=33333.0 k_r=22222.0 c_f=777.0"
+    },
+    {
+      "name": "poisoned_defaults",
+      "pass": true,
+      "detail": "type=HydraulicAntiRollBar k=55000.0"
+    },
+    {
+      "name": "dugoff_fz_coupling",
+      "pass": true,
+      "detail": "\u03a3Fy=12331 \u03c6=0.0165"
+    },
+    {
+      "name": "combined_brake_corner",
+      "pass": true,
+      "detail": "min_Fz=1597.8"
+    },
+    {
+      "name": "fz_floor_safety",
+      "pass": true,
+      "detail": "min_Fz=1597.8"
+    },
+    {
+      "name": "mechanical_fallback",
+      "pass": true,
+      "detail": "default type=MechanicalAntiRollBar"
+    },
+    {
+      "name": "deterministic_replay",
+      "pass": true,
+      "detail": "run0=0.00885642"
+    },
+    {
+      "name": "regression",
+      "pass": true,
+      "detail": "t100=3.1299999999999772 t200=8.339999999999867"
+    },
+    {
+      "name": "historical_isolation",
+      "pass": true,
+      "detail": "t100=5.36999999999993"
+    }
+  ],
+  "roll": {
+    "phi0": 0.036163867687877854,
+    "phi30k": 0.013940984860663646,
+    "phi100k": 0.005810683426239401
+  },
+  "regression": {
+    "hyper": {
+      "t100": 3.1299999999999772,
+      "t200": 8.339999999999867,
+      "ref": [
+        3.13,
+        8.34
+      ]
+    },
+    "hist": {
+      "t100": 5.36999999999993,
+      "ref": [
+        5.37,
+        19.81
+      ]
+    }
+  }
+}
