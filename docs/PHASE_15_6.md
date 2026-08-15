@@ -2,35 +2,57 @@
 
 **Status: PASS (12/12 gates)**  
 **Date:** 2026-08-15  
-**Plant:** FROZEN · **K_us:** FROZEN · **K_Mz:** NOT FROZEN  
+**Prerequisites:** 15.5 PASS · 14.9 frozen  
+**Plant modification:** NONE · **Gain freeze:** NONE  
 
 ---
 
-## K_Mz sweep (disturbance −3000 N·m, vx=25)
+## Boundary
 
-| K_Mz | e₀ → e_final | max\|Mz\| | sat | flips |
-|------|--------------|----------|-----|-------|
-| 1000 | 0.210 → 0.255 | 258 | 0 | 0 |
-| 2000 | 0.210 → 0.212 | 442 | 0 | 0 |
-| **4000** | 0.210 → **0.169** | 726 | 0 | 0 |
-| 8000 | 0.210 → 0.118 | 1048 | 0 | 0 |
-| 12000 | 0.210 → **0.090** | 1515 | 0 | 0 |
+```
+Frozen 14.9 plant → 15.1 Obs → 15.3 Decision (K_Mz sweep)
+                              → 15.2 Allocation → 15.4 closed-loop
+                              → performance metrics
+```
 
-Higher K reduces residual error without oscillation in this envelope.
-
-**Recommended candidate:** K_Mz = 12000 (lowest e_final, sat=0) — **still NOT FROZEN**.
-
-Baseline remains K_Mz = 4000 until an explicit freeze decision.
+Architecture and 15.5 safety gates **unchanged**.
 
 ---
 
-## Other envelopes
+## K_Mz sweep (Mz_dist = −3000 N·m, vx = 25, steer = 0.06)
 
-- Split-μ: finite, bounded  
+| K_Mz | e₀ → e_final | e_reduction | max\|Mz\| | sat | flips |
+|------|--------------|-------------|----------|-----|-------|
+| 1000 | 0.210 → 0.255 | −0.045 | 258 | 0 | 0 |
+| 2000 | 0.210 → 0.212 | −0.002 | 442 | 0 | 0 |
+| **4000** (baseline) | 0.210 → **0.169** | +0.041 | 726 | 0 | 0 |
+| 8000 | 0.210 → 0.118 | +0.092 | 1048 | 0 | 0 |
+| **12000** | 0.210 → **0.090** | +0.120 | 1515 | 0 | 0 |
+
+Higher gain reduces residual error without Mz sign-switching in this envelope.
+
+---
+
+## Additional envelopes (PASS)
+
+- Split-μ vs nominal: finite / bounded  
 - Disturbance magnitude 1.5–7 kN·m: bounded  
-- Speed 15/25/35 m/s: bounded  
-- Opposite-disturbance recovery asymmetric (documented limitation)  
-- Regression **3.13 / 8.34 s**
+- Speed 15 / 25 / 35 m/s: bounded  
+- Opposite-disturbance recovery asymmetric (documented; both bounded)  
+- ESC-OFF regression: **3.13 / 8.34 s**  
+- All candidates pass safety bounds (cmd ≤ 1, flips ≤ 8, e_final < 5)
+
+---
+
+## Deliverables
+
+| Artifact | Path |
+|----------|------|
+| Harness | `vehicle_dynamics/controls/esc_characterization.py` |
+| Validation | `vehicle_dynamics/demonstration/validation_15_6.py` |
+| Sweep JSON | `artifacts/phase_15_6/kmz_sweep.json` |
+| CSV | `artifacts/phase_15_6/characterization.csv` |
+| Recommendation | `artifacts/phase_15_6/recommendation.json` |
 
 ---
 
@@ -39,14 +61,14 @@ Baseline remains K_Mz = 4000 until an explicit freeze decision.
 **PHASE 15.6 — PASS**
 
 ```
-tag: v1.5.6-esc-controller-characterization
-report: docs/PHASE_15_6.md
-artifacts: artifacts/phase_15_6/kmz_sweep.json
+Best-performing candidate:     K_Mz = 12000
+Recommended operating range:   4000 → 12000
+K_Mz frozen:                   NO
+14.9 plant:                    FROZEN
+15.5 safety envelope:          PRESERVED
+Regression:                    3.13 / 8.34 s
 ```
 
 ```
-PASSIVE PLANT     FROZEN
-ESC ARCHITECTURE  VALIDATED
-ESC BASELINE      VALIDATED
-ESC GAINS         NOT FROZEN  (candidate 12000 reported)
+tag: v1.5.6-esc-controller-characterization
 ```

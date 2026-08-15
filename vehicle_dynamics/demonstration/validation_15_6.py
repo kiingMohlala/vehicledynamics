@@ -19,6 +19,9 @@ from vehicle_dynamics.simulation.simulation import Simulation
 from vehicle_dynamics.controls.esc_closed_loop import ClosedLoopESC, ClosedLoopESCConfig
 from vehicle_dynamics.controls.esc_command import ESCCommand, BrakeAllocator
 from vehicle_dynamics.controls.esc_observability import ESCObservability
+from vehicle_dynamics.controls.esc_characterization import (
+    kmz_sweep, characterize_run, recommend_candidate,
+)
 
 ROOT = Path("artifacts/phase_15_6")
 REF_HYPER = (3.13, 8.34)
@@ -122,6 +125,15 @@ def run_validation() -> dict:
     sweep = [_characterize(cfg, k) for k in K_SWEEP]
     with open(ROOT / "kmz_sweep.json", "w") as f:
         json.dump(sweep, f, indent=2)
+    # characterization.csv
+    import csv
+    if sweep:
+        keys = list(sweep[0].keys())
+        with open(ROOT / "characterization.csv", "w", newline="") as cf:
+            w = csv.DictWriter(cf, fieldnames=keys)
+            w.writeheader()
+            for row in sweep:
+                w.writerow(row)
 
     print("  K_Mz sweep:")
     for s in sweep:
