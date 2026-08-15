@@ -1,0 +1,129 @@
+{
+  "phase": "15.4",
+  "status": "PASS",
+  "gates_passed": 19,
+  "gates_total": 19,
+  "gates": [
+    {
+      "name": "integration_boundary",
+      "pass": true,
+      "detail": "add=[0.0, 0.0, 0.0, 0.0]"
+    },
+    {
+      "name": "enable_disable_isolation",
+      "pass": true,
+      "detail": "fy_off=11653.5 fy_none=11653.5"
+    },
+    {
+      "name": "zero_intervention_invariance",
+      "pass": true,
+      "detail": "max|Mz|=0.0 r=0.0000"
+    },
+    {
+      "name": "positive_disturbance_correction",
+      "pass": true,
+      "detail": "|e_r| esc 0.949\u21921.844 free_final=1.850"
+    },
+    {
+      "name": "negative_disturbance_correction",
+      "pass": true,
+      "detail": "|e_r| esc 0.210\u21920.120 free_final=0.301"
+    },
+    {
+      "name": "er_convergence",
+      "pass": true,
+      "detail": "esc+=1.844 free+=1.850 esc-=0.120 free-=0.301"
+    },
+    {
+      "name": "oscillation_bound",
+      "pass": true,
+      "detail": "Mz_sign_flips=0 n_active=156"
+    },
+    {
+      "name": "delta_Mz_saturation",
+      "pass": true,
+      "detail": "max|Mz|=2444"
+    },
+    {
+      "name": "wheel_brake_saturation",
+      "pass": true,
+      "detail": "max_cmd=0.582"
+    },
+    {
+      "name": "abs_coexistence",
+      "pass": true,
+      "detail": "min_Fz=1642 abs=True"
+    },
+    {
+      "name": "friction_limit_inhibition",
+      "pass": true,
+      "detail": "policy_inhibit=True runtime=True"
+    },
+    {
+      "name": "beta_limit_inhibition",
+      "pass": true,
+      "detail": "reason=beta_limit"
+    },
+    {
+      "name": "low_speed_inhibition",
+      "pass": true,
+      "detail": "reason=low_speed"
+    },
+    {
+      "name": "lr_symmetry",
+      "pass": true,
+      "detail": "r+=0.348 r-=-0.348"
+    },
+    {
+      "name": "esc_off_regression",
+      "pass": true,
+      "detail": "t100=3.1299999999999772 t200=8.339999999999867"
+    },
+    {
+      "name": "esc_on_longitudinal_regression",
+      "pass": true,
+      "detail": "t100=3.1299999999999772 t200=8.339999999999867"
+    },
+    {
+      "name": "historical_isolation",
+      "pass": true,
+      "detail": "t100=5.36999999999993"
+    },
+    {
+      "name": "deterministic_replay",
+      "pass": true,
+      "detail": "run0=(0.34189, -743.02)"
+    },
+    {
+      "name": "closed_loop_stability_envelope",
+      "pass": true,
+      "detail": "r=0.220"
+    }
+  ],
+  "disturbance": {
+    "pos": {
+      "e0": 0.9492083380560775,
+      "ef_esc": 1.8439689621173279,
+      "ef_free": 1.8502684288267215
+    },
+    "neg": {
+      "e0": 0.21000430533454856,
+      "ef_esc": 0.11983471868602272,
+      "ef_free": 0.30073461523731926
+    }
+  },
+  "regression": {
+    "esc_off": {
+      "t100": 3.1299999999999772,
+      "t200": 8.339999999999867
+    },
+    "esc_on": {
+      "t100": 3.1299999999999772,
+      "t200": 8.339999999999867
+    },
+    "ref": [
+      3.13,
+      8.34
+    ]
+  }
+}
