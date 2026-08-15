@@ -244,6 +244,8 @@ def bind_authoritative_hypercar(
         aero_cl_front=float(definition.subsystems.aero.Cl_front),
         aero_cl_rear=float(definition.subsystems.aero.Cl_rear),
         aero_frontal_area=float(definition.subsystems.aero.frontal_area_m2),
+        aero_cy_beta=-0.8,
+        aero_cn_beta=-0.15,
         gear_ratios=list(pt.gear_ratios) if pt.gear_ratios else None,
         transmission_efficiency=float(getattr(pt, "transmission_efficiency", 0.95)),
     )

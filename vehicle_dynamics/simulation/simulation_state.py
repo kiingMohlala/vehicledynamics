@@ -69,5 +69,7 @@ class SimulationState:
     wheel_torque_R: float = 0.0
     gear: int = 1
     mu_scale: float = 1.0
-    crosswind: float = 0.0
+    crosswind: float = 0.0  # legacy lateral wind proxy (m/s); maps to wind_vy if wind unset
+    wind_vx: float = 0.0    # Phase 14.3 body-frame wind +x (m/s)
+    wind_vy: float = 0.0    # Phase 14.3 body-frame wind +y (m/s)
     rain: bool = False

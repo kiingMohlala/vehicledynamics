@@ -1,0 +1,91 @@
+{
+  "phase": "14.3",
+  "status": "PASS",
+  "gates_passed": 15,
+  "gates_total": 15,
+  "gates": [
+    {
+      "name": "zero_wind_regression",
+      "pass": true,
+      "detail": "t100=3.1299999999999772 t200=8.309999999999867"
+    },
+    {
+      "name": "wind_symmetry",
+      "pass": true,
+      "detail": "Fy+=308.97 Fy-=-308.97 Mz+=156.42 Mz-=-156.42"
+    },
+    {
+      "name": "sideslip_authority",
+      "pass": true,
+      "detail": "\u03b25=-0.170 \u03b215=-0.476 |Fy| 118.1\u2192407.3"
+    },
+    {
+      "name": "relative_air_speed_authority",
+      "pass": true,
+      "detail": "Vair 27.35\u219232.68 q 458\u2192654 Fy 118.1\u2192600.2"
+    },
+    {
+      "name": "aero_on_off",
+      "pass": true,
+      "detail": "Fy_on=249.6 Fy_off=0.0 drag_on=321.1"
+    },
+    {
+      "name": "sign_correctness",
+      "pass": true,
+      "detail": "sign Fy +/- = 1.0/-1.0"
+    },
+    {
+      "name": "coefficient_mutation",
+      "pass": true,
+      "detail": "Fy base=309.0 Cy*2=587.6; Mz base=156.4 Cn*2=309.4"
+    },
+    {
+      "name": "relative_airflow_calculation",
+      "pass": true,
+      "detail": "Vair=29.14 \u03b2=-0.391"
+    },
+    {
+      "name": "beta_calculation",
+      "pass": true,
+      "detail": "\u03b2=-0.3909"
+    },
+    {
+      "name": "aero_side_force",
+      "pass": true,
+      "detail": "Fy=309.0"
+    },
+    {
+      "name": "aero_yaw_moment",
+      "pass": true,
+      "detail": "Mz=156.4"
+    },
+    {
+      "name": "historical_isolation",
+      "pass": true,
+      "detail": "t100=5.35999999999993 t200=19.77000000000029"
+    },
+    {
+      "name": "deterministic_replay",
+      "pass": true,
+      "detail": "Fy runs=[246.53816430698245, 246.53816430698245, 246.53816430698245, 246.53816430698245, 246.53816430698245]"
+    },
+    {
+      "name": "vehicle_response_to_aero",
+      "pass": true,
+      "detail": "ay_wind=8.130 ay_0=0.000"
+    },
+    {
+      "name": "no_parameter_retuning",
+      "pass": true,
+      "detail": "mass=1100.0 P=750.0 \u03bc=1.15"
+    }
+  ],
+  "zero_wind": {
+    "t100": 3.1299999999999772,
+    "t200": 8.309999999999867
+  },
+  "historical": {
+    "t100": 5.35999999999993,
+    "t200": 19.77000000000029
+  }
+}

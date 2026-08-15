@@ -1,0 +1,11 @@
+{
+  "relative_airflow": true,
+  "beta": -0.39088303999902185,
+  "Fy_aero": 308.97311380401464,
+  "Mz_aero": 156.41763886328243,
+  "symmetry": true,
+  "mutation_cy": true,
+  "mutation_cn": true,
+  "zero_wind_t100": 3.1299999999999772,
+  "zero_wind_t200": 8.309999999999867
+}

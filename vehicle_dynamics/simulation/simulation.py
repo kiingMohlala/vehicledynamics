@@ -74,6 +74,8 @@ class SimulationConfig:
     aero_cl_front: float = -0.45
     aero_cl_rear: float = -0.70
     aero_frontal_area: float = 1.90
+    aero_cy_beta: float = -0.8   # Phase 14.3 side-force / rad β
+    aero_cn_beta: float = -0.15  # Phase 14.3 yaw-moment / rad β
 
 
 @dataclass
@@ -147,6 +149,8 @@ class Simulation:
                 Cd=float(self.cfg.aero_cd),
                 Cl_front=float(getattr(self.cfg, "aero_cl_front", -0.45)),
                 Cl_rear=float(getattr(self.cfg, "aero_cl_rear", -0.70)),
+                Cy_beta=float(getattr(self.cfg, "aero_cy_beta", -0.8)),
+                Cn_yaw=float(getattr(self.cfg, "aero_cn_beta", -0.15)),
             )
             self.aero_cfg.frontal_area = float(getattr(self.cfg, "aero_frontal_area", 1.90))
             self.aero_cfg.cg_height = float(getattr(self.cfg, "h_cg", 0.45))
@@ -357,15 +361,31 @@ class Simulation:
             Fz_right=Fz_wheel,
         )
 
-        # --- Aero ---
+        # --- Aero (Phase 14.3 relative airflow) ---
         drag = 0.0
         downforce = 0.0
+        Fy_aero = 0.0
+        Mz_aero = 0.0
+        # Wind: prefer explicit wind_vx/vy; legacy crosswind → +wind_vy
+        wvx = float(getattr(st, "wind_vx", 0.0) or 0.0)
+        wvy = float(getattr(st, "wind_vy", 0.0) or 0.0)
+        if abs(wvx) < 1e-12 and abs(wvy) < 1e-12 and abs(st.crosswind) > 1e-12:
+            wvy = float(st.crosswind)
+        self._aero_air = None
         if cfg.aero_enabled and self.aero_cfg.enabled:
+            from vehicle_dynamics.aerodynamics.relative_airflow import compute_sideslip_aero
             ride = RideHeightState(h_front=v.ride_h_front, h_rear=v.ride_h_rear)
-            aero = compute_aero_loads(max(abs(v.vx), 0.1), self.aero_cfg, ride=ride)
-            drag = float(aero.drag * self._draft_factor)
-            downforce = float(aero.downforce_total)
-        F_y_wind = st.crosswind * 40.0
+            air = compute_sideslip_aero(
+                float(v.vx), float(v.vy), wvx, wvy, self.aero_cfg, ride=ride,
+                Cy_beta=float(getattr(cfg, "aero_cy_beta", self.aero_cfg.coeffs.Cy_beta)),
+                Cn_beta=float(getattr(cfg, "aero_cn_beta", self.aero_cfg.coeffs.Cn_yaw)),
+                draft_factor=float(self._draft_factor),
+            )
+            self._aero_air = air
+            drag = float(air.drag)
+            downforce = float(air.downforce_total)
+            Fy_aero = float(air.Fy_aero)
+            Mz_aero = float(air.Mz_aero)
 
         if self.dual_track is not None and cfg.use_dual_track:
             # ===== Phase 14.2C authoritative dual-track + Dugoff + ABS =====
@@ -387,8 +407,9 @@ class Simulation:
             ax = Fx / cfg.mass
             ay = float(dt_state.ay)
             r_dot = float(dt_state.yaw_acc)
-            # Crosswind disturbance on lateral
-            ay += F_y_wind / cfg.mass
+            # Phase 14.3: aero side-force and yaw moment from relative airflow
+            ay += Fy_aero / cfg.mass
+            r_dot += Mz_aero / cfg.Iz
 
             vx_new = v.vx + ax * dt
             if v.vx >= 0:
