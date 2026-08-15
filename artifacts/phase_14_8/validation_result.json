@@ -1,0 +1,379 @@
+{
+  "phase": "14.8",
+  "status": "PASS",
+  "gates_passed": 34,
+  "gates_total": 34,
+  "gates": [
+    {
+      "name": "authority_complete",
+      "pass": true,
+      "detail": "matched=26/26"
+    },
+    {
+      "name": "runtime_parameter_match",
+      "pass": true,
+      "detail": "config\u2192plant identity"
+    },
+    {
+      "name": "no_default_fallback",
+      "pass": true,
+      "detail": "mass=1100.0 mu=1.15 k_t=220000.0"
+    },
+    {
+      "name": "aero_to_body_coupling",
+      "pass": true,
+      "detail": "Fy=315 ay=8.65"
+    },
+    {
+      "name": "body_to_suspension_coupling",
+      "pass": true,
+      "detail": "\u03b8=-0.0203"
+    },
+    {
+      "name": "suspension_to_unsprung_coupling",
+      "pass": true,
+      "detail": "zu_FL=0.0294"
+    },
+    {
+      "name": "unsprung_to_tire_coupling",
+      "pass": true,
+      "detail": "Fz_FL=5190"
+    },
+    {
+      "name": "tire_to_dugoff_coupling",
+      "pass": true,
+      "detail": "ax=10.98"
+    },
+    {
+      "name": "crosswind_to_sideslip",
+      "pass": true,
+      "detail": "\u03b2=-0.413"
+    },
+    {
+      "name": "sideslip_to_yaw",
+      "pass": true,
+      "detail": "Mz=191.4"
+    },
+    {
+      "name": "yaw_to_vehicle_response",
+      "pass": true,
+      "detail": "r=0.221 ay=10.35"
+    },
+    {
+      "name": "acceleration_to_pitch",
+      "pass": true,
+      "detail": "\u03b8=0.0083"
+    },
+    {
+      "name": "braking_to_pitch",
+      "pass": true,
+      "detail": "\u03b8=-0.0133"
+    },
+    {
+      "name": "cornering_to_roll",
+      "pass": true,
+      "detail": "\u03c6=0.0680"
+    },
+    {
+      "name": "dynamic_fz_authority",
+      "pass": true,
+      "detail": "Fz_dyn=4739 Fz_qs=2898"
+    },
+    {
+      "name": "no_competing_fz_path",
+      "pass": true,
+      "detail": "poisoned static still responds to road \u0394Fz=-326"
+    },
+    {
+      "name": "bump_to_dynamic_fz",
+      "pass": true,
+      "detail": "Fz=2590 max=3072"
+    },
+    {
+      "name": "bump_to_dugoff",
+      "pass": true,
+      "detail": "ax under bump drive max=5.08"
+    },
+    {
+      "name": "braking_dynamic_fz",
+      "pass": true,
+      "detail": "minFz=1737 ax=-12.41"
+    },
+    {
+      "name": "cornering_dynamic_fz",
+      "pass": true,
+      "detail": "\u03c6=-0.1437"
+    },
+    {
+      "name": "combined_brake_corner",
+      "pass": true,
+      "detail": "minFz=116 ay=-3.58"
+    },
+    {
+      "name": "combined_brake_crosswind",
+      "pass": true,
+      "detail": "ax=-11.23 ay=1.04"
+    },
+    {
+      "name": "combined_aero_load",
+      "pass": true,
+      "detail": "\u03a3Fz=14052"
+    },
+    {
+      "name": "wheel_unloading_safety",
+      "pass": true,
+      "detail": "min_Fz=50.0"
+    },
+    {
+      "name": "mutation_cy_beta",
+      "pass": true,
+      "detail": "Fy_base=341 Fy\u00d72=655"
+    },
+    {
+      "name": "mutation_hcg",
+      "pass": true,
+      "detail": "\u03b8_h0.4=0.0133 \u03b8_h0.8=0.0266"
+    },
+    {
+      "name": "mutation_k_tire",
+      "pass": true,
+      "detail": "T_150k=0.126 T_350k=0.052000000000000005"
+    },
+    {
+      "name": "energy_body",
+      "pass": true,
+      "detail": "E_body=3.25"
+    },
+    {
+      "name": "energy_unsprung",
+      "pass": true,
+      "detail": "E_u=0.03"
+    },
+    {
+      "name": "energy_suspension",
+      "pass": true,
+      "detail": "E_damp_s=322.52"
+    },
+    {
+      "name": "energy_tire",
+      "pass": true,
+      "detail": "E_damp_t=8.67"
+    },
+    {
+      "name": "deterministic_replay",
+      "pass": true,
+      "detail": "run0=(-0.00519855, 6816.999, -10.772008)"
+    },
+    {
+      "name": "historical_isolation",
+      "pass": true,
+      "detail": "t100=5.36999999999993 t200=19.810000000000297"
+    },
+    {
+      "name": "frozen_regression",
+      "pass": true,
+      "detail": "t100=3.1299999999999772 t200=8.339999999999867 (ref (3.13, 8.34))"
+    }
+  ],
+  "provenance": [
+    {
+      "parameter": "mass",
+      "config": 1100.0,
+      "runtime": 1100.0,
+      "match": true
+    },
+    {
+      "parameter": "mu",
+      "config": 1.15,
+      "runtime": 1.15,
+      "match": true
+    },
+    {
+      "parameter": "Cx",
+      "config": 100000.0,
+      "runtime": 100000.0,
+      "match": true
+    },
+    {
+      "parameter": "Cy",
+      "config": 90000.0,
+      "runtime": 90000.0,
+      "match": true
+    },
+    {
+      "parameter": "wheel_radius",
+      "config": 0.33,
+      "runtime": 0.33,
+      "match": true
+    },
+    {
+      "parameter": "wheelbase",
+      "config": 2.7,
+      "runtime": 2.7,
+      "match": true
+    },
+    {
+      "parameter": "track_f",
+      "config": 1.65,
+      "runtime": 1.65,
+      "match": true
+    },
+    {
+      "parameter": "track_r",
+      "config": 1.62,
+      "runtime": 1.62,
+      "match": true
+    },
+    {
+      "parameter": "h_cg",
+      "config": 0.4,
+      "runtime": 0.4,
+      "match": true
+    },
+    {
+      "parameter": "drive_split",
+      "config": 0.35,
+      "runtime": 0.35,
+      "match": true
+    },
+    {
+      "parameter": "brake_Tmax",
+      "config": 2800.0,
+      "runtime": 2800.0,
+      "match": true
+    },
+    {
+      "parameter": "final_drive",
+      "config": 3.9,
+      "runtime": 3.9,
+      "match": true
+    },
+    {
+      "parameter": "k_front",
+      "config": 80000.0,
+      "runtime": 80000.0,
+      "match": true
+    },
+    {
+      "parameter": "k_rear",
+      "config": 95000.0,
+      "runtime": 95000.0,
+      "match": true
+    },
+    {
+      "parameter": "c_front",
+      "config": 6000.0,
+      "runtime": 6000.0,
+      "match": true
+    },
+    {
+      "parameter": "m_u_front",
+      "config": 40.0,
+      "runtime": 40.0,
+      "match": true
+    },
+    {
+      "parameter": "k_tire_front",
+      "config": 220000.0,
+      "runtime": 220000.0,
+      "match": true
+    },
+    {
+      "parameter": "c_tire_front",
+      "config": 200.0,
+      "runtime": 200.0,
+      "match": true
+    },
+    {
+      "parameter": "aero_cd",
+      "config": 0.34,
+      "runtime": 0.34,
+      "match": true
+    },
+    {
+      "parameter": "aero_cy_beta",
+      "config": -0.8,
+      "runtime": -0.8,
+      "match": true
+    },
+    {
+      "parameter": "aero_cn_beta",
+      "config": -0.15,
+      "runtime": -0.15,
+      "match": true
+    },
+    {
+      "parameter": "peak_power",
+      "config": 750.0,
+      "runtime": 750.0,
+      "match": true
+    },
+    {
+      "parameter": "abs",
+      "config": 1.0,
+      "runtime": 1.0,
+      "match": true
+    },
+    {
+      "parameter": "use_sprung",
+      "config": 1.0,
+      "runtime": 1.0,
+      "match": true
+    },
+    {
+      "parameter": "use_unsprung",
+      "config": 1.0,
+      "runtime": 1.0,
+      "match": true
+    },
+    {
+      "parameter": "gear_ratios",
+      "config": [
+        0.0,
+        3.5,
+        2.2,
+        1.6,
+        1.2,
+        1.0,
+        0.85
+      ],
+      "runtime": [
+        0.0,
+        3.5,
+        2.2,
+        1.6,
+        1.2,
+        1.0,
+        0.85
+      ],
+      "match": true
+    }
+  ],
+  "energy": {
+    "E_spring_susp": 778.460118116241,
+    "E_damper_susp": 322.5208367477284,
+    "E_tire_spring": 179.04556056944247,
+    "E_tire_damper": 8.671669300862193,
+    "E_body_K": 3.251802906485364,
+    "E_unsprung_K": 0.02923540046718325,
+    "global_drivetrain": "PARTIAL"
+  },
+  "regression": {
+    "hyper": {
+      "t100": 3.1299999999999772,
+      "t200": 8.339999999999867,
+      "ref": [
+        3.13,
+        8.34
+      ]
+    },
+    "hist": {
+      "t100": 5.36999999999993,
+      "t200": 19.810000000000297,
+      "ref": [
+        5.37,
+        19.81
+      ]
+    }
+  }
+}

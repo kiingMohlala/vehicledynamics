@@ -1,0 +1,9 @@
+{
+  "E_spring_susp": 778.460118116241,
+  "E_damper_susp": 322.5208367477284,
+  "E_tire_spring": 179.04556056944247,
+  "E_tire_damper": 8.671669300862193,
+  "E_body_K": 3.251802906485364,
+  "E_unsprung_K": 0.02923540046718325,
+  "global_drivetrain": "PARTIAL"
+}

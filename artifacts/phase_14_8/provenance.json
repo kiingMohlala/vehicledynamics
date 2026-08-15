@@ -1,0 +1,174 @@
+[
+  {
+    "parameter": "mass",
+    "config": 1100.0,
+    "runtime": 1100.0,
+    "match": true
+  },
+  {
+    "parameter": "mu",
+    "config": 1.15,
+    "runtime": 1.15,
+    "match": true
+  },
+  {
+    "parameter": "Cx",
+    "config": 100000.0,
+    "runtime": 100000.0,
+    "match": true
+  },
+  {
+    "parameter": "Cy",
+    "config": 90000.0,
+    "runtime": 90000.0,
+    "match": true
+  },
+  {
+    "parameter": "wheel_radius",
+    "config": 0.33,
+    "runtime": 0.33,
+    "match": true
+  },
+  {
+    "parameter": "wheelbase",
+    "config": 2.7,
+    "runtime": 2.7,
+    "match": true
+  },
+  {
+    "parameter": "track_f",
+    "config": 1.65,
+    "runtime": 1.65,
+    "match": true
+  },
+  {
+    "parameter": "track_r",
+    "config": 1.62,
+    "runtime": 1.62,
+    "match": true
+  },
+  {
+    "parameter": "h_cg",
+    "config": 0.4,
+    "runtime": 0.4,
+    "match": true
+  },
+  {
+    "parameter": "drive_split",
+    "config": 0.35,
+    "runtime": 0.35,
+    "match": true
+  },
+  {
+    "parameter": "brake_Tmax",
+    "config": 2800.0,
+    "runtime": 2800.0,
+    "match": true
+  },
+  {
+    "parameter": "final_drive",
+    "config": 3.9,
+    "runtime": 3.9,
+    "match": true
+  },
+  {
+    "parameter": "k_front",
+    "config": 80000.0,
+    "runtime": 80000.0,
+    "match": true
+  },
+  {
+    "parameter": "k_rear",
+    "config": 95000.0,
+    "runtime": 95000.0,
+    "match": true
+  },
+  {
+    "parameter": "c_front",
+    "config": 6000.0,
+    "runtime": 6000.0,
+    "match": true
+  },
+  {
+    "parameter": "m_u_front",
+    "config": 40.0,
+    "runtime": 40.0,
+    "match": true
+  },
+  {
+    "parameter": "k_tire_front",
+    "config": 220000.0,
+    "runtime": 220000.0,
+    "match": true
+  },
+  {
+    "parameter": "c_tire_front",
+    "config": 200.0,
+    "runtime": 200.0,
+    "match": true
+  },
+  {
+    "parameter": "aero_cd",
+    "config": 0.34,
+    "runtime": 0.34,
+    "match": true
+  },
+  {
+    "parameter": "aero_cy_beta",
+    "config": -0.8,
+    "runtime": -0.8,
+    "match": true
+  },
+  {
+    "parameter": "aero_cn_beta",
+    "config": -0.15,
+    "runtime": -0.15,
+    "match": true
+  },
+  {
+    "parameter": "peak_power",
+    "config": 750.0,
+    "runtime": 750.0,
+    "match": true
+  },
+  {
+    "parameter": "abs",
+    "config": 1.0,
+    "runtime": 1.0,
+    "match": true
+  },
+  {
+    "parameter": "use_sprung",
+    "config": 1.0,
+    "runtime": 1.0,
+    "match": true
+  },
+  {
+    "parameter": "use_unsprung",
+    "config": 1.0,
+    "runtime": 1.0,
+    "match": true
+  },
+  {
+    "parameter": "gear_ratios",
+    "config": [
+      0.0,
+      3.5,
+      2.2,
+      1.6,
+      1.2,
+      1.0,
+      0.85
+    ],
+    "runtime": [
+      0.0,
+      3.5,
+      2.2,
+      1.6,
+      1.2,
+      1.0,
+      0.85
+    ],
+    "match": true
+  }
+]
