@@ -1,0 +1,152 @@
+{
+  "phase": "14.9.7",
+  "status": "PASS",
+  "gates_passed": 22,
+  "gates_total": 22,
+  "gates": [
+    {
+      "name": "front_stiffness_authority",
+      "pass": true,
+      "detail": "\u03c60=0.0362 \u03c6_front=0.0083 dFz_f 0\u21922020/464"
+    },
+    {
+      "name": "rear_stiffness_authority",
+      "pass": true,
+      "detail": "\u03c60=0.0362 \u03c6_rear=0.0085 dFz_r 0\u21922289/540"
+    },
+    {
+      "name": "distribution_conservation",
+      "pass": true,
+      "detail": "\u03a3Fz0=10791 \u03a3FzF=10791 \u03a3FzR=10791"
+    },
+    {
+      "name": "lr_symmetry",
+      "pass": true,
+      "detail": "dFz_f+=659 dFz_f-=-659"
+    },
+    {
+      "name": "zero_roll_baseline",
+      "pass": true,
+      "detail": "\u03c60=0.0362 \u03c6_bal=0.0100"
+    },
+    {
+      "name": "mech_hyd_equivalence",
+      "pass": true,
+      "detail": "\u03c6_mech=0.0118 \u03c6_hyd=0.0118"
+    },
+    {
+      "name": "front_heavy_distribution",
+      "pass": true,
+      "detail": "front-heavy ARB |F|_f=2391 |F|_r=98 \u03c6=0.0060"
+    },
+    {
+      "name": "rear_heavy_distribution",
+      "pass": true,
+      "detail": "rear-heavy ARB |F|_f=102 |F|_r=2410 \u03c6=0.0062"
+    },
+    {
+      "name": "fy_distribution",
+      "pass": true,
+      "detail": "Fy_f front-heavy=6625 Fy_r rear-heavy=5839"
+    },
+    {
+      "name": "yaw_moment_response",
+      "pass": true,
+      "detail": "r_F=0.508 r_R=0.508"
+    },
+    {
+      "name": "mu_sensitivity",
+      "pass": true,
+      "detail": "\u03a3|Fy| \u03bc1.15=12357 \u03bc0.55=6140"
+    },
+    {
+      "name": "fz_authority_dugoff",
+      "pass": true,
+      "detail": "util=[0.95, 0.932, 0.943, 0.917] minFz=2333"
+    },
+    {
+      "name": "combined_slip",
+      "pass": true,
+      "detail": "util=[0.9753924958157274, 0.9612157486460223, 0.9726128153430804, 0.9465479752276528]"
+    },
+    {
+      "name": "hydraulic_damping",
+      "pass": true,
+      "detail": "\u03c6\u0307 lo=0.2896 hi=0.1669 \u03a3Fz=10791/10791"
+    },
+    {
+      "name": "mechanical_fallback",
+      "pass": true,
+      "detail": "MechanicalAntiRollBar"
+    },
+    {
+      "name": "hydraulic_path",
+      "pass": true,
+      "detail": "HydraulicAntiRollBar"
+    },
+    {
+      "name": "diagnostics_complete",
+      "pass": true,
+      "detail": "keys present=['dFz_front', 'dFz_rear', 'Fy_front', 'Fy_rear', 'roll_k_front', 'roll_k_rear', 'Mz_tire']"
+    },
+    {
+      "name": "crosswind",
+      "pass": true,
+      "detail": "Fy_aero=470"
+    },
+    {
+      "name": "reversal",
+      "pass": true,
+      "detail": "\u03c6+=0.0167 \u03c6-=-0.0167"
+    },
+    {
+      "name": "deterministic_replay",
+      "pass": true,
+      "detail": "run0=(494.6, 0.008856, 0.0)"
+    },
+    {
+      "name": "regression",
+      "pass": true,
+      "detail": "t100=3.1299999999999772 t200=8.339999999999867"
+    },
+    {
+      "name": "historical_isolation",
+      "pass": true,
+      "detail": "t100=5.36999999999993"
+    }
+  ],
+  "load_transfer": {
+    "zero": {
+      "dFz_f": 2019.6129185732889,
+      "dFz_r": 2288.665854539552,
+      "phi": 0.03616386768795145
+    },
+    "front_heavy": {
+      "dFz_f": 463.5904831210337,
+      "dFz_r": 525.3500309179753,
+      "phi": 0.008301206998308736
+    },
+    "rear_heavy": {
+      "dFz_f": 476.8281272034028,
+      "dFz_r": 540.3511946176523,
+      "phi": 0.008538244701828917
+    }
+  },
+  "regression": {
+    "hyper": {
+      "t100": 3.1299999999999772,
+      "t200": 8.339999999999867,
+      "ref": [
+        3.13,
+        8.34
+      ]
+    },
+    "hist": {
+      "t100": 5.36999999999993,
+      "ref": [
+        5.37,
+        19.81
+      ]
+    }
+  }
+}

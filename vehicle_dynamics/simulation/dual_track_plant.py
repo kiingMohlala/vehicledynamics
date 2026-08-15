@@ -478,4 +478,20 @@ class DualTrackPlant:
             "ax": self.state.ax,
             "ay": self.state.ay,
             "yaw_acc": self.state.yaw_acc,
+            # Phase 14.9.7 roll / load-transfer diagnostics
+            "dFz_front": float(self.wheels[1].Fz - self.wheels[0].Fz),  # FR−FL
+            "dFz_rear": float(self.wheels[3].Fz - self.wheels[2].Fz),   # RR−RL
+            "Fz_front_sum": float(self.wheels[0].Fz + self.wheels[1].Fz),
+            "Fz_rear_sum": float(self.wheels[2].Fz + self.wheels[3].Fz),
+            "Fy_front": float(self.wheels[0].Fy + self.wheels[1].Fy),
+            "Fy_rear": float(self.wheels[2].Fy + self.wheels[3].Fy),
+            "Mz_tire": float(self.state.yaw_acc * self.cfg.Iz),
+            "roll_k_front": float(
+                getattr(self.sprung.arb.front, "k_hyd", None)
+                or getattr(self.sprung.arb.front, "k_arb", 0.0)
+            ) if hasattr(self, "sprung") else 0.0,
+            "roll_k_rear": float(
+                getattr(self.sprung.arb.rear, "k_hyd", None)
+                or getattr(self.sprung.arb.rear, "k_arb", 0.0)
+            ) if hasattr(self, "sprung") else 0.0,
         }
