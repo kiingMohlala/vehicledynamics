@@ -1,0 +1,96 @@
+{
+  "phase": "15.5",
+  "status": "PASS",
+  "gates_passed": 14,
+  "gates_total": 14,
+  "gates": [
+    {
+      "name": "left_right_mu_asymmetry",
+      "pass": true,
+      "detail": "r=0.312 mu=[1.15, 0.45999999999999996, 1.15, 0.45999999999999996]"
+    },
+    {
+      "name": "front_rear_mu_asymmetry",
+      "pass": true,
+      "detail": "r=0.219"
+    },
+    {
+      "name": "one_wheel_saturation",
+      "pass": true,
+      "detail": "max_util=0.993"
+    },
+    {
+      "name": "esc_brake_saturation",
+      "pass": true,
+      "detail": "max_cmd=0.426"
+    },
+    {
+      "name": "abs_overrides_coexist",
+      "pass": true,
+      "detail": "min_Fz=1616 pressures=[0.75, 0.307734375, 0.11249999999999999, 0.11249999999999999]"
+    },
+    {
+      "name": "observer_signal_integrity",
+      "pass": true,
+      "detail": "\u03b2=0.0058 e_r=0.2248"
+    },
+    {
+      "name": "yaw_sign_reversal",
+      "pass": true,
+      "detail": "r+=0.387 r-=-0.404"
+    },
+    {
+      "name": "inhibit_recovery",
+      "pass": true,
+      "detail": "inhibit=util_limit recover_active=True"
+    },
+    {
+      "name": "split_mu_mirror_symmetry",
+      "pass": true,
+      "detail": "ay_R\u03bc=7.05 ay_L\u03bc=-7.05"
+    },
+    {
+      "name": "esc_off_split_mu_equivalence",
+      "pass": true,
+      "detail": "\u0394\u03a3Fy=0.0000"
+    },
+    {
+      "name": "actuator_limit_when_disabled",
+      "pass": true,
+      "detail": "add=[0. 0. 0. 0.]"
+    },
+    {
+      "name": "regression",
+      "pass": true,
+      "detail": "t100=3.1299999999999772 t200=8.339999999999867"
+    },
+    {
+      "name": "historical_isolation",
+      "pass": true,
+      "detail": "t100=5.36999999999993"
+    },
+    {
+      "name": "deterministic_split_mu",
+      "pass": true,
+      "detail": "run0=0.3194"
+    }
+  ],
+  "note": "K_Mz not retuned; plant identity frozen",
+  "regression": {
+    "hyper": {
+      "t100": 3.1299999999999772,
+      "t200": 8.339999999999867,
+      "ref": [
+        3.13,
+        8.34
+      ]
+    },
+    "hist": {
+      "t100": 5.36999999999993,
+      "ref": [
+        5.37,
+        19.81
+      ]
+    }
+  }
+}
