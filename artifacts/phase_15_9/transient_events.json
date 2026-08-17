@@ -1,0 +1,43 @@
+[
+  {
+    "event": "step_pos",
+    "peak_er": 1.6983391423310894,
+    "final_er": 1.6983391423310894,
+    "flips": 0
+  },
+  {
+    "event": "step_neg",
+    "peak_er": 0.19220944788412198,
+    "final_er": 0.1024997064528704
+  },
+  {
+    "event": "impulse",
+    "final_er": 0.1064881867291152,
+    "flips": 0
+  },
+  {
+    "event": "sustained",
+    "final_er": 0.9301023344674416,
+    "final_Mz": 0.0
+  },
+  {
+    "event": "cross_zero",
+    "flips": 0
+  },
+  {
+    "event": "near_threshold",
+    "activations": 7,
+    "deactivations": 7
+  },
+  {
+    "event": "high_util",
+    "inhibited": true,
+    "recovered": true
+  },
+  {
+    "event": "split_mu",
+    "final_er": 0.10316521211463213,
+    "peak_er": 0.12372723919286349,
+    "finite": true
+  }
+]

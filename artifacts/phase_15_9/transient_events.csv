@@ -1,0 +1,9 @@
+activations,deactivations,event,final_Mz,final_er,finite,flips,inhibited,peak_er,recovered
+,,step_pos,,1.6983391423310894,,0,,1.6983391423310894,
+,,step_neg,,0.1024997064528704,,,,0.19220944788412198,
+,,impulse,,0.1064881867291152,,0,,,
+,,sustained,0.0,0.9301023344674416,,,,,
+,,cross_zero,,,,0,,,
+7,7,near_threshold,,,,,,,
+,,high_util,,,,,True,,True
+,,split_mu,,0.10316521211463213,True,,,0.12372723919286349,

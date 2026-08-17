@@ -1,0 +1,10 @@
+{
+  "selected_candidate": 10000.0,
+  "gain_frozen": false,
+  "transient_recovery": "PASS",
+  "plant": "FROZEN",
+  "regression": {
+    "t100": 3.1299999999999772,
+    "t200": 8.339999999999867
+  }
+}

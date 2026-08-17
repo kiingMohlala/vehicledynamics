@@ -1,0 +1,121 @@
+{
+  "phase": "15.9",
+  "status": "PASS",
+  "gates_passed": 12,
+  "gates_total": 12,
+  "gates": [
+    {
+      "name": "correct_activation",
+      "pass": true,
+      "detail": "activated=True"
+    },
+    {
+      "name": "correct_release",
+      "pass": true,
+      "detail": "mean_Mz_tail=0.0 final_Mz=0.0"
+    },
+    {
+      "name": "no_corrective_overshoot",
+      "pass": true,
+      "detail": "final=0.102 peak=0.192"
+    },
+    {
+      "name": "no_chatter",
+      "pass": true,
+      "detail": "impulse_flips=0 cross_flips=0 near_act=7"
+    },
+    {
+      "name": "disturbance_removal",
+      "pass": true,
+      "detail": "mean|Mz|_tail=0.0"
+    },
+    {
+      "name": "symmetry",
+      "pass": true,
+      "detail": "peak+=1.698 peak-=0.192"
+    },
+    {
+      "name": "split_mu",
+      "pass": true,
+      "detail": "final_er=0.103"
+    },
+    {
+      "name": "abs_coexistence",
+      "pass": true,
+      "detail": "min_Fz=1642"
+    },
+    {
+      "name": "esc_off_regression",
+      "pass": true,
+      "detail": "t100=3.1299999999999772 t200=8.339999999999867"
+    },
+    {
+      "name": "historical_isolation",
+      "pass": true,
+      "detail": "t100=5.36999999999993"
+    },
+    {
+      "name": "determinism",
+      "pass": true,
+      "detail": "run0=0.1071"
+    },
+    {
+      "name": "high_util_inhibit",
+      "pass": true,
+      "detail": "inhibited=True"
+    }
+  ],
+  "recommendation": {
+    "selected_candidate": 10000.0,
+    "gain_frozen": false,
+    "transient_recovery": "PASS",
+    "plant": "FROZEN",
+    "regression": {
+      "t100": 3.1299999999999772,
+      "t200": 8.339999999999867
+    }
+  },
+  "events": [
+    {
+      "event": "step_pos",
+      "peak_er": 1.6983391423310894,
+      "final_er": 1.6983391423310894,
+      "flips": 0
+    },
+    {
+      "event": "step_neg",
+      "peak_er": 0.19220944788412198,
+      "final_er": 0.1024997064528704
+    },
+    {
+      "event": "impulse",
+      "final_er": 0.1064881867291152,
+      "flips": 0
+    },
+    {
+      "event": "sustained",
+      "final_er": 0.9301023344674416,
+      "final_Mz": 0.0
+    },
+    {
+      "event": "cross_zero",
+      "flips": 0
+    },
+    {
+      "event": "near_threshold",
+      "activations": 7,
+      "deactivations": 7
+    },
+    {
+      "event": "high_util",
+      "inhibited": true,
+      "recovered": true
+    },
+    {
+      "event": "split_mu",
+      "final_er": 0.10316521211463213,
+      "peak_er": 0.12372723919286349,
+      "finite": true
+    }
+  ]
+}
