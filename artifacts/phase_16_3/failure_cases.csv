@@ -1,0 +1,14 @@
+Mz,abs_enabled,activated,active,case,cmd_zero,final_Mz,finite,inhibited,max_Mz,max_cmd,min_Fz,peak_r,reason,reentry,released,saw_inhibit,stuck_active
+,,,,yaw_bias,,,True,,3000.0,,,0.28254940665086686,,,,,
+,,,False,esc_unavailable,True,,,,0.0,,,,,,,,
+,,True,,stale_obs_release,,0.0,,,,,,,,,True,,
+,,,,single_wheel_mu,,,True,,0.0,,,1.719805819497644,,,,,
+,,,,axle_mu_collapse,,,True,,0.0,,,0.10089840512358855,,,,,
+,,,,severe_split_mu,,,True,,0.0,0.009519779673873918,,0.4672155083163634,,,,,
+,,,,reduced_actuator,,,True,,0.0,0.6103117635851609,,,,,,,
+,,,,actuator_sat,,,True,,,0.5489491714474746,,,,,,,
+,,,,inhibit_recovery,,,,,,,,,,False,,True,False
+,True,,,abs_esc_combined,,,True,,,,1614.8483419528761,,,,,,
+,,,,split_mu_actuator_limit,,,True,,,0.17337640325526135,,0.2649342300574538,,,,,
+,,,False,util_overrides_error,,,,True,,,,,util_limit,,,,
+0.0,,,False,post_fault_no_intervention,,,,,,,,,,,,,

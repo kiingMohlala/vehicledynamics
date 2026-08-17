@@ -1,0 +1,66 @@
+{
+  "yaw_bias": {
+    "peak_r": 0.28254940665086686,
+    "max_Mz": 3000.0,
+    "finite": true
+  },
+  "esc_unavailable": {
+    "max_Mz": 0.0,
+    "active": false,
+    "cmd_zero": true
+  },
+  "stale_obs_release": {
+    "activated": true,
+    "released": true,
+    "final_Mz": 0.0
+  },
+  "single_wheel_mu": {
+    "peak_r": 1.719805819497644,
+    "finite": "True",
+    "max_Mz": 0.0
+  },
+  "axle_mu_collapse": {
+    "peak_r": 0.10089840512358855,
+    "finite": "True",
+    "max_Mz": 0.0
+  },
+  "severe_split_mu": {
+    "peak_r": 0.4672155083163634,
+    "finite": "True",
+    "max_Mz": 0.0,
+    "max_cmd": 0.009519779673873918
+  },
+  "reduced_actuator": {
+    "max_cmd": 0.6103117635851609,
+    "max_Mz": 0.0,
+    "finite": "True"
+  },
+  "actuator_sat": {
+    "max_cmd": 0.5489491714474746,
+    "finite": "True"
+  },
+  "inhibit_recovery": {
+    "saw_inhibit": true,
+    "stuck_active": false,
+    "reentry": false
+  },
+  "abs_esc_combined": {
+    "min_Fz": 1614.8483419528761,
+    "abs_enabled": true,
+    "finite": "True"
+  },
+  "split_mu_actuator_limit": {
+    "max_cmd": 0.17337640325526135,
+    "peak_r": 0.2649342300574538,
+    "finite": "True"
+  },
+  "util_overrides_error": {
+    "inhibited": true,
+    "active": false,
+    "reason": "util_limit"
+  },
+  "post_fault_no_intervention": {
+    "active": false,
+    "Mz": 0.0
+  }
+}
