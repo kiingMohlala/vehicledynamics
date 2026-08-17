@@ -1,0 +1,101 @@
+{
+  "progressive_saturation": {
+    "peak_er": 0.17187349988411088,
+    "final_er": 0.15054330604329424,
+    "peak_beta": 0.036551769295602415,
+    "peak_r": 0.5276172535466938,
+    "peak_util": 0.9799996171054022,
+    "max_Mz": 1252.1439395784046,
+    "max_cmd": 0.2981295094234297,
+    "flips": 0,
+    "active_steps": 219,
+    "finite": true
+  },
+  "high_speed_transient": {
+    "peak_er": 0.1776872749135425,
+    "final_er": 0.15128810450579286,
+    "peak_beta": 0.015207254526333328,
+    "peak_r": 0.327968899612393,
+    "peak_util": 0.9800006350720171,
+    "max_Mz": 1141.6414555903964,
+    "max_cmd": 0.2718193941881896,
+    "flips": 0,
+    "active_steps": 160,
+    "finite": true
+  },
+  "brake_steer_sat": {
+    "peak_er": 1.56979728421806,
+    "final_er": 1.56979728421806,
+    "peak_beta": 1.4297440053553314,
+    "peak_r": 1.6440008156808006,
+    "peak_util": 0.9968363831183403,
+    "max_Mz": 0.0,
+    "max_cmd": 0.0,
+    "flips": 0,
+    "active_steps": 0,
+    "finite": true,
+    "min_Fz": 1607.7239579172367
+  },
+  "mu_high_to_low": {
+    "peak_er": 0.15304422335560372,
+    "final_er": 0.0923263393318414,
+    "peak_beta": 0.09264978021824194,
+    "peak_r": 0.34264211944074324,
+    "peak_util": 0.9807710029752889,
+    "max_Mz": 1140.859917157139,
+    "max_cmd": 0.2716333136088427,
+    "flips": 0,
+    "active_steps": 176,
+    "finite": true
+  },
+  "mu_low_to_high": {
+    "peak_er": 0.15961363601932058,
+    "final_er": 0.15764411943642823,
+    "peak_beta": 0.019247346541751118,
+    "peak_r": 0.3580199980113152,
+    "peak_util": 0.9800060628660023,
+    "max_Mz": 1131.9937552171345,
+    "max_cmd": 0.26952232267074633,
+    "flips": 0,
+    "active_steps": 138,
+    "finite": true
+  },
+  "split_mu_transition": {
+    "peak_er": 0.16061260179672246,
+    "final_er": 0.13619134152954396,
+    "peak_beta": 0.009732491660233218,
+    "peak_r": 0.31637598917536147,
+    "peak_util": 0.9870216009063112,
+    "max_Mz": 1371.1664318461771,
+    "max_cmd": 0.32646819805861366,
+    "flips": 0,
+    "active_steps": 253,
+    "finite": true
+  },
+  "steer_reversal": {
+    "peak_er": 0.2410685251567191,
+    "final_er": 0.14999253910074062,
+    "peak_beta": 0.028936311201496808,
+    "peak_r": 0.4848755345556984,
+    "peak_util": 0.9799996171054022,
+    "max_Mz": 1897.2188098761837,
+    "max_cmd": 0.45171876425623436,
+    "flips": 0,
+    "active_steps": 191,
+    "finite": true
+  },
+  "inhibit_recovery": {
+    "peak_er": 0.5736606575016994,
+    "final_er": 0.5180599853411142,
+    "peak_beta": 0.2925792633067164,
+    "peak_r": 0.7844132557840157,
+    "peak_util": 0.9914635191423375,
+    "max_Mz": 146.20081004047856,
+    "max_cmd": 0.03480971667630443,
+    "flips": 0,
+    "active_steps": 38,
+    "finite": true,
+    "saw_inhibit": true,
+    "saw_reentry": true
+  }
+}
