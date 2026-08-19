@@ -1,0 +1,153 @@
+{
+  "phase": "16.5",
+  "status": "PASS",
+  "gates_passed": 18,
+  "gates_total": 18,
+  "gates": [
+    {
+      "name": "configuration_integrity",
+      "pass": true,
+      "detail": "{'K_Mz': 10000.0, 'K_us': 0.0065, 'e_enter': 0.12, 'e_exit': 0.06}"
+    },
+    {
+      "name": "kmz_confirmed_10000",
+      "pass": true,
+      "detail": "K_Mz=10000.0"
+    },
+    {
+      "name": "no_unapproved_param_changes",
+      "pass": true,
+      "detail": "bounds match 15.3\u201315.9 validated defaults"
+    },
+    {
+      "name": "passive_regression_14_9",
+      "pass": true,
+      "detail": "t100=3.1299999999999772 t200=8.339999999999867"
+    },
+    {
+      "name": "historical_isolation",
+      "pass": true,
+      "detail": "t100=5.36999999999993"
+    },
+    {
+      "name": "deterministic_rerun",
+      "pass": true,
+      "detail": "peak_r=0.29639"
+    },
+    {
+      "name": "straight_minimal_intervention",
+      "pass": true,
+      "detail": "max_Mz=0.00"
+    },
+    {
+      "name": "handling_response",
+      "pass": true,
+      "detail": "peaks=[0.296, 0.297, 0.362, 0.296]"
+    },
+    {
+      "name": "braking_abs_coexistence",
+      "pass": true,
+      "detail": "brake_Mz=0 min_Fz=1653/1524"
+    },
+    {
+      "name": "split_mu_safety",
+      "pass": true,
+      "detail": "peak_r=0.283 cmd=0.156"
+    },
+    {
+      "name": "limit_inhibit_behavior",
+      "pass": true,
+      "detail": "util_limit"
+    },
+    {
+      "name": "fault_recovery",
+      "pass": true,
+      "detail": "saw_inhibit=True last_active=False"
+    },
+    {
+      "name": "disturbance_recovery",
+      "pass": true,
+      "detail": "peak_r=0.351 max_Mz=2231"
+    },
+    {
+      "name": "esc_unavailable",
+      "pass": true,
+      "detail": "Mz=0.0"
+    },
+    {
+      "name": "no_nan_inf",
+      "pass": true,
+      "detail": "ok"
+    },
+    {
+      "name": "command_bounds",
+      "pass": true,
+      "detail": "max_cmd=0.531"
+    },
+    {
+      "name": "mz_stability",
+      "pass": true,
+      "detail": "max_flips=0 max_Mz=2231"
+    },
+    {
+      "name": "release_manifest_integrity",
+      "pass": true,
+      "detail": "manifest consistent"
+    }
+  ],
+  "manifest": {
+    "phase": "16.5",
+    "status": "ESC FROZEN",
+    "ESC_calibration": {
+      "K_Mz": 10000.0,
+      "state": "FROZEN"
+    },
+    "plant": {
+      "phase": "14.9",
+      "state": "FROZEN",
+      "regression": {
+        "hyper_0_100": 3.13,
+        "hyper_0_200": 8.34
+      }
+    },
+    "ESC_architecture": {
+      "state": "FROZEN",
+      "layers": [
+        "15.1 observation",
+        "15.2 allocation",
+        "15.3 decision",
+        "15.4 closed-loop",
+        "15.5 safety",
+        "15.9 transient"
+      ]
+    },
+    "validation_chain": {
+      "15.5": "PASS",
+      "15.6": "PASS",
+      "15.7": "PASS",
+      "15.8": "PASS",
+      "15.9": "PASS",
+      "16.1": "PASS",
+      "16.2": "PASS",
+      "16.3": "PASS",
+      "16.4": "PASS"
+    },
+    "config": {
+      "K_Mz": 10000.0,
+      "K_us": 0.0065,
+      "e_enter": 0.12,
+      "e_exit": 0.06,
+      "max_delta_Mz": 6000.0,
+      "min_vx": 8.0,
+      "min_delta": 0.015,
+      "max_util": 0.98,
+      "max_beta": 0.45,
+      "brake_torque_max": 2800.0,
+      "wheelbase": 2.7,
+      "track_f": 1.65,
+      "track_r": 1.62,
+      "status": "FROZEN ESC CALIBRATION"
+    },
+    "note": "Changing K_Mz requires a new controlled calibration phase."
+  }
+}

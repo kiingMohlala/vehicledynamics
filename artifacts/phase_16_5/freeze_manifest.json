@@ -1,0 +1,55 @@
+{
+  "phase": "16.5",
+  "status": "ESC FROZEN",
+  "ESC_calibration": {
+    "K_Mz": 10000.0,
+    "state": "FROZEN"
+  },
+  "plant": {
+    "phase": "14.9",
+    "state": "FROZEN",
+    "regression": {
+      "hyper_0_100": 3.13,
+      "hyper_0_200": 8.34
+    }
+  },
+  "ESC_architecture": {
+    "state": "FROZEN",
+    "layers": [
+      "15.1 observation",
+      "15.2 allocation",
+      "15.3 decision",
+      "15.4 closed-loop",
+      "15.5 safety",
+      "15.9 transient"
+    ]
+  },
+  "validation_chain": {
+    "15.5": "PASS",
+    "15.6": "PASS",
+    "15.7": "PASS",
+    "15.8": "PASS",
+    "15.9": "PASS",
+    "16.1": "PASS",
+    "16.2": "PASS",
+    "16.3": "PASS",
+    "16.4": "PASS"
+  },
+  "config": {
+    "K_Mz": 10000.0,
+    "K_us": 0.0065,
+    "e_enter": 0.12,
+    "e_exit": 0.06,
+    "max_delta_Mz": 6000.0,
+    "min_vx": 8.0,
+    "min_delta": 0.015,
+    "max_util": 0.98,
+    "max_beta": 0.45,
+    "brake_torque_max": 2800.0,
+    "wheelbase": 2.7,
+    "track_f": 1.65,
+    "track_r": 1.62,
+    "status": "FROZEN ESC CALIBRATION"
+  },
+  "note": "Changing K_Mz requires a new controlled calibration phase."
+}
